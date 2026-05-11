@@ -1,0 +1,128 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  /* RTL support */
+  html {
+    direction: rtl;
+  }
+}
+
+/* FullCalendar RTL overrides */
+.fc {
+  direction: rtl;
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+.fc-toolbar-title {
+  font-size: 1rem !important;
+  font-weight: 600;
+}
+.fc-event {
+  cursor: pointer;
+  border-radius: 8px !important;
+  border: none !important;
+  padding: 3px 7px;
+  font-size: 0.75rem !important;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  transition: opacity 0.15s;
+}
+.fc-event:hover {
+  opacity: 0.85;
+}
+.fc-day-today {
+  background-color: hsl(221.2 83.2% 53.3% / 0.04) !important;
+}
+.fc-day-today .fc-col-header-cell-cushion {
+  color: #2563EB;
+  font-weight: 700;
+}
+.fc-col-header-cell-cushion {
+  padding: 10px 4px !important;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748B;
+  text-decoration: none !important;
+}
+.fc-timegrid-slot {
+  height: 48px !important;
+}
+.fc-timegrid-slot-label-cushion {
+  font-size: 0.7rem;
+  color: #94A3B8;
+  padding: 0 8px;
+}
+.fc-scrollgrid {
+  border-radius: 12px;
+  overflow: hidden;
+  border-color: #E2E8F0 !important;
+}
+.fc-scrollgrid td, .fc-scrollgrid th {
+  border-color: #F1F5F9 !important;
+}
+.fc-timegrid-now-indicator-line {
+  border-color: #EF4444 !important;
+  border-width: 2px !important;
+}
+.fc-timegrid-now-indicator-arrow {
+  border-top-color: #EF4444 !important;
+}
+/* Hide FullCalendar watermark */
+.fc-license-message, .fc .fc-license-message {
+  display: none !important;
+}
