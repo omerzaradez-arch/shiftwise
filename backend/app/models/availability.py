@@ -13,7 +13,7 @@ class AvailabilitySubmission(Base):
     employee_id: Mapped[str] = mapped_column(String, ForeignKey("employees.id"), nullable=False)
     week_id: Mapped[str] = mapped_column(String, ForeignKey("schedule_weeks.id"), nullable=False)
     submitted_at: Mapped[datetime] = mapped_column(
-        DateTime, default=lambda: datetime.now(timezone.utc)
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
     desired_shifts_count: Mapped[int | None] = mapped_column(Integer)
     preferred_shift_types: Mapped[list] = mapped_column(JSON, default=list)
