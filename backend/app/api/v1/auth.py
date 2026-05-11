@@ -109,3 +109,36 @@ async def get_me(current_user: Employee = Depends(get_current_user)):
 @router.post("/logout")
 async def logout():
     return {"ok": True}
+
+
+class SetupRequest(BaseModel):
+    org_name: str
+    name: str
+    phone: str
+    password: str
+
+
+@router.post("/setup")
+async def setup(data: SetupRequest, db: AsyncSession = Depends(get_db)):
+    from sqlalchemy import func
+    from app.models import Organization
+    from app.security import hash_password
+    import uuid
+    count = await db.execute(select(func.count()).select_from(Employee))
+    if count.scalar() > 0:
+        raise HTTPException(status_code=403, detail="Setup already done")
+    org = Organization(id=str(uuid.uuid4()), name=data.org_name)
+    db.add(org)
+    await db.flush()
+    emp = Employee(
+        id=str(uuid.uuid4()),
+        org_id=org.id,
+        name=data.name,
+        phone=data.phone,
+        hashed_password=hash_password(data.password),
+        role="manager",
+        is_active=True,
+    )
+    db.add(emp)
+    await db.commit()
+    return {"ok": True, "org_id": org.id}
