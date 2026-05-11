@@ -9,6 +9,9 @@ from app.api.v1 import settings as settings_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    from app.database import async_engine, Base
+    async with async_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
     yield
 
 

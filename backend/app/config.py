@@ -1,15 +1,14 @@
 from pydantic_settings import BaseSettings
+from pydantic import model_validator
 from functools import lru_cache
-import os
 
 
 class Settings(BaseSettings):
     app_name: str = "ShiftWise API"
     debug: bool = True
 
-    # SQLite for local dev — override with PostgreSQL URL in production
     database_url: str = "sqlite:///./shiftwise.db"
-    async_database_url: str = "sqlite+aiosqlite:///./shiftwise.db"
+    async_database_url: str = ""
 
     secret_key: str = "dev-secret-key-change-in-production"
     algorithm: str = "HS256"
@@ -23,6 +22,19 @@ class Settings(BaseSettings):
     ]
 
     optimizer_time_limit_seconds: int = 30
+
+    @model_validator(mode="after")
+    def derive_async_url(self) -> "Settings":
+        if not self.async_database_url:
+            url = self.database_url
+            if url.startswith("postgres://"):
+                url = url.replace("postgres://", "postgresql://", 1)
+                self.database_url = url
+            if url.startswith("postgresql://"):
+                self.async_database_url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+            else:
+                self.async_database_url = url.replace("sqlite://", "sqlite+aiosqlite://", 1)
+        return self
 
     class Config:
         env_file = ".env"
