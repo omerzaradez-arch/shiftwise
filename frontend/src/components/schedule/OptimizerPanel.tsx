@@ -65,7 +65,7 @@ export function OptimizerPanel({ weekStart, onClose, onComplete }: Props) {
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full flex-none" />
-                    מניעת סגירה + פתיחה ברצף
+                    כיבוד העדפות בוקר/ערב
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full flex-none" />
