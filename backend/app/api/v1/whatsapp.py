@@ -49,17 +49,49 @@ def next_week_sunday() -> date:
     return today + timedelta(days=days_until_sunday)
 
 
+DAY_NAME_TO_IDX = {
+    "ראשון": 0, "שני": 1, "שלישי": 2,
+    "רביעי": 3, "חמישי": 4, "שישי": 5, "שבת": 6,
+}
+
+
 def week_availability_message(operating_days: list[int], week_start: date) -> str:
-    lines = [f"📅 *זמינות שבוע {week_start.strftime('%d/%m')}*\n"]
+    lines = [
+        f"📅 *זמינות שבוע {week_start.strftime('%d/%m')}*\n",
+        "1️⃣ בוקר  2️⃣ ערב  3️⃣ כל משמרת  4️⃣ כלום\n",
+    ]
     for day_idx in operating_days:
         day_date = week_start + timedelta(days=day_idx)
-        lines.append(f"יום {DAY_NAMES[day_idx]} ({day_date.strftime('%d/%m')}):  1 בוקר  |  2 ערב  |  3 כל משמרת  |  4 כלום")
-    n = len(operating_days)
-    example = ",".join(["1"] * n)
-    lines.append(f"\nשלח {n} מספרים מופרדים בפסיק (לפי סדר הימים):")
-    lines.append(f"לדוגמה: {example}")
+        lines.append(f"יום {DAY_NAMES[day_idx]} ({day_date.strftime('%d/%m')}): ____")
+
+    example_parts = [f"{DAY_NAMES[d]}: 1" for d in operating_days[:2]]
+    example_parts += [f"{DAY_NAMES[d]}: 3" for d in operating_days[2:4]]
+    lines.append(f"\nלדוגמה:\n{chr(10).join(example_parts[:4])} ...")
     lines.append("\nלביטול שלח: לא")
     return "\n".join(lines)
+
+
+def parse_day_response(body: str, operating_days: list[int]) -> dict | None:
+    """
+    Parses responses like:
+      ראשון: 1 שני: 4 שלישי: 2 ...
+    Returns {str(day_idx): option} or None if parsing fails.
+    """
+    import re
+    responses: dict = {}
+    # Match "day_name: number" with flexible spacing/punctuation
+    pattern = re.compile(
+        r'(ראשון|שני|שלישי|רביעי|חמישי|שישי|שבת)\s*[:\-]\s*([1-4])',
+        re.UNICODE
+    )
+    for match in pattern.finditer(body):
+        day_name, num = match.group(1), match.group(2)
+        day_idx = DAY_NAME_TO_IDX.get(day_name)
+        if day_idx is not None and day_idx in operating_days:
+            option = OPTION_MAP.get(num)
+            if option:
+                responses[str(day_idx)] = option
+    return responses if responses else None
 
 
 OPTION_MAP = {
@@ -296,34 +328,26 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
         await db.commit()
         return twiml("❌ הפעולה בוטלה.\n\n" + MENU)
 
-    # ── State: waiting for single response covering all days ──
+    # ── State: waiting for day-by-day response ──
     if session.state == "availability_waiting_response":
         ctx = dict(session.context or {})
         operating_days: list[int] = ctx.get("operating_days", [0, 1, 2, 3, 4, 5])
         week_start_str: str = ctx.get("week_start", "")
         week_start = date.fromisoformat(week_start_str)
 
-        parts = [p.strip() for p in body.replace("،", ",").split(",")]
-        if len(parts) != len(operating_days):
+        responses = parse_day_response(body, operating_days)
+
+        if not responses:
             return twiml(
-                f"⚠️ שלח בדיוק {len(operating_days)} מספרים מופרדים בפסיק.\n\n"
+                "⚠️ לא הצלחתי לקרוא את התשובה.\n"
+                "שלח בפורמט:\nראשון: 1\nשני: 3\nשלישי: 2 ...\n\n"
                 + week_availability_message(operating_days, week_start)
             )
 
-        responses: dict = {}
-        invalid = []
-        for i, part in enumerate(parts):
-            option = OPTION_MAP.get(part.strip())
-            if not option:
-                invalid.append(part)
-            else:
-                responses[str(operating_days[i])] = option
-
-        if invalid:
-            return twiml(
-                f"⚠️ לא הבנתי: {', '.join(invalid)}\nשלח מספרים 1-4 בלבד.\n\n"
-                + week_availability_message(operating_days, week_start)
-            )
+        # Fill missing days with "כל משמרת" (option 3)
+        for day_idx in operating_days:
+            if str(day_idx) not in responses:
+                responses[str(day_idx)] = OPTION_MAP["3"]
 
         ctx["responses"] = responses
         session.state = "availability_confirm"
