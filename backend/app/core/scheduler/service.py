@@ -81,6 +81,9 @@ def generate_schedule(
         )
     ).scalars().all()
     submissions_by_emp = {s.employee_id: s for s in submissions}
+    print(f"[scheduler] week_id={week.id} submissions_found={len(submissions)}", flush=True)
+    for s in submissions:
+        print(f"[scheduler] sub emp={s.employee_id} day_prefs={s.day_preferences}", flush=True)
 
     # Load fairness history (last 8 weeks)
     fairness_history = _load_fairness_history(db, org_id, week_start)
