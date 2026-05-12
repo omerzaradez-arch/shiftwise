@@ -49,24 +49,35 @@ def next_week_sunday() -> date:
     return today + timedelta(days=days_until_sunday)
 
 
-def day_prompt(day_idx: int, day_date: date) -> str:
-    return (
-        f"📅 *יום {DAY_NAMES[day_idx]}* ({day_date.strftime('%d/%m')}):\n\n"
-        "1️⃣ זמין – כל משמרת\n"
-        "2️⃣ זמין – בוקר / צהריים בלבד\n"
-        "3️⃣ זמין – ערב / לילה בלבד\n"
-        "4️⃣ מעדיף לא לעבוד (גמיש)\n"
-        "5️⃣ לא יכול כלל (חייב)\n\n"
-        "שלח את המספר המתאים:"
-    )
+def week_availability_message(operating_days: list[int], week_start: date) -> str:
+    lines = [f"📅 *זמינות שבוע {week_start.strftime('%d/%m')}*\n"]
+    for day_idx in operating_days:
+        day_date = week_start + timedelta(days=day_idx)
+        lines.append(f"יום {DAY_NAMES[day_idx]} ({day_date.strftime('%d/%m')}):  1 בוקר  |  2 ערב  |  3 כל משמרת  |  4 כלום")
+    n = len(operating_days)
+    example = ",".join(["1"] * n)
+    lines.append(f"\nשלח {n} מספרים מופרדים בפסיק (לפי סדר הימים):")
+    lines.append(f"לדוגמה: {example}")
+    lines.append("\nלביטול שלח: לא")
+    return "\n".join(lines)
 
 
 OPTION_MAP = {
-    "1": {"available": True,  "preferred_types": [],             "is_hard": False, "label": "זמין לכל"},
-    "2": {"available": True,  "preferred_types": MORNING_TYPES,  "is_hard": False, "label": "בוקר/צהריים"},
-    "3": {"available": True,  "preferred_types": EVENING_TYPES,  "is_hard": False, "label": "ערב/לילה"},
-    "4": {"available": False, "preferred_types": [],             "is_hard": False, "label": "מעדיף לא"},
-    "5": {"available": False, "preferred_types": [],             "is_hard": True,  "label": "לא יכול"},
+    "1": {"available": True,  "preferred_types": MORNING_TYPES, "is_hard": False, "label": "בוקר"},
+    "2": {"available": True,  "preferred_types": EVENING_TYPES, "is_hard": False, "label": "ערב"},
+    "3": {"available": True,  "preferred_types": [],            "is_hard": False, "label": "כל משמרת"},
+    "4": {"available": False, "preferred_types": [],            "is_hard": True,  "label": "כלום"},
+    # text aliases
+    "בוקר":       {"available": True,  "preferred_types": MORNING_TYPES, "is_hard": False, "label": "בוקר"},
+    "ב":          {"available": True,  "preferred_types": MORNING_TYPES, "is_hard": False, "label": "בוקר"},
+    "ערב":        {"available": True,  "preferred_types": EVENING_TYPES, "is_hard": False, "label": "ערב"},
+    "ע":          {"available": True,  "preferred_types": EVENING_TYPES, "is_hard": False, "label": "ערב"},
+    "כל":         {"available": True,  "preferred_types": [],            "is_hard": False, "label": "כל משמרת"},
+    "כל משמרת":  {"available": True,  "preferred_types": [],            "is_hard": False, "label": "כל משמרת"},
+    "הכל":        {"available": True,  "preferred_types": [],            "is_hard": False, "label": "כל משמרת"},
+    "כלום":       {"available": False, "preferred_types": [],            "is_hard": True,  "label": "כלום"},
+    "כ":          {"available": False, "preferred_types": [],            "is_hard": True,  "label": "כלום"},
+    "לא":         {"available": False, "preferred_types": [],            "is_hard": True,  "label": "כלום"},
 }
 
 
@@ -285,44 +296,41 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
         await db.commit()
         return twiml("❌ הפעולה בוטלה.\n\n" + MENU)
 
-    # ── State: collecting day responses ──
-    if session.state == "availability_collecting":
+    # ── State: waiting for single response covering all days ──
+    if session.state == "availability_waiting_response":
         ctx = dict(session.context or {})
         operating_days: list[int] = ctx.get("operating_days", [0, 1, 2, 3, 4, 5])
-        current_idx: int = ctx.get("current_day_idx", 0)
-        responses: dict = ctx.get("responses", {})
         week_start_str: str = ctx.get("week_start", "")
         week_start = date.fromisoformat(week_start_str)
 
-        # Save response for current day
-        option = OPTION_MAP.get(body.strip())
-        if not option:
-            day_idx = operating_days[current_idx]
-            day_date = week_start + timedelta(days=day_idx)
-            return twiml(f"⚠️ שלח מספר בין 1 ל-5.\n\n" + day_prompt(day_idx, day_date))
+        parts = [p.strip() for p in body.replace("،", ",").split(",")]
+        if len(parts) != len(operating_days):
+            return twiml(
+                f"⚠️ שלח בדיוק {len(operating_days)} מספרים מופרדים בפסיק.\n\n"
+                + week_availability_message(operating_days, week_start)
+            )
 
-        day_idx = operating_days[current_idx]
-        responses[str(day_idx)] = option
-        current_idx += 1
+        responses: dict = {}
+        invalid = []
+        for i, part in enumerate(parts):
+            option = OPTION_MAP.get(part.strip())
+            if not option:
+                invalid.append(part)
+            else:
+                responses[str(operating_days[i])] = option
 
-        if current_idx < len(operating_days):
-            # Next day
-            ctx["current_day_idx"] = current_idx
-            ctx["responses"] = responses
-            session.context = ctx
-            session.updated_at = datetime.now(timezone.utc)
-            await db.commit()
-            next_day_idx = operating_days[current_idx]
-            next_date = week_start + timedelta(days=next_day_idx)
-            return twiml(day_prompt(next_day_idx, next_date))
-        else:
-            # All days done → show summary
-            ctx["responses"] = responses
-            session.state = "availability_confirm"
-            session.context = ctx
-            session.updated_at = datetime.now(timezone.utc)
-            await db.commit()
-            return twiml(build_summary(responses, operating_days, week_start))
+        if invalid:
+            return twiml(
+                f"⚠️ לא הבנתי: {', '.join(invalid)}\nשלח מספרים 1-4 בלבד.\n\n"
+                + week_availability_message(operating_days, week_start)
+            )
+
+        ctx["responses"] = responses
+        session.state = "availability_confirm"
+        session.context = ctx
+        session.updated_at = datetime.now(timezone.utc)
+        await db.commit()
+        return twiml(build_summary(responses, operating_days, week_start))
 
     # ── State: confirmation ──
     if session.state == "availability_confirm":
@@ -353,19 +361,14 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
         operating_days = await get_org_operating_days(employee.org_id, db)
         if not operating_days:
             return twiml("⚠️ לא הוגדרו ימי פעילות לעסק. פנה למנהל.")
-        first_day_idx = operating_days[0]
-        first_date = week_start + timedelta(days=first_day_idx)
-        session.state = "availability_collecting"
+        session.state = "availability_waiting_response"
         session.context = {
             "week_start": week_start.isoformat(),
             "operating_days": operating_days,
-            "current_day_idx": 0,
-            "responses": {},
         }
         session.updated_at = datetime.now(timezone.utc)
         await db.commit()
-        intro = f"📝 *דיווח זמינות לשבוע {week_start.strftime('%d/%m')}*\n\nנעבור יום-יום. לביטול שלח 'לא'.\n\n"
-        return twiml(intro + day_prompt(first_day_idx, first_date))
+        return twiml(week_availability_message(operating_days, week_start))
 
     if "משמרת" in normalized or "הבא" in normalized:
         return twiml(await cmd_next_shift(employee, db))
