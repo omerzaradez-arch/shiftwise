@@ -102,7 +102,7 @@ async def send_availability_reminders(
     if not account_sid or not auth_token:
         raise HTTPException(status_code=500, detail="Twilio credentials not configured")
 
-    from twilio.rest import Client
+    import httpx
     from app.models import Employee as EmpModel
 
     employees = (await db.execute(
@@ -129,28 +129,36 @@ async def send_availability_reminders(
         )).scalars().all()
         submitted_ids = {s.employee_id for s in subs}
 
-    client = Client(account_sid, auth_token)
     sent, failed = 0, 0
+    twilio_url = f"https://api.twilio.com/2010-04-01/Accounts/{account_sid}/Messages.json"
 
-    for emp in employees:
-        if emp.id in submitted_ids:
-            continue
-        phone = emp.phone.replace("-", "").replace(" ", "")
-        if not phone.startswith("+"):
-            phone = "+972" + phone.lstrip("0")
-        try:
-            client.messages.create(
-                from_=f"whatsapp:{whatsapp_number}",
-                to=f"whatsapp:{phone}",
-                body=(
-                    f"שלום {emp.name} 👋\n"
-                    f"טרם הגשת זמינות לשבוע {week_start.strftime('%d/%m')}.\n"
-                    f"שלח *זמינות* כדי להגיש עכשיו."
-                ),
-            )
-            sent += 1
-        except Exception:
-            failed += 1
+    async with httpx.AsyncClient() as client:
+        for emp in employees:
+            if emp.id in submitted_ids:
+                continue
+            phone = emp.phone.replace("-", "").replace(" ", "")
+            if not phone.startswith("+"):
+                phone = "+972" + phone.lstrip("0")
+            try:
+                resp = await client.post(
+                    twilio_url,
+                    auth=(account_sid, auth_token),
+                    data={
+                        "From": f"whatsapp:{whatsapp_number}",
+                        "To": f"whatsapp:{phone}",
+                        "Body": (
+                            f"שלום {emp.name} 👋\n"
+                            f"טרם הגשת זמינות לשבוע {week_start.strftime('%d/%m')}.\n"
+                            f"שלח *זמינות* כדי להגיש עכשיו."
+                        ),
+                    },
+                )
+                if resp.status_code == 201:
+                    sent += 1
+                else:
+                    failed += 1
+            except Exception:
+                failed += 1
 
     return {"sent": sent, "failed": failed, "skipped": len(submitted_ids)}
 
