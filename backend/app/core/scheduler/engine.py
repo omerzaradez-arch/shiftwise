@@ -251,11 +251,11 @@ class ShiftScheduler:
                 if not day_prefs:
                     continue
                 if slot.shift_type not in day_prefs:
-                    # Wrong type for this day — stronger penalty
-                    penalties.append(self.vars[(emp.id, slot.id)] * 3)
+                    # Wrong type for this day — high penalty to strongly respect preference
+                    penalties.append(self.vars[(emp.id, slot.id)] * 20)
                 else:
-                    # Preferred type for this specific day — reward
-                    penalties.append(self.vars[(emp.id, slot.id)] * -2)
+                    # Preferred type for this specific day — strong reward
+                    penalties.append(self.vars[(emp.id, slot.id)] * -8)
 
         return sum(penalties) if penalties else cp_model.LinearExpr.sum([])
 

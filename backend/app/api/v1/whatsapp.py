@@ -101,10 +101,12 @@ def parse_day_response(body: str, operating_days: list[int]) -> dict | None:
     """
     import re
     responses: dict = {}
+    # (?:^|[\s,\n\r]) — day name must start at line beginning or after whitespace/comma
+    # (?![\u05d0-\u05ea]) — option must NOT be followed by another Hebrew letter (word boundary)
     pattern = re.compile(
-        r'(ראשון|שני|שלישי|רביעי|חמישי|שישי|שבת)\s*[:\-]\s*'
-        r'(כל משמרת|כל|הכל|בוקר|ערב|כלום|לא|[1-4])',
-        re.UNICODE
+        r'(?:(?:^|[\s,\n\r]))(ראשון|שני|שלישי|רביעי|חמישי|שישי|שבת)\s*[:\-]\s*'
+        r'(כל משמרת|כל|הכל|בוקר|ערב|כלום|לא|[1-4])(?![\u05d0-\u05ea])',
+        re.UNICODE | re.MULTILINE
     )
     for match in pattern.finditer(body):
         day_name, value = match.group(1), match.group(2).strip()
@@ -578,7 +580,7 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
         if not responses:
             return twiml(
                 "⚠️ לא הצלחתי לקרוא את התשובה.\n"
-                "שלח בפורמט:\nראשון: 1\nשני: 3\nשלישי: 2 ...\n\n"
+                "שלח בפורמט:\nראשון: בוקר\nשני: לא\nשלישי: ערב\n\n"
                 + week_availability_message(operating_days, week_start)
             )
 
