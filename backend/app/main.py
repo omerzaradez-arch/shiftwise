@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from app.config import settings
 from app.api.v1 import auth, employees, schedules, availability, shifts, swaps, analytics
 from app.api.v1 import settings as settings_router
+from app.api.v1 import shift_templates as shift_templates_router
 
 
 @asynccontextmanager
@@ -39,6 +40,7 @@ app.include_router(shifts.router, prefix="/api/v1/shifts", tags=["shifts"])
 app.include_router(swaps.router, prefix="/api/v1/swaps", tags=["swaps"])
 app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["analytics"])
 app.include_router(settings_router.router, prefix="/api/v1/settings", tags=["settings"])
+app.include_router(shift_templates_router.router, prefix="/api/v1/shift-templates", tags=["shift-templates"])
 
 
 @app.get("/health")

@@ -5,12 +5,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { format, startOfWeek, addWeeks, subWeeks } from 'date-fns'
 import { he } from 'date-fns/locale'
 import { scheduleApi } from '@/lib/api/schedule'
+import { shiftTemplatesApi } from '@/lib/api/shiftTemplates'
 import { WeeklyCalendar } from '@/components/schedule/WeeklyCalendar'
 import { ConflictPanel } from '@/components/schedule/ConflictPanel'
 import { OptimizerPanel } from '@/components/schedule/OptimizerPanel'
 import { ManagerNav } from '@/components/layout/ManagerNav'
 import { toast } from 'sonner'
 import { Schedule } from '@/types/schedule'
+import Link from 'next/link'
 
 function exportScheduleCSV(schedule: Schedule, weekStart: Date) {
   const header = 'תאריך,יום,שם עובד,תפקיד,שם משמרת,התחלה,סיום,שעות\n'
@@ -37,6 +39,11 @@ export default function SchedulePage() {
   )
   const [showOptimizer, setShowOptimizer] = useState(false)
   const [showConflicts, setShowConflicts] = useState(true)
+
+  const { data: templates = [] } = useQuery({
+    queryKey: ['shift-templates'],
+    queryFn: shiftTemplatesApi.list,
+  })
 
   const { data: schedule, isLoading } = useQuery({
     queryKey: ['schedule', currentWeek.toISOString()],
@@ -186,6 +193,27 @@ export default function SchedulePage() {
             )}
           </div>
         </div>
+
+        {/* Onboarding banner */}
+        {templates.length === 0 && (
+          <div className="mx-5 mt-4 p-4 bg-indigo-50 border border-indigo-200 rounded-xl flex items-center gap-4">
+            <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center flex-none">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#6366f1" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-indigo-800">טרם הגדרת משמרות לעסק</p>
+              <p className="text-xs text-indigo-600 mt-0.5">האופטימייזר לא יוכל לייצר סידור ללא הגדרת משמרות</p>
+            </div>
+            <Link
+              href="/onboarding"
+              className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-xl hover:bg-indigo-700 transition flex-none"
+            >
+              הגדר עכשיו ›
+            </Link>
+          </div>
+        )}
 
         {/* Calendar area */}
         <div className="flex flex-1 overflow-hidden">
