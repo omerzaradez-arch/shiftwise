@@ -56,18 +56,32 @@ DAY_NAME_TO_IDX = {
 
 
 def week_availability_message(operating_days: list[int], week_start: date) -> str:
+    week_end = week_start + timedelta(days=6)
     lines = [
-        f"📅 *זמינות שבוע {week_start.strftime('%d/%m')}*\n",
-        "1️⃣ בוקר  2️⃣ ערב  3️⃣ כל משמרת  4️⃣ כלום\n",
+        f"📅 *זמינות שבוע {week_start.strftime('%d/%m')}–{week_end.strftime('%d/%m')}*",
+        "",
+        "בחר לכל יום אחת מהאפשרויות:",
+        "1️⃣ בוקר",
+        "2️⃣ ערב",
+        "3️⃣ כל משמרת",
+        "4️⃣ כלום (לא זמין)",
+        "",
+        "*ימי השבוע:*",
     ]
     for day_idx in operating_days:
         day_date = week_start + timedelta(days=day_idx)
-        lines.append(f"יום {DAY_NAMES[day_idx]} ({day_date.strftime('%d/%m')}): ____")
+        lines.append(f"• {DAY_NAMES[day_idx]} ({day_date.strftime('%d/%m')})")
 
-    example_parts = [f"{DAY_NAMES[d]}: 1" for d in operating_days[:2]]
-    example_parts += [f"{DAY_NAMES[d]}: 3" for d in operating_days[2:4]]
-    lines.append(f"\nלדוגמה:\n{chr(10).join(example_parts[:4])} ...")
-    lines.append("\nלביטול שלח: לא")
+    example_lines = [f"{DAY_NAMES[d]}: {i+1}" for i, d in enumerate(operating_days[:4])]
+    lines += [
+        "",
+        "*ענה בפורמט:*",
+        *example_lines,
+        "...",
+        "",
+        "_ימים שלא ציינת יחשבו כ\"כל משמרת\"_",
+        "_לביטול שלח: לא_",
+    ]
     return "\n".join(lines)
 
 
