@@ -103,6 +103,8 @@ async def send_availability_reminders(
         auth_token = os.getenv("TWILIO_AUTH_TOKEN")
         whatsapp_number = os.getenv("TWILIO_WHATSAPP_NUMBER", "+14155238886")
 
+        twilio_keys = [k for k in os.environ if 'TWILIO' in k]
+        print(f"[send-reminders] TWILIO keys in env: {twilio_keys}", flush=True)
         print(f"[send-reminders] sid={'SET' if account_sid else 'MISSING'} token={'SET' if auth_token else 'MISSING'} from={whatsapp_number}", flush=True)
 
         if not account_sid or not auth_token:
