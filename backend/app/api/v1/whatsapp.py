@@ -44,8 +44,12 @@ def twiml(message: str) -> Response:
 
 
 def next_week_sunday() -> date:
-    today = datetime.now(timezone.utc).date()
-    days_until_sunday = (6 - today.weekday()) % 7 + 1
+    # Israel timezone (UTC+3) for correct "this week" calculation
+    today = (datetime.now(timezone.utc) + timedelta(hours=3)).date()
+    # Python weekday: Mon=0 ... Sun=6
+    days_until_sunday = (6 - today.weekday()) % 7
+    if days_until_sunday == 0:
+        days_until_sunday = 7  # today is Sunday → go to next Sunday
     return today + timedelta(days=days_until_sunday)
 
 
