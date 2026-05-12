@@ -54,7 +54,7 @@ export default function AvailabilityManagerPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['availability-manager', weekStartStr],
-    queryFn: () => apiClient.get(`/availability/manager-view?week_start=${weekStartStr}`).then(r => r.data),
+    queryFn: () => apiClient.get(`/api/v1/availability/manager-view?week_start=${weekStartStr}`).then(r => r.data),
   })
 
   const employees: any[] = data?.employees ?? []
