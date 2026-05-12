@@ -117,6 +117,8 @@ def generate_schedule(
                     else:
                         soft_blocked.add(day_date)
 
+        print(f"[scheduler] {emp.name}: sub={'yes' if sub else 'NO'} hard_blocked={hard_blocked} day_type_prefs={day_type_preferences}", flush=True)
+
         employee_data.append(EmployeeData(
             id=emp.id,
             name=emp.name,
