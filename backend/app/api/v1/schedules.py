@@ -24,6 +24,7 @@ async def generate_schedule(
     current_user: Employee = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
+    print(f"[generate] POST received user={current_user.name} week={req.week_start}", flush=True)
     if current_user.role not in ("manager", "owner", "super_admin"):
         raise HTTPException(status_code=403, detail="אין הרשאה")
 
