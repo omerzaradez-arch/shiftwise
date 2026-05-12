@@ -34,6 +34,7 @@ MENU = """👋 שלום! אני *הגשת משמרות* של ShiftWise.
 📅 *משמרת* – המשמרת הבאה שלך
 🗓 *סידור* – סידור השבוע
 ✅ *זמינות* – דווח זמינות לשבוע הבא
+🔄 *לא יכול* – בקש החלפת משמרת
 ❓ *עזרה* – הצג תפריט זה"""
 
 
@@ -129,6 +130,158 @@ OPTION_MAP = {
     "כ":          {"available": False, "preferred_types": [],            "is_hard": True,  "label": "כלום"},
     "לא":         {"available": False, "preferred_types": [],            "is_hard": True,  "label": "כלום"},
 }
+
+
+async def send_whatsapp_to(phone: str, body: str) -> bool:
+    import os, httpx
+    account_sid = os.getenv("TWILIO_ACCOUNT_SID")
+    auth_token = os.getenv("TWILIO_AUTH_TOKEN")
+    whatsapp_number = os.getenv("TWILIO_WHATSAPP_NUMBER", "+14155238886")
+    if not account_sid or not auth_token:
+        return False
+    clean = phone.replace("-", "").replace(" ", "")
+    if not clean.startswith("+"):
+        clean = "+972" + clean.lstrip("0")
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(
+                f"https://api.twilio.com/2010-04-01/Accounts/{account_sid}/Messages.json",
+                auth=(account_sid, auth_token),
+                data={"From": f"whatsapp:{whatsapp_number}", "To": f"whatsapp:{clean}", "Body": body},
+                timeout=10.0,
+            )
+            return resp.status_code == 201
+    except Exception:
+        return False
+
+
+async def cmd_cant_come(employee: Employee, db: AsyncSession) -> tuple[str, list[str]]:
+    from app.models.scheduled_shift import ScheduledShift
+    today = (datetime.now(timezone.utc) + timedelta(hours=3)).date()
+    week_end = today + timedelta(days=7)
+    result = await db.execute(
+        select(ScheduledShift).where(
+            ScheduledShift.employee_id == employee.id,
+            ScheduledShift.date >= today,
+            ScheduledShift.date <= week_end,
+            ScheduledShift.status.in_(["assigned", "swap_requested"]),
+        ).order_by(ScheduledShift.date, ScheduledShift.start_time)
+    )
+    shifts = result.scalars().all()
+    if not shifts:
+        return "😊 אין לך משמרות קרובות שניתן להחליף.", []
+    lines = ["🔄 *בקשת החלפת משמרת*\n", "לאיזו משמרת אינך יכול/ה להגיע?"]
+    shift_ids = []
+    for i, s in enumerate(shifts, 1):
+        dow = (s.date.weekday() + 1) % 7
+        lines.append(f"{i}. יום {DAY_NAMES[dow]} {s.date.strftime('%d/%m')} {s.start_time.strftime('%H:%M')}–{s.end_time.strftime('%H:%M')}")
+        shift_ids.append(s.id)
+    lines.append("\n_שלח את מספר המשמרת_\n_לביטול שלח: לא_")
+    return "\n".join(lines), shift_ids
+
+
+async def find_and_notify_replacements(
+    shift_id: str, requester_name: str, org_id: str, db: AsyncSession
+) -> int:
+    from app.models.scheduled_shift import ScheduledShift
+    shift = await db.get(ScheduledShift, shift_id)
+    if not shift:
+        return 0
+    dow = (shift.date.weekday() + 1) % 7
+    shift_display = f"יום {DAY_NAMES[dow]} {shift.date.strftime('%d/%m')} {shift.start_time.strftime('%H:%M')}–{shift.end_time.strftime('%H:%M')}"
+
+    result = await db.execute(
+        select(Employee).where(
+            Employee.org_id == org_id,
+            Employee.is_active == True,
+            Employee.id != shift.employee_id,
+            Employee.phone != None,
+        )
+    )
+    all_employees = result.scalars().all()
+
+    day_result = await db.execute(
+        select(ScheduledShift).where(
+            ScheduledShift.date == shift.date,
+            ScheduledShift.status.notin_(["cancelled"]),
+        )
+    )
+    busy_ids = {s.employee_id for s in day_result.scalars().all()}
+
+    candidates = [e for e in all_employees if e.id not in busy_ids]
+    sent = 0
+    for candidate in candidates:
+        msg = (
+            f"👋 שלום {candidate.name}!\n"
+            f"🔄 *התפנתה משמרת להחלפה*\n\n"
+            f"📅 {shift_display}\n"
+            f"({requester_name} לא יכול/ה להגיע)\n\n"
+            f"האם תוכל/י להחליף? שלח/י *כן* לאישור"
+        )
+        ok = await send_whatsapp_to(candidate.phone, msg)
+        if ok:
+            sent += 1
+            cand_session = await db.get(WhatsAppSession, candidate.phone)
+            if not cand_session:
+                cand_session = WhatsAppSession(phone=candidate.phone, state="idle", context={})
+                db.add(cand_session)
+                await db.flush()
+            ctx = dict(cand_session.context or {})
+            ctx["pending_swap_shift_id"] = shift_id
+            ctx["pending_swap_display"] = shift_display
+            ctx["pending_swap_requester"] = requester_name
+            cand_session.context = ctx
+            cand_session.updated_at = datetime.now(timezone.utc)
+    await db.commit()
+    return sent
+
+
+async def handle_volunteer_acceptance(employee: Employee, ctx: dict, db: AsyncSession) -> str:
+    from app.models.scheduled_shift import ScheduledShift
+    shift_id = ctx["pending_swap_shift_id"]
+    shift_display = ctx.get("pending_swap_display", "")
+    shift = await db.get(ScheduledShift, shift_id)
+
+    if not shift or shift.status not in ("assigned", "swap_requested"):
+        return "❌ המשמרת כבר הוחלפה על ידי עובד אחר."
+
+    existing = await db.execute(
+        select(ScheduledShift).where(
+            ScheduledShift.employee_id == employee.id,
+            ScheduledShift.date == shift.date,
+            ScheduledShift.status != "cancelled",
+        )
+    )
+    if existing.scalar_one_or_none():
+        return "❌ כבר יש לך משמרת ביום הזה. לא ניתן לקחת את המשמרת."
+
+    original_emp = await db.get(Employee, shift.employee_id)
+    shift.employee_id = employee.id
+    shift.status = "assigned"
+    await db.commit()
+
+    if original_emp and original_emp.phone:
+        await send_whatsapp_to(
+            original_emp.phone,
+            f"✅ בשורות טובות!\n*{employee.name}* יחליף אותך במשמרת:\n{shift_display}"
+        )
+
+    managers = await db.execute(
+        select(Employee).where(
+            Employee.org_id == employee.org_id,
+            Employee.role.in_(["manager", "owner"]),
+            Employee.is_active == True,
+            Employee.phone != None,
+        )
+    )
+    orig_name = original_emp.name if original_emp else "?"
+    for mgr in managers.scalars().all():
+        await send_whatsapp_to(
+            mgr.phone,
+            f"🔄 *עדכון סידור*\n{shift_display}\n{orig_name} ← {employee.name}\n_(החלפה אוטומטית)_"
+        )
+
+    return f"✅ *אושר!* קיבלת את המשמרת:\n{shift_display}\n\nהמנהל קיבל עדכון."
 
 
 async def get_session(phone: str, db: AsyncSession) -> WhatsAppSession:
@@ -346,6 +499,70 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
         await db.commit()
         return twiml("❌ הפעולה בוטלה.\n\n" + MENU)
 
+    # ── State: cant_come_selecting ──
+    if session.state == "cant_come_selecting":
+        ctx = dict(session.context or {})
+        shift_ids: list[str] = ctx.get("shift_ids", [])
+        try:
+            idx = int(body.strip()) - 1
+            if idx < 0 or idx >= len(shift_ids):
+                raise ValueError()
+        except (ValueError, TypeError):
+            return twiml(f"⚠️ שלח מספר בין 1 ל-{len(shift_ids)}.")
+        from app.models.scheduled_shift import ScheduledShift
+        shift = await db.get(ScheduledShift, shift_ids[idx])
+        if not shift:
+            session.state = "idle"
+            session.context = {}
+            await db.commit()
+            return twiml("❌ המשמרת לא נמצאה.\n\n" + MENU)
+        dow = (shift.date.weekday() + 1) % 7
+        shift_display = f"יום {DAY_NAMES[dow]} {shift.date.strftime('%d/%m')} {shift.start_time.strftime('%H:%M')}–{shift.end_time.strftime('%H:%M')}"
+        ctx["selected_shift_id"] = shift.id
+        ctx["selected_shift_display"] = shift_display
+        session.state = "cant_come_confirm"
+        session.context = ctx
+        session.updated_at = datetime.now(timezone.utc)
+        await db.commit()
+        return twiml(
+            f"🔄 *אישור בקשת החלפה*\n\n"
+            f"📅 {shift_display}\n\n"
+            f"לאשר שלח *כן*, לביטול שלח *לא*"
+        )
+
+    # ── State: cant_come_confirm ──
+    if session.state == "cant_come_confirm":
+        ctx = dict(session.context or {})
+        if normalized in ("כן", "yes", "אישור", "אשר", "ok", "✅"):
+            shift_id = ctx.get("selected_shift_id")
+            shift_display = ctx.get("selected_shift_display", "")
+            from app.models.scheduled_shift import ScheduledShift
+            shift = await db.get(ScheduledShift, shift_id)
+            session.state = "idle"
+            session.context = {}
+            session.updated_at = datetime.now(timezone.utc)
+            if shift:
+                shift.status = "swap_requested"
+            await db.commit()
+            sent = await find_and_notify_replacements(shift_id, employee.name, employee.org_id, db)
+            if sent > 0:
+                return twiml(
+                    f"✅ הבקשה נשלחה!\n"
+                    f"📅 {shift_display}\n\n"
+                    f"נשלחה הודעה ל-{sent} עובדים. תקבל/י עדכון כשמישהו יאשר."
+                )
+            else:
+                return twiml(
+                    f"⚠️ לא נמצאו עובדים זמינים להחלפה.\n"
+                    f"פנה/י ישירות למנהל."
+                )
+        else:
+            session.state = "idle"
+            session.context = {}
+            session.updated_at = datetime.now(timezone.utc)
+            await db.commit()
+            return twiml("❌ הבקשה בוטלה.\n\n" + MENU)
+
     # ── State: waiting for day-by-day response ──
     if session.state == "availability_waiting_response":
         ctx = dict(session.context or {})
@@ -417,5 +634,27 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
 
     if "סידור" in normalized or "שבוע" in normalized:
         return twiml(await cmd_week_schedule(employee, db))
+
+    if any(kw in normalized for kw in ["לא יכול", "לא יכולה", "החלפה", "מחליף", "להחליף"]):
+        msg, shift_ids = await cmd_cant_come(employee, db)
+        if shift_ids:
+            session.state = "cant_come_selecting"
+            session.context = {"shift_ids": shift_ids}
+            session.updated_at = datetime.now(timezone.utc)
+            await db.commit()
+        return twiml(msg)
+
+    # Volunteer accepting a replacement offer
+    if normalized in ("כן", "yes", "אישור", "אשר", "ok", "✅"):
+        ctx = dict(session.context or {})
+        if "pending_swap_shift_id" in ctx:
+            result_msg = await handle_volunteer_acceptance(employee, ctx, db)
+            ctx.pop("pending_swap_shift_id", None)
+            ctx.pop("pending_swap_display", None)
+            ctx.pop("pending_swap_requester", None)
+            session.context = ctx
+            session.updated_at = datetime.now(timezone.utc)
+            await db.commit()
+            return twiml(result_msg)
 
     return twiml(MENU)
