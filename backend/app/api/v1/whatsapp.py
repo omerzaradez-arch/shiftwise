@@ -65,11 +65,11 @@ def week_availability_message(operating_days: list[int], week_start: date) -> st
     lines = [
         f"📅 *זמינות שבוע {week_start.strftime('%d/%m')}–{week_end.strftime('%d/%m')}*",
         "",
-        "בחר לכל יום אחת מהאפשרויות:",
-        "1️⃣ בוקר",
-        "2️⃣ ערב",
-        "3️⃣ כל משמרת",
-        "4️⃣ כלום (לא זמין)",
+        "לכל יום כתוב אחת מהאפשרויות:",
+        "🌅 *בוקר*",
+        "🌆 *ערב*",
+        "✅ *כל משמרת*",
+        "❌ *לא* (לא זמין)",
         "",
         "*ימי השבוע:*",
     ]
@@ -77,15 +77,17 @@ def week_availability_message(operating_days: list[int], week_start: date) -> st
         day_date = week_start + timedelta(days=day_idx)
         lines.append(f"• {DAY_NAMES[day_idx]} ({day_date.strftime('%d/%m')})")
 
-    example_lines = [f"{DAY_NAMES[d]}: {i+1}" for i, d in enumerate(operating_days[:4])]
+    example_days = operating_days[:4]
+    example_options = ["בוקר", "לא", "ערב", "כל משמרת"]
+    example_lines = [f"{DAY_NAMES[d]}: {example_options[i]}" for i, d in enumerate(example_days)]
     lines += [
         "",
-        "*ענה בפורמט:*",
+        "*לדוגמה:*",
         *example_lines,
         "...",
         "",
         "_ימים שלא ציינת יחשבו כ\"כל משמרת\"_",
-        "_לביטול שלח: לא_",
+        "_לביטול שלח: ביטול_",
     ]
     return "\n".join(lines)
 
@@ -93,21 +95,22 @@ def week_availability_message(operating_days: list[int], week_start: date) -> st
 def parse_day_response(body: str, operating_days: list[int]) -> dict | None:
     """
     Parses responses like:
-      ראשון: 1 שני: 4 שלישי: 2 ...
+      ראשון: בוקר שני: לא שלישי: ערב ...
+      ראשון: 1 שני: 4 שלישי: 2 ...  (numbers still supported)
     Returns {str(day_idx): option} or None if parsing fails.
     """
     import re
     responses: dict = {}
-    # Match "day_name: number" with flexible spacing/punctuation
     pattern = re.compile(
-        r'(ראשון|שני|שלישי|רביעי|חמישי|שישי|שבת)\s*[:\-]\s*([1-4])',
+        r'(ראשון|שני|שלישי|רביעי|חמישי|שישי|שבת)\s*[:\-]\s*'
+        r'(כל משמרת|כל|הכל|בוקר|ערב|כלום|לא|[1-4])',
         re.UNICODE
     )
     for match in pattern.finditer(body):
-        day_name, num = match.group(1), match.group(2)
+        day_name, value = match.group(1), match.group(2).strip()
         day_idx = DAY_NAME_TO_IDX.get(day_name)
         if day_idx is not None and day_idx in operating_days:
-            option = OPTION_MAP.get(num)
+            option = OPTION_MAP.get(value)
             if option:
                 responses[str(day_idx)] = option
     return responses if responses else None
