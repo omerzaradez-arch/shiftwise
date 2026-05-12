@@ -28,7 +28,7 @@ const NAV_ITEMS = [
     ),
   },
   {
-    href: '/availability',
+    href: '/submissions',
     label: 'זמינות',
     icon: (
       <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
