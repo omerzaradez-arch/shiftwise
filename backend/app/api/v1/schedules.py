@@ -38,6 +38,7 @@ async def generate_schedule(
 
 
 def _run_optimizer_sync(org_id: str, week_start: date):
+    print(f"[optimizer] START org={org_id} week={week_start}", flush=True)
     with SyncSessionLocal() as db:
         try:
             result = scheduler_service.generate_schedule(
@@ -45,10 +46,12 @@ def _run_optimizer_sync(org_id: str, week_start: date):
                 org_id=org_id,
                 week_start=week_start,
             )
+            print(f"[optimizer] DONE score={result.score}", flush=True)
             return result
         except Exception as e:
-            import logging
-            logging.getLogger(__name__).exception(f"Optimizer failed: {e}")
+            print(f"[optimizer] ERROR: {e}", flush=True)
+            import traceback
+            traceback.print_exc()
             raise
 
 
