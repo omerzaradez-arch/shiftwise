@@ -9,6 +9,9 @@ from app.models import AvailabilitySubmission, UnavailabilitySlot, ScheduleWeek
 from app.api.v1.auth import get_current_user, Employee
 import uuid
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -92,75 +95,90 @@ async def send_availability_reminders(
     current_user: Employee = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    if current_user.role not in ("manager", "owner", "super_admin"):
-        raise HTTPException(status_code=403)
+    try:
+        if current_user.role not in ("manager", "owner", "super_admin"):
+            raise HTTPException(status_code=403)
 
-    account_sid = os.getenv("TWILIO_ACCOUNT_SID")
-    auth_token = os.getenv("TWILIO_AUTH_TOKEN")
-    whatsapp_number = os.getenv("TWILIO_WHATSAPP_NUMBER", "+14155238886")
+        account_sid = os.getenv("TWILIO_ACCOUNT_SID")
+        auth_token = os.getenv("TWILIO_AUTH_TOKEN")
+        whatsapp_number = os.getenv("TWILIO_WHATSAPP_NUMBER", "+14155238886")
 
-    if not account_sid or not auth_token:
-        raise HTTPException(status_code=500, detail="Twilio credentials not configured")
+        print(f"[send-reminders] sid={'SET' if account_sid else 'MISSING'} token={'SET' if auth_token else 'MISSING'} from={whatsapp_number}", flush=True)
 
-    import httpx
-    from app.models import Employee as EmpModel
+        if not account_sid or not auth_token:
+            raise HTTPException(status_code=500, detail="Twilio credentials not configured")
 
-    employees = (await db.execute(
-        select(EmpModel).where(
-            EmpModel.org_id == current_user.org_id,
-            EmpModel.is_active == True,
-            EmpModel.phone != None,
-        )
-    )).scalars().all()
+        import httpx
+        from app.models import Employee as EmpModel
 
-    week = (await db.execute(
-        select(ScheduleWeek).where(
-            ScheduleWeek.org_id == current_user.org_id,
-            ScheduleWeek.week_start == week_start,
-        )
-    )).scalar_one_or_none()
-
-    submitted_ids = set()
-    if week:
-        subs = (await db.execute(
-            select(AvailabilitySubmission).where(
-                AvailabilitySubmission.week_id == week.id
+        employees = (await db.execute(
+            select(EmpModel).where(
+                EmpModel.org_id == current_user.org_id,
+                EmpModel.is_active == True,
+                EmpModel.phone != None,
             )
         )).scalars().all()
-        submitted_ids = {s.employee_id for s in subs}
 
-    sent, failed = 0, 0
-    twilio_url = f"https://api.twilio.com/2010-04-01/Accounts/{account_sid}/Messages.json"
+        print(f"[send-reminders] found {len(employees)} employees with phone", flush=True)
 
-    async with httpx.AsyncClient() as client:
-        for emp in employees:
-            if emp.id in submitted_ids:
-                continue
-            phone = emp.phone.replace("-", "").replace(" ", "")
-            if not phone.startswith("+"):
-                phone = "+972" + phone.lstrip("0")
-            try:
-                resp = await client.post(
-                    twilio_url,
-                    auth=(account_sid, auth_token),
-                    data={
-                        "From": f"whatsapp:{whatsapp_number}",
-                        "To": f"whatsapp:{phone}",
-                        "Body": (
-                            f"שלום {emp.name} 👋\n"
-                            f"טרם הגשת זמינות לשבוע {week_start.strftime('%d/%m')}.\n"
-                            f"שלח *זמינות* כדי להגיש עכשיו."
-                        ),
-                    },
+        week = (await db.execute(
+            select(ScheduleWeek).where(
+                ScheduleWeek.org_id == current_user.org_id,
+                ScheduleWeek.week_start == week_start,
+            )
+        )).scalar_one_or_none()
+
+        submitted_ids = set()
+        if week:
+            subs = (await db.execute(
+                select(AvailabilitySubmission).where(
+                    AvailabilitySubmission.week_id == week.id
                 )
-                if resp.status_code == 201:
-                    sent += 1
-                else:
-                    failed += 1
-            except Exception:
-                failed += 1
+            )).scalars().all()
+            submitted_ids = {s.employee_id for s in subs}
 
-    return {"sent": sent, "failed": failed, "skipped": len(submitted_ids)}
+        sent, failed = 0, 0
+        twilio_url = f"https://api.twilio.com/2010-04-01/Accounts/{account_sid}/Messages.json"
+
+        async with httpx.AsyncClient() as client:
+            for emp in employees:
+                if emp.id in submitted_ids:
+                    continue
+                phone = emp.phone.replace("-", "").replace(" ", "")
+                if not phone.startswith("+"):
+                    phone = "+972" + phone.lstrip("0")
+                try:
+                    resp = await client.post(
+                        twilio_url,
+                        auth=(account_sid, auth_token),
+                        data={
+                            "From": f"whatsapp:{whatsapp_number}",
+                            "To": f"whatsapp:{phone}",
+                            "Body": (
+                                f"שלום {emp.name} 👋\n"
+                                f"טרם הגשת זמינות לשבוע {week_start.strftime('%d/%m')}.\n"
+                                f"שלח *זמינות* כדי להגיש עכשיו."
+                            ),
+                        },
+                    )
+                    print(f"[send-reminders] Twilio {resp.status_code} for {phone}: {resp.text[:200]}", flush=True)
+                    if resp.status_code == 201:
+                        sent += 1
+                    else:
+                        failed += 1
+                except Exception as e:
+                    print(f"[send-reminders] exception sending to {phone}: {e}", flush=True)
+                    failed += 1
+
+        return {"sent": sent, "failed": failed, "skipped": len(submitted_ids)}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        tb = traceback.format_exc()
+        print(f"[send-reminders] FATAL: {type(e).__name__}: {e}\n{tb}", flush=True)
+        return {"error": f"{type(e).__name__}: {str(e)}", "sent": 0, "failed": 0, "skipped": 0}
 
 
 @router.get("/my")

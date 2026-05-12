@@ -1,3 +1,4 @@
+import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -8,6 +9,12 @@ from app.api.v1 import settings as settings_router
 from app.api.v1 import shift_templates as shift_templates_router
 from app.api.v1 import whatsapp as whatsapp_router
 
+logger = logging.getLogger(__name__)
+
+COLUMN_MIGRATIONS = [
+    "ALTER TABLE availability_submissions ADD COLUMN IF NOT EXISTS day_preferences JSON DEFAULT '{}'",
+]
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -15,14 +22,12 @@ async def lifespan(app: FastAPI):
     from sqlalchemy import text
     async with async_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-        # Incremental column migrations (idempotent)
-        try:
-            await conn.execute(text(
-                "ALTER TABLE availability_submissions "
-                "ADD COLUMN IF NOT EXISTS day_preferences JSONB DEFAULT '{}'"
-            ))
-        except Exception:
-            pass
+        for sql in COLUMN_MIGRATIONS:
+            try:
+                await conn.execute(text(sql))
+                print(f"[migration] OK: {sql[:60]}", flush=True)
+            except Exception as e:
+                print(f"[migration] FAILED: {sql[:60]} — {e}", flush=True)
     yield
 
 
