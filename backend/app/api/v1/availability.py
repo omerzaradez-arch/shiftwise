@@ -121,6 +121,54 @@ async def get_my_availability(
     }
 
 
+@router.get("/manager-view")
+async def get_manager_availability_view(
+    week_start: date,
+    current_user: Employee = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Returns all employees' availability for a given week (manager only)."""
+    if current_user.role not in ("manager", "owner", "super_admin"):
+        raise HTTPException(status_code=403)
+
+    from app.models import Employee as EmpModel
+    employees = (await db.execute(
+        select(EmpModel).where(
+            EmpModel.org_id == current_user.org_id,
+            EmpModel.is_active == True,
+        ).order_by(EmpModel.name)
+    )).scalars().all()
+
+    week = (await db.execute(
+        select(ScheduleWeek).where(
+            ScheduleWeek.org_id == current_user.org_id,
+            ScheduleWeek.week_start == week_start,
+        )
+    )).scalar_one_or_none()
+
+    submissions_by_emp = {}
+    if week:
+        subs = (await db.execute(
+            select(AvailabilitySubmission).where(
+                AvailabilitySubmission.week_id == week.id
+            )
+        )).scalars().all()
+        submissions_by_emp = {s.employee_id: s for s in subs}
+
+    result = []
+    for emp in employees:
+        sub = submissions_by_emp.get(emp.id)
+        result.append({
+            "employee_id": emp.id,
+            "employee_name": emp.name,
+            "submitted": sub is not None,
+            "submitted_at": sub.submitted_at.isoformat() if sub else None,
+            "day_preferences": sub.day_preferences if sub else {},
+        })
+
+    return {"week_start": week_start.isoformat(), "employees": result}
+
+
 @router.get("/week-status")
 async def get_week_status(
     week_start: date,
