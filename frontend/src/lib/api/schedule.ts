@@ -16,9 +16,9 @@ export const scheduleApi = {
   },
 
   generateSchedule: async (weekStart: Date) => {
-    const { data } = await apiClient.post('/api/v1/schedules/generate', {
+    const { data } = await apiClient.post('/api/v1/schedules/generate/sync', {
       week_start: format(weekStart, 'yyyy-MM-dd'),
-    })
+    }, { timeout: 60000 })
     return data
   },
 
