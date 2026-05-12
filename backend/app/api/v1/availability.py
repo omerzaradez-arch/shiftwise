@@ -8,6 +8,7 @@ from app.database import get_db
 from app.models import AvailabilitySubmission, UnavailabilitySlot, ScheduleWeek
 from app.api.v1.auth import get_current_user, Employee
 import uuid
+import os
 
 router = APIRouter()
 
@@ -83,6 +84,75 @@ async def submit_availability(
 
     await db.commit()
     return {"status": "submitted", "submission_id": submission.id}
+
+
+@router.post("/send-reminders")
+async def send_availability_reminders(
+    week_start: date,
+    current_user: Employee = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    if current_user.role not in ("manager", "owner", "super_admin"):
+        raise HTTPException(status_code=403)
+
+    account_sid = os.getenv("TWILIO_ACCOUNT_SID")
+    auth_token = os.getenv("TWILIO_AUTH_TOKEN")
+    whatsapp_number = os.getenv("TWILIO_WHATSAPP_NUMBER", "+14155238886")
+
+    if not account_sid or not auth_token:
+        raise HTTPException(status_code=500, detail="Twilio credentials not configured")
+
+    from twilio.rest import Client
+    from app.models import Employee as EmpModel
+
+    employees = (await db.execute(
+        select(EmpModel).where(
+            EmpModel.org_id == current_user.org_id,
+            EmpModel.is_active == True,
+            EmpModel.phone != None,
+        )
+    )).scalars().all()
+
+    week = (await db.execute(
+        select(ScheduleWeek).where(
+            ScheduleWeek.org_id == current_user.org_id,
+            ScheduleWeek.week_start == week_start,
+        )
+    )).scalar_one_or_none()
+
+    submitted_ids = set()
+    if week:
+        subs = (await db.execute(
+            select(AvailabilitySubmission).where(
+                AvailabilitySubmission.week_id == week.id
+            )
+        )).scalars().all()
+        submitted_ids = {s.employee_id for s in subs}
+
+    client = Client(account_sid, auth_token)
+    sent, failed = 0, 0
+
+    for emp in employees:
+        if emp.id in submitted_ids:
+            continue
+        phone = emp.phone.replace("-", "").replace(" ", "")
+        if not phone.startswith("+"):
+            phone = "+972" + phone.lstrip("0")
+        try:
+            client.messages.create(
+                from_=f"whatsapp:{whatsapp_number}",
+                to=f"whatsapp:{phone}",
+                body=(
+                    f"שלום {emp.name} 👋\n"
+                    f"טרם הגשת זמינות לשבוע {week_start.strftime('%d/%m')}.\n"
+                    f"שלח *זמינות* כדי להגיש עכשיו."
+                ),
+            )
+            sent += 1
+        except Exception:
+            failed += 1
+
+    return {"sent": sent, "failed": failed, "skipped": len(submitted_ids)}
 
 
 @router.get("/my")

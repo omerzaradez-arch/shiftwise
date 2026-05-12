@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import { ManagerNav } from '@/components/layout/ManagerNav'
 import { apiClient } from '@/lib/api/client'
 
@@ -55,9 +56,18 @@ export default function AvailabilityManagerPage() {
   const weekEnd = addWeeks(weekStart, 1)
   weekEnd.setDate(weekEnd.getDate() - 1)
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ['availability-manager', weekStartStr],
     queryFn: () => apiClient.get(`/api/v1/availability/manager-view?week_start=${weekStartStr}`).then(r => r.data),
+  })
+
+  const reminderMutation = useMutation({
+    mutationFn: () => apiClient.post(`/api/v1/availability/send-reminders?week_start=${weekStartStr}`).then(r => r.data),
+    onSuccess: (data) => {
+      toast.success(`נשלחו ${data.sent} הודעות בהצלחה`)
+      refetch()
+    },
+    onError: () => toast.error('שגיאה בשליחת ההודעות'),
   })
 
   const employees: any[] = data?.employees ?? []
@@ -85,6 +95,18 @@ export default function AvailabilityManagerPage() {
                 שבוע {weekStart.toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit' })}–
                 {weekEnd.toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit' })}
               </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => reminderMutation.mutate()}
+                disabled={reminderMutation.isPending || employees.filter(e => !e.submitted).length === 0}
+                className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-xl hover:bg-indigo-700 disabled:opacity-50 transition shadow-sm"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                {reminderMutation.isPending ? 'שולח...' : `שלח תזכורת (${employees.filter(e => !e.submitted).length})`}
+              </button>
             </div>
             {/* Week nav */}
             <div className="flex items-center gap-2">
