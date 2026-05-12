@@ -12,8 +12,17 @@ from app.api.v1 import whatsapp as whatsapp_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     from app.database import async_engine, Base
+    from sqlalchemy import text
     async with async_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        # Incremental column migrations (idempotent)
+        try:
+            await conn.execute(text(
+                "ALTER TABLE availability_submissions "
+                "ADD COLUMN IF NOT EXISTS day_preferences JSONB DEFAULT '{}'"
+            ))
+        except Exception:
+            pass
     yield
 
 

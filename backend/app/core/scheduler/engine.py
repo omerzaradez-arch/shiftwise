@@ -27,6 +27,8 @@ class EmployeeData:
     soft_blocked_dates: set[str]          # preferred not to work
     historical_weekend_shifts: int = 0    # last 8 weeks
     historical_evening_shifts: int = 0
+    # per-day shift type preferences: {day_index -> [preferred types]}
+    day_type_preferences: dict = field(default_factory=dict)
 
 
 @dataclass
@@ -235,11 +237,25 @@ class ShiftScheduler:
                 for slot in weekend_slots:
                     penalties.append(self.vars[(emp.id, slot.id)] * 5)
 
-        # Reward: preferences met (negative penalty = reward)
+        # Reward: global shift type preferences met
         for emp in self.employees:
             for slot in self.shift_slots:
                 if slot.shift_type in emp.preferred_shift_types:
                     penalties.append(self.vars[(emp.id, slot.id)] * -1)
+
+        # Per-day shift type preferences (from WhatsApp availability)
+        for emp in self.employees:
+            for slot in self.shift_slots:
+                day_prefs = emp.day_type_preferences.get(slot.day_index) or \
+                            emp.day_type_preferences.get(str(slot.day_index))
+                if not day_prefs:
+                    continue
+                if slot.shift_type not in day_prefs:
+                    # Wrong type for this day — stronger penalty
+                    penalties.append(self.vars[(emp.id, slot.id)] * 3)
+                else:
+                    # Preferred type for this specific day — reward
+                    penalties.append(self.vars[(emp.id, slot.id)] * -2)
 
         return sum(penalties) if penalties else cp_model.LinearExpr.sum([])
 

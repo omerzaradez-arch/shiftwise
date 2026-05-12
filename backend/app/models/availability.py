@@ -18,6 +18,9 @@ class AvailabilitySubmission(Base):
     desired_shifts_count: Mapped[int | None] = mapped_column(Integer)
     preferred_shift_types: Mapped[list] = mapped_column(JSON, default=list)
     notes: Mapped[str | None] = mapped_column(Text)
+    # {day_index: {available, preferred_types, is_hard}}
+    # e.g. {"0": {"available": true, "preferred_types": ["evening"], "is_hard": false}}
+    day_preferences: Mapped[dict] = mapped_column(JSON, default=dict)
 
     employee: Mapped["Employee"] = relationship(back_populates="availability_submissions")
     unavailability_slots: Mapped[list["UnavailabilitySlot"]] = relationship(

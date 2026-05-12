@@ -92,6 +92,8 @@ def generate_schedule(
         hard_blocked: set[str] = set()
         soft_blocked: set[str] = set()
 
+        day_type_preferences: dict[int, list[str]] = {}
+
         if sub:
             for slot in sub.unavailability_slots:
                 date_str = slot.date.isoformat()
@@ -99,6 +101,21 @@ def generate_schedule(
                     hard_blocked.add(date_str)
                 else:
                     soft_blocked.add(date_str)
+
+            # Build per-day type preferences from day_preferences JSON
+            for day_str, pref in (sub.day_preferences or {}).items():
+                day_idx = int(day_str)
+                if pref.get("available", True):
+                    types = pref.get("preferred_types", [])
+                    if types:
+                        day_type_preferences[day_idx] = types
+                else:
+                    # Not available this day — add to blocked sets
+                    day_date = (week_start + timedelta(days=day_idx)).isoformat()
+                    if pref.get("is_hard", True):
+                        hard_blocked.add(day_date)
+                    else:
+                        soft_blocked.add(day_date)
 
         employee_data.append(EmployeeData(
             id=emp.id,
@@ -113,6 +130,7 @@ def generate_schedule(
             soft_blocked_dates=soft_blocked,
             historical_weekend_shifts=fairness_history.get(emp.id, {}).get("weekend_shifts", 0),
             historical_evening_shifts=fairness_history.get(emp.id, {}).get("evening_shifts", 0),
+            day_type_preferences=day_type_preferences,
         ))
 
     # Build ShiftSlot objects for each day of the week
