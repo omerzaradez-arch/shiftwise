@@ -28,7 +28,7 @@ DAY_NAMES = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "
 MORNING_TYPES = ["morning", "afternoon"]
 EVENING_TYPES = ["evening", "night"]
 
-MENU = """👋 שלום! אני ShiftWise Bot.
+MENU = """👋 שלום! אני *הגשת משמרות* של ShiftWise.
 
 בחר אפשרות:
 📅 *משמרת* – המשמרת הבאה שלך
