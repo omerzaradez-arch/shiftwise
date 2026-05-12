@@ -143,21 +143,7 @@ class ShiftScheduler:
                 if slot.date in emp.hard_blocked_dates:
                     self.model.add(self.vars[(emp.id, slot.id)] == 0)
 
-        # 4. No close-then-open (closing shift followed by opening next day)
-        sorted_slots = sorted(self.shift_slots, key=lambda s: (s.date, s.start_time))
-        for emp in self.employees:
-            for i, slot_a in enumerate(sorted_slots):
-                if slot_a.shift_type not in ("evening", "night"):
-                    continue
-                next_day = str(
-                    date.fromisoformat(slot_a.date) + timedelta(days=1)
-                )
-                for slot_b in slots_by_date.get(next_day, []):
-                    if slot_b.shift_type == "morning":
-                        self.model.add(
-                            self.vars[(emp.id, slot_a.id)] +
-                            self.vars[(emp.id, slot_b.id)] <= 1
-                        )
+        # Close-then-open is allowed (not ideal but permitted)
 
         # 5. At least one senior per slot
         senior_ids = {e.id for e in self.employees if e.role in ("senior", "manager")}
