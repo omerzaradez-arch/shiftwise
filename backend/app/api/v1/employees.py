@@ -22,6 +22,7 @@ class CreateEmployeeRequest(BaseModel):
     min_hours_per_week: int = 0
     max_consecutive_days: int = 5
     skills: list[str] = []
+    hourly_rate: float | None = None
     password: str
 
 
@@ -51,6 +52,7 @@ async def list_employees(
             "max_hours_per_week": e.max_hours_per_week,
             "min_hours_per_week": e.min_hours_per_week,
             "skills": e.skills,
+            "hourly_rate": e.hourly_rate,
         }
         for e in emps
     ]
@@ -78,6 +80,7 @@ async def create_employee(
         min_hours_per_week=req.min_hours_per_week,
         max_consecutive_days=req.max_consecutive_days,
         skills=req.skills,
+        hourly_rate=req.hourly_rate,
     )
     db.add(emp)
     await db.commit()
@@ -92,6 +95,7 @@ class UpdateEmployeeRequest(BaseModel):
     employment_type: str | None = None
     max_hours_per_week: int | None = None
     min_hours_per_week: int | None = None
+    hourly_rate: float | None = None
 
 
 @router.patch("/{employee_id}")

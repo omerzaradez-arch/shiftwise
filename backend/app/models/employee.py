@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime, timezone
-from sqlalchemy import String, DateTime, Integer, Boolean, ForeignKey, JSON
+from sqlalchemy import String, DateTime, Integer, Float, Boolean, ForeignKey, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
 
@@ -22,6 +22,8 @@ class Employee(Base):
     min_hours_per_week: Mapped[int] = mapped_column(Integer, default=0)
     max_consecutive_days: Mapped[int] = mapped_column(Integer, default=5)
     skills: Mapped[list] = mapped_column(JSON, default=list)
+
+    hourly_rate: Mapped[float | None] = mapped_column(Float, nullable=True, default=None)
 
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(

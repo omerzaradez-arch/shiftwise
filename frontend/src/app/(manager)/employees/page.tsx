@@ -38,6 +38,7 @@ const createEmployeeSchema = z.object({
   employment_type: z.enum(['full_time', 'part_time', 'casual']),
   max_hours_per_week: z.coerce.number().min(1).max(60),
   min_hours_per_week: z.coerce.number().min(0).max(60),
+  hourly_rate: z.coerce.number().min(0).optional().or(z.literal('')),
   password: z.string().min(4, 'סיסמה חייבת להכיל לפחות 4 תווים'),
 })
 
@@ -49,6 +50,7 @@ const editEmployeeSchema = z.object({
   employment_type: z.enum(['full_time', 'part_time', 'casual']),
   max_hours_per_week: z.coerce.number().min(1).max(60),
   min_hours_per_week: z.coerce.number().min(0).max(60),
+  hourly_rate: z.coerce.number().min(0).optional().or(z.literal('')),
 })
 
 type CreateEmployeeForm = z.infer<typeof createEmployeeSchema>
@@ -139,6 +141,7 @@ export default function EmployeesPage() {
       employment_type: emp.employment_type as any,
       max_hours_per_week: emp.max_hours_per_week,
       min_hours_per_week: emp.min_hours_per_week,
+      hourly_rate: emp.hourly_rate ?? undefined,
     })
   }
 
@@ -151,6 +154,11 @@ export default function EmployeesPage() {
     const matchRole = filterRole === 'all' || e.role === filterRole
     return matchSearch && matchRole
   })
+
+  const weeklyPayroll = employees.reduce((sum: number, e: Employee) => {
+    if (!e.hourly_rate) return sum
+    return sum + e.hourly_rate * e.max_hours_per_week
+  }, 0)
 
   const stats = {
     total: employees.length,
@@ -185,7 +193,7 @@ export default function EmployeesPage() {
 
         <div className="p-6">
           {/* Stats */}
-          <div className="grid grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-5 gap-4 mb-6">
             {[
               { label: 'סה"כ עובדים', value: stats.total, color: 'text-slate-900' },
               { label: 'משרה מלאה', value: stats.fullTime, color: 'text-indigo-600' },
@@ -197,6 +205,12 @@ export default function EmployeesPage() {
                 <p className={`text-3xl font-bold ${s.color}`}>{s.value}</p>
               </div>
             ))}
+            <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm">
+              <p className="text-sm text-slate-500 mb-1">עלות שבועית משוערת</p>
+              <p className="text-3xl font-bold text-emerald-600">
+                {weeklyPayroll > 0 ? `₪${weeklyPayroll.toLocaleString('he-IL', { maximumFractionDigits: 0 })}` : '—'}
+              </p>
+            </div>
           </div>
 
           {/* Filters */}
@@ -257,6 +271,7 @@ export default function EmployeesPage() {
                     <th className="text-right text-xs font-semibold text-slate-400 uppercase px-5 py-3">תפקיד</th>
                     <th className="text-right text-xs font-semibold text-slate-400 uppercase px-5 py-3">סוג משרה</th>
                     <th className="text-right text-xs font-semibold text-slate-400 uppercase px-5 py-3">שעות/שבוע</th>
+                    <th className="text-right text-xs font-semibold text-slate-400 uppercase px-5 py-3">שכר שעתי</th>
                     <th className="text-right text-xs font-semibold text-slate-400 uppercase px-5 py-3">טלפון</th>
                     <th className="px-5 py-3" />
                   </tr>
@@ -293,6 +308,9 @@ export default function EmployeesPage() {
                         {emp.min_hours_per_week > 0 && (
                           <div className="text-xs text-slate-400">מינ׳ {emp.min_hours_per_week}</div>
                         )}
+                      </td>
+                      <td className="px-5 py-4 text-sm font-medium text-slate-700">
+                        {emp.hourly_rate ? `₪${emp.hourly_rate}/ש׳` : <span className="text-slate-300">—</span>}
                       </td>
                       <td className="px-5 py-4 text-sm text-slate-500 dir-ltr text-left">
                         {emp.phone}
@@ -401,6 +419,9 @@ export default function EmployeesPage() {
                   <input {...registerCreate('min_hours_per_week')} type="number" min={0} className={inputCls} />
                 </FormField>
               </div>
+              <FormField label="שכר שעתי (₪)">
+                <input {...registerCreate('hourly_rate')} type="number" min={0} step="0.5" placeholder="לדוגמה: 35" className={inputCls} />
+              </FormField>
               <FormField label="סיסמה זמנית *" error={createErrors.password?.message}>
                 <input {...registerCreate('password')} type="text" placeholder="לפחות 4 תווים" className={inputCls} />
                 <p className="text-xs text-slate-400 mt-1">העובד יוכל לשנות את הסיסמה בהמשך</p>
@@ -480,6 +501,9 @@ export default function EmployeesPage() {
                   <input {...registerEdit('min_hours_per_week')} type="number" min={0} className={inputCls} />
                 </FormField>
               </div>
+              <FormField label="שכר שעתי (₪)">
+                <input {...registerEdit('hourly_rate')} type="number" min={0} step="0.5" placeholder="לדוגמה: 35" className={inputCls} />
+              </FormField>
 
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => setEditEmployee(null)}

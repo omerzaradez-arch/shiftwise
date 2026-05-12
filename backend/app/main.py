@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 COLUMN_MIGRATIONS = [
     "ALTER TABLE availability_submissions ADD COLUMN IF NOT EXISTS day_preferences JSON DEFAULT '{}'",
+    "ALTER TABLE employees ADD COLUMN IF NOT EXISTS hourly_rate FLOAT",
 ]
 
 

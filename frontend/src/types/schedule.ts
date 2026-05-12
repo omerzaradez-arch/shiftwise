@@ -47,6 +47,7 @@ export interface Employee {
   min_hours_per_week: number
   skills: string[]
   is_active: boolean
+  hourly_rate?: number | null
 }
 
 export interface SwapRequest {
