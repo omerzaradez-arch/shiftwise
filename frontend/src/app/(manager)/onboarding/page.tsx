@@ -270,17 +270,45 @@ export default function OnboardingPage() {
               </svg>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-slate-800">העסק מוכן!</h2>
-              <p className="text-sm text-slate-500 mt-1">
-                המשמרות הוגדרו. עכשיו תוכל להוסיף עובדים ולהריץ את האופטימייזר
-              </p>
+              <h2 className="text-xl font-bold text-slate-800">המשמרות הוגדרו!</h2>
+              <p className="text-sm text-slate-500 mt-1">מה הצעד הבא?</p>
             </div>
-            <button
-              onClick={() => router.push('/schedule')}
-              className="w-full py-3 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition text-sm"
-            >
-              עבור לסידור עבודה →
-            </button>
+
+            {/* Checklist */}
+            <div className="bg-slate-50 rounded-xl p-4 text-right space-y-2.5">
+              {[
+                { done: true, label: 'הגדרת פרטי העסק' },
+                { done: true, label: 'הגדרת משמרות' },
+                { done: false, label: 'הוספת עובדים', href: '/employees' },
+                { done: false, label: 'הרצת אופטימייזר', href: '/schedule' },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-none text-xs font-bold ${
+                    item.done ? 'bg-emerald-500 text-white' : 'bg-slate-200 text-slate-400'
+                  }`}>
+                    {item.done ? '✓' : i + 1}
+                  </div>
+                  <span className={`text-sm ${item.done ? 'text-slate-400 line-through' : 'text-slate-700 font-medium'}`}>
+                    {item.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => router.push('/employees')}
+                className="flex-1 py-3 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition text-sm"
+              >
+                הוסף עובדים ראשונים →
+              </button>
+              <button
+                onClick={() => router.push('/schedule')}
+                className="flex-1 py-3 border border-slate-200 text-slate-600 font-medium rounded-xl hover:bg-slate-50 transition text-sm"
+              >
+                עבור לסידור
+              </button>
+            </div>
           </div>
         )}
       </div>

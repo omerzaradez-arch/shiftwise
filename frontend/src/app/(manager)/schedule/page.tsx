@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useRouter } from 'next/navigation'
 import { format, startOfWeek, addWeeks, subWeeks } from 'date-fns'
 import { he } from 'date-fns/locale'
 import { scheduleApi } from '@/lib/api/schedule'
@@ -34,16 +35,28 @@ function exportScheduleCSV(schedule: Schedule, weekStart: Date) {
 
 export default function SchedulePage() {
   const qc = useQueryClient()
+  const router = useRouter()
   const [currentWeek, setCurrentWeek] = useState(
     startOfWeek(new Date(), { weekStartsOn: 0 })
   )
   const [showOptimizer, setShowOptimizer] = useState(false)
   const [showConflicts, setShowConflicts] = useState(true)
 
-  const { data: templates = [] } = useQuery({
+  const { data: orgSettings } = useQuery({
+    queryKey: ['settings'],
+    queryFn: () => import('@/lib/api/client').then(m => m.apiClient.get('/api/v1/settings/').then(r => r.data)),
+  })
+
+  const { data: templates = [], isSuccess: templatesLoaded } = useQuery({
     queryKey: ['shift-templates'],
     queryFn: shiftTemplatesApi.list,
   })
+
+  useEffect(() => {
+    if (templatesLoaded && orgSettings && !orgSettings.onboarding_complete && templates.length === 0) {
+      router.replace('/onboarding')
+    }
+  }, [templatesLoaded, orgSettings, templates.length, router])
 
   const { data: schedule, isLoading } = useQuery({
     queryKey: ['schedule', currentWeek.toISOString()],

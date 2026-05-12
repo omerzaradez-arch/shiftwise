@@ -6,6 +6,7 @@ from .availability import AvailabilitySubmission, UnavailabilitySlot
 from .scheduled_shift import ScheduledShift
 from .swap_request import SwapRequest
 from .fairness_tracking import FairnessTracking
+from .whatsapp_session import WhatsAppSession
 
 __all__ = [
     "Organization",
@@ -17,4 +18,5 @@ __all__ = [
     "ScheduledShift",
     "SwapRequest",
     "FairnessTracking",
+    "WhatsAppSession",
 ]
