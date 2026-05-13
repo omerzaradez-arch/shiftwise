@@ -390,9 +390,17 @@ class ShiftScheduler:
                 and emp_hours[e.id] + slot.duration_hours <= e.max_hours_per_week
             ]
 
-            # Prioritize: seniors first, then by fewest shifts
+            # Prioritize: seniors first, then preference match, then fewest shifts
+            def _day_pref_penalty(e):
+                day_prefs = e.day_type_preferences.get(slot.day_index) or \
+                            e.day_type_preferences.get(str(slot.day_index))
+                if day_prefs:
+                    return 0 if slot.shift_type in day_prefs else 1
+                return 0
+
             candidates.sort(key=lambda e: (
                 0 if e.role in ("senior", "manager") else 1,
+                _day_pref_penalty(e),
                 emp_shift_count[e.id],
             ))
 
