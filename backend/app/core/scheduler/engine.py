@@ -121,10 +121,9 @@ class ShiftScheduler:
                 )
 
     def _add_hard_constraints(self):
-        # 1. Coverage: min/max employees per slot
+        # 1. Coverage: max employees per slot (hard), min is soft via objective
         for slot in self.shift_slots:
             assigned = [self.vars[(emp.id, slot.id)] for emp in self.employees]
-            self.model.add(sum(assigned) >= slot.min_employees)
             self.model.add(sum(assigned) <= slot.max_employees)
 
         # 2. One shift per employee per day
@@ -183,6 +182,13 @@ class ShiftScheduler:
 
     def _build_objective(self) -> cp_model.LinearExprT:
         penalties = []
+
+        # Penalty: under minimum coverage per slot (highest priority)
+        for slot in self.shift_slots:
+            assigned = [self.vars[(emp.id, slot.id)] for emp in self.employees]
+            under_cov = self.model.new_int_var(0, slot.min_employees, f"under_cov_{slot.id[:8]}")
+            self.model.add(under_cov >= slot.min_employees - sum(assigned))
+            penalties.append(under_cov * 1000)
 
         # Penalty: under minimum hours (soft version of hard min_hours constraint)
         for emp in self.employees:
