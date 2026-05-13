@@ -226,9 +226,14 @@ async def _send_schedule_notifications(
     employees, by_employee, week, all_employees_map,
     shifts_by_day, operating_days, schedule_id,
 ):
-    from app.api.v1.whatsapp import send_whatsapp_to
-    from app.core.schedule_image import ensure_font, generate_schedule_image
-    from app.config import settings
+    print(f"[notify] starting — {len(all_employees_map)} employees", flush=True)
+    try:
+        from app.api.v1.whatsapp import send_whatsapp_to
+        from app.core.schedule_image import ensure_font, generate_schedule_image
+        from app.config import settings
+    except Exception as e:
+        print(f"[notify] import error: {e}", flush=True)
+        return
 
     week_str = week.week_start.strftime("%d/%m")
 
@@ -238,15 +243,18 @@ async def _send_schedule_notifications(
         img_bytes = generate_schedule_image(week.week_start, shifts_by_day, operating_days)
         _image_cache[schedule_id] = img_bytes
         image_url = f"{settings.backend_url}/api/v1/schedules/{schedule_id}/image.png"
+        print(f"[notify] image generated ok, url={image_url}", flush=True)
     except Exception as e:
-        print(f"[schedule_image] Failed to generate image: {e}", flush=True)
+        print(f"[notify] image failed: {e}", flush=True)
         image_url = None
 
     # Send to all employees with phones
     notified = set()
     for emp in all_employees_map.values():
         if not emp.phone or emp.id in notified:
+            print(f"[notify] skipping {emp.name} — no phone or already notified", flush=True)
             continue
+        print(f"[notify] sending to {emp.name} ({emp.phone})", flush=True)
 
         my_shifts = by_employee.get(emp.id, [])
         my_shifts_sorted = sorted(my_shifts, key=lambda s: s.date)
@@ -268,8 +276,14 @@ async def _send_schedule_notifications(
             f"שלח *לא יכול* אם יש בעיה עם משמרת."
         )
 
-        await send_whatsapp_to(emp.phone, msg, media_url=image_url)
+        try:
+            ok = await send_whatsapp_to(emp.phone, msg, media_url=image_url)
+            print(f"[notify] sent to {emp.name}: {'ok' if ok else 'failed'}", flush=True)
+        except Exception as e:
+            print(f"[notify] error sending to {emp.name}: {e}", flush=True)
         notified.add(emp.id)
+
+    print(f"[notify] done — notified {len(notified)} employees", flush=True)
 
 
 @router.get("/conflicts")
