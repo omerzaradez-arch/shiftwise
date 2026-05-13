@@ -203,7 +203,18 @@ async def find_and_notify_replacements(
             Employee.phone != None,
         )
     )
-    candidates = result.scalars().all()
+    all_employees = result.scalars().all()
+
+    # Exclude employees already in the same shift (same date + same start time)
+    same_shift_result = await db.execute(
+        select(ScheduledShift).where(
+            ScheduledShift.date == shift.date,
+            ScheduledShift.start_time == shift.start_time,
+            ScheduledShift.status.notin_(["cancelled"]),
+        )
+    )
+    same_shift_ids = {s.employee_id for s in same_shift_result.scalars().all()}
+    candidates = [e for e in all_employees if e.id not in same_shift_ids]
     sent = 0
     for candidate in candidates:
         msg = (
