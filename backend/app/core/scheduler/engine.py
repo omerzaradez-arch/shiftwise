@@ -145,14 +145,7 @@ class ShiftScheduler:
         # Close-then-open is allowed (not ideal but permitted)
 
         # 5. At least one senior per slot — soft (penalty in objective, not hard constraint)
-
-        # 6. Required roles per slot — soft if not enough role employees
-        for slot in self.shift_slots:
-            for role, count in slot.required_roles.items():
-                role_emps = [e for e in self.employees if e.role == role]
-                if len(role_emps) >= count:
-                    role_vars = [self.vars[(e.id, slot.id)] for e in role_emps]
-                    self.model.add(sum(role_vars) >= count)
+        # 6. Required roles per slot — soft (penalty in objective, not hard constraint)
 
         # 7. Weekly hours limits (max is hard, min is soft — enforced via penalty in objective)
         for emp in self.employees:
@@ -199,6 +192,16 @@ class ShiftScheduler:
             under_min = self.model.new_int_var(0, int(emp.max_hours_per_week * 60), f"under_min_{emp.id[:6]}")
             self.model.add(under_min >= int(emp.min_hours_per_week * 60) - total_minutes)
             penalties.append(under_min * 3)
+
+        # Penalty: required roles not met per slot
+        for slot in self.shift_slots:
+            for role, count in slot.required_roles.items():
+                role_emps = [e for e in self.employees if e.role == role]
+                if role_emps:
+                    role_vars = [self.vars[(e.id, slot.id)] for e in role_emps]
+                    under_role = self.model.new_int_var(0, count, f"under_role_{role}_{slot.id[:8]}")
+                    self.model.add(under_role >= count - sum(role_vars))
+                    penalties.append(under_role * 200)
 
         # Penalty: no senior in slot
         senior_ids = {e.id for e in self.employees if e.role in ("senior", "manager")}
