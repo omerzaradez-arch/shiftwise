@@ -269,15 +269,18 @@ async def _send_schedule_notifications(
         else:
             personal = "אין לך משמרות השבוע."
 
+        view_url = f"{settings.frontend_url}/view/{week.org_id}"
+
         msg = (
             f"שלום {emp.name} 👋\n"
             f"הסידור לשבוע {week_str} פורסם!\n\n"
             f"{personal}\n\n"
+            f"📅 לצפייה בסידור המלא:\n{view_url}\n\n"
             f"שלח *לא יכול* אם יש בעיה עם משמרת."
         )
 
         try:
-            ok = await send_whatsapp_to(emp.phone, msg, media_url=image_url)
+            ok = await send_whatsapp_to(emp.phone, msg)
             print(f"[notify] sent to {emp.name}: {'ok' if ok else 'failed'}", flush=True)
         except Exception as e:
             print(f"[notify] error sending to {emp.name}: {e}", flush=True)

@@ -9,6 +9,7 @@ from app.api.v1 import settings as settings_router
 from app.api.v1 import shift_templates as shift_templates_router
 from app.api.v1 import whatsapp as whatsapp_router
 from app.api.v1 import simulate as simulate_router
+from app.api.v1 import public as public_router
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +61,7 @@ app.include_router(settings_router.router, prefix="/api/v1/settings", tags=["set
 app.include_router(shift_templates_router.router, prefix="/api/v1/shift-templates", tags=["shift-templates"])
 app.include_router(whatsapp_router.router, prefix="/api/v1/whatsapp", tags=["whatsapp"])
 app.include_router(simulate_router.router, prefix="/api/v1/simulate", tags=["simulate"])
+app.include_router(public_router.router, prefix="/api/v1/public", tags=["public"])
 
 
 @app.get("/health")
