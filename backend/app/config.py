@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     ]
 
     optimizer_time_limit_seconds: int = 30
+    backend_url: str = "https://shiftwise-production.up.railway.app"
 
     @model_validator(mode="after")
     def derive_async_url(self) -> "Settings":

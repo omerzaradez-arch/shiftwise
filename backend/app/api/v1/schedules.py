@@ -182,36 +182,94 @@ async def publish_schedule(
     DAY_NAMES = {0: "ראשון", 1: "שני", 2: "שלישי", 3: "רביעי", 4: "חמישי", 5: "שישי", 6: "שבת"}
     SHIFT_NAMES = {"morning": "בוקר", "afternoon": "אחהצ", "evening": "ערב", "night": "לילה"}
 
-    background_tasks.add_task(_send_schedule_notifications, employees, by_employee, week, DAY_NAMES, SHIFT_NAMES)
+    # Build shifts_by_day for image generation
+    all_emp_result = await db.execute(
+        select(Employee).where(Employee.org_id == current_user.org_id, Employee.is_active == True)
+    )
+    all_employees_map = {e.id: e for e in all_emp_result.scalars().all()}
+
+    shifts_by_day: dict = {}
+    operating_days_set: set = set()
+    for shift in shifts:
+        d = shift.date.isoformat()
+        st = shift.start_time
+        shift_type = "morning" if st.hour < 12 else "evening"
+        emp_name = all_employees_map.get(shift.employee_id, type("", (), {"name": "?"})()).name
+        shifts_by_day.setdefault(d, {}).setdefault(shift_type, []).append(emp_name)
+        dow = (shift.date.weekday() + 1) % 7
+        operating_days_set.add(dow)
+
+    operating_days = sorted(operating_days_set)
+
+    background_tasks.add_task(
+        _send_schedule_notifications,
+        employees, by_employee, week, all_employees_map,
+        shifts_by_day, operating_days, schedule_id,
+    )
 
     return {"status": "published", "notified": len(emp_ids)}
 
 
-async def _send_schedule_notifications(employees, by_employee, week, DAY_NAMES, SHIFT_NAMES):
+# ── Serve schedule image (no auth — URL is unguessable enough for WhatsApp) ──
+_image_cache: dict[str, bytes] = {}
+
+@router.get("/{schedule_id}/image.png", include_in_schema=False)
+async def get_schedule_image(schedule_id: str):
+    from fastapi.responses import Response
+    img_bytes = _image_cache.get(schedule_id)
+    if not img_bytes:
+        raise HTTPException(status_code=404, detail="תמונה לא נמצאה")
+    return Response(content=img_bytes, media_type="image/png")
+
+
+async def _send_schedule_notifications(
+    employees, by_employee, week, all_employees_map,
+    shifts_by_day, operating_days, schedule_id,
+):
     from app.api.v1.whatsapp import send_whatsapp_to
+    from app.core.schedule_image import ensure_font, generate_schedule_image
+    from app.config import settings
+
     week_str = week.week_start.strftime("%d/%m")
 
-    for emp_id, shifts in by_employee.items():
-        emp = employees.get(emp_id)
-        if not emp or not emp.phone:
+    # Generate schedule image
+    await ensure_font()
+    try:
+        img_bytes = generate_schedule_image(week.week_start, shifts_by_day, operating_days)
+        _image_cache[schedule_id] = img_bytes
+        image_url = f"{settings.backend_url}/api/v1/schedules/{schedule_id}/image.png"
+    except Exception as e:
+        print(f"[schedule_image] Failed to generate image: {e}", flush=True)
+        image_url = None
+
+    # Send to all employees with phones
+    notified = set()
+    for emp in all_employees_map.values():
+        if not emp.phone or emp.id in notified:
             continue
 
-        shifts_sorted = sorted(shifts, key=lambda s: s.date)
-        lines = []
-        for s in shifts_sorted:
-            day_name = DAY_NAMES.get(s.date.weekday(), "")
-            date_str = s.date.strftime("%d/%m")
-            start = s.start_time.strftime("%H:%M")
-            end = s.end_time.strftime("%H:%M")
-            lines.append(f"• {day_name} {date_str}: {start}–{end}")
+        my_shifts = by_employee.get(emp.id, [])
+        my_shifts_sorted = sorted(my_shifts, key=lambda s: s.date)
+        DAY_NAMES = {0: "ראשון", 1: "שני", 2: "שלישי", 3: "רביעי", 4: "חמישי", 5: "שישי", 6: "שבת"}
+
+        if my_shifts_sorted:
+            lines = []
+            for s in my_shifts_sorted:
+                day_name = DAY_NAMES.get((s.date.weekday() + 1) % 7, "")
+                lines.append(f"• {day_name} {s.date.strftime('%d/%m')}: {s.start_time.strftime('%H:%M')}–{s.end_time.strftime('%H:%M')}")
+            personal = "המשמרות שלך:\n" + "\n".join(lines)
+        else:
+            personal = "אין לך משמרות השבוע."
 
         msg = (
             f"שלום {emp.name} 👋\n"
-            f"הסידור לשבוע {week_str} פורסם:\n\n"
-            + "\n".join(lines)
-            + "\n\nשלח *אני לא יכול* אם יש בעיה עם משמרת."
+            f"הסידור לשבוע {week_str} פורסם!\n\n"
+            f"{personal}\n\n"
+            f"שלח *לא יכול* אם יש בעיה עם משמרת."
         )
-        await send_whatsapp_to(emp.phone, msg)
+
+        await send_whatsapp_to(emp.phone, msg, media_url=image_url)
+        notified.add(emp.id)
 
 
 @router.get("/conflicts")

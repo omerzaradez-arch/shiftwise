@@ -117,7 +117,7 @@ OPTION_MAP = {
 }
 
 
-async def send_whatsapp_to(phone: str, body: str) -> bool:
+async def send_whatsapp_to(phone: str, body: str, media_url: str | None = None) -> bool:
     import os, httpx
     account_sid = os.getenv("TWILIO_ACCOUNT_SID")
     auth_token = os.getenv("TWILIO_AUTH_TOKEN")
@@ -128,11 +128,18 @@ async def send_whatsapp_to(phone: str, body: str) -> bool:
     if not clean.startswith("+"):
         clean = "+972" + clean.lstrip("0")
     try:
+        payload = {
+            "From": f"whatsapp:{whatsapp_number}",
+            "To": f"whatsapp:{clean}",
+            "Body": body,
+        }
+        if media_url:
+            payload["MediaUrl"] = media_url
         async with httpx.AsyncClient() as client:
             resp = await client.post(
                 f"https://api.twilio.com/2010-04-01/Accounts/{account_sid}/Messages.json",
                 auth=(account_sid, auth_token),
-                data={"From": f"whatsapp:{whatsapp_number}", "To": f"whatsapp:{clean}", "Body": body},
+                data=payload,
                 timeout=10.0,
             )
             return resp.status_code == 201
