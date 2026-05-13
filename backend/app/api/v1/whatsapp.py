@@ -203,25 +203,15 @@ async def find_and_notify_replacements(
             Employee.phone != None,
         )
     )
-    all_employees = result.scalars().all()
-
-    day_result = await db.execute(
-        select(ScheduledShift).where(
-            ScheduledShift.date == shift.date,
-            ScheduledShift.status.notin_(["cancelled"]),
-        )
-    )
-    busy_ids = {s.employee_id for s in day_result.scalars().all()}
-
-    candidates = [e for e in all_employees if e.id not in busy_ids]
+    candidates = result.scalars().all()
     sent = 0
     for candidate in candidates:
         msg = (
             f"👋 שלום {candidate.name}!\n"
-            f"🔄 *התפנתה משמרת להחלפה*\n\n"
-            f"📅 {shift_display}\n"
-            f"({requester_name} לא יכול/ה להגיע)\n\n"
-            f"האם תוכל/י להחליף? שלח/י *כן* לאישור"
+            f"*{requester_name}* מחפש/ת מחליף/ה למשמרת:\n"
+            f"📅 {shift_display}\n\n"
+            f"האם תוכל/י להחליף אותו/ה?\n"
+            f"שלח/י *כן* לאישור או *לא* לדחייה"
         )
         ok = await send_whatsapp_to(candidate.phone, msg)
         if ok:
@@ -258,7 +248,7 @@ async def handle_volunteer_acceptance(employee: Employee, ctx: dict, db: AsyncSe
         )
     )
     if existing.scalar_one_or_none():
-        return "❌ כבר יש לך משמרת ביום הזה. לא ניתן לקחת את המשמרת."
+        return "❌ כבר יש לך משמרת ביום הזה, לא ניתן לקחת את המשמרת.\nנסה/י עובד/ת אחר/ת."
 
     original_emp = await db.get(Employee, shift.employee_id)
     shift.employee_id = employee.id
