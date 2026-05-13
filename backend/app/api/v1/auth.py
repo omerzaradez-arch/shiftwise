@@ -142,3 +142,56 @@ async def setup(data: SetupRequest, db: AsyncSession = Depends(get_db)):
     db.add(emp)
     await db.commit()
     return {"ok": True, "org_id": org.id}
+
+
+class RegisterRequest(BaseModel):
+    org_name: str
+    name: str
+    phone: str
+    password: str
+    email: str = ""
+
+
+@router.post("/register", response_model=TokenResponse)
+async def register(data: RegisterRequest, db: AsyncSession = Depends(get_db)):
+    from app.models import Organization
+    from app.security import hash_password
+    import uuid
+
+    # Check phone not already taken
+    existing = await db.execute(select(Employee).where(Employee.phone == data.phone))
+    if existing.scalar_one_or_none():
+        raise HTTPException(status_code=400, detail="מספר הטלפון כבר רשום במערכת")
+
+    # Create org
+    org = Organization(id=str(uuid.uuid4()), name=data.org_name)
+    db.add(org)
+    await db.flush()
+
+    # Create manager
+    emp = Employee(
+        id=str(uuid.uuid4()),
+        org_id=org.id,
+        name=data.name,
+        phone=data.phone,
+        email=data.email or None,
+        hashed_password=hash_password(data.password),
+        role="owner",
+        is_active=True,
+    )
+    db.add(emp)
+    await db.commit()
+
+    token = create_access_token({"sub": emp.id, "org_id": org.id})
+    return TokenResponse(
+        access_token=token,
+        user={
+            "id": emp.id,
+            "name": emp.name,
+            "phone": emp.phone,
+            "email": emp.email,
+            "role": emp.role,
+            "org_id": org.id,
+            "org_name": org.name,
+        },
+    )

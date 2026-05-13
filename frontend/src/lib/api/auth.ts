@@ -13,6 +13,11 @@ export const authApi = {
     return data
   },
 
+  register: async (orgName: string, name: string, phone: string, password: string, email?: string): Promise<LoginResponse> => {
+    const { data } = await apiClient.post('/api/v1/auth/register', { org_name: orgName, name, phone, password, email: email || '' })
+    return data
+  },
+
   logout: async () => {
     await apiClient.post('/api/v1/auth/logout')
   },

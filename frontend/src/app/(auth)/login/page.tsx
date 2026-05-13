@@ -106,7 +106,14 @@ export default function LoginPage() {
           </form>
         </div>
 
-        <p className="text-center text-xs text-slate-600 mt-6">
+        <p className="text-center text-sm text-slate-500 mt-4">
+          עסק חדש?{' '}
+          <a href="/register" className="text-indigo-400 hover:text-indigo-300 font-medium">
+            פתח חשבון
+          </a>
+        </p>
+
+        <p className="text-center text-xs text-slate-600 mt-4">
           ShiftWise © {new Date().getFullYear()}
         </p>
       </div>
