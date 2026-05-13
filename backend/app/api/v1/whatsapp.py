@@ -227,9 +227,13 @@ async def find_and_notify_replacements(
         ok = await send_whatsapp_to(candidate.phone, msg)
         if ok:
             sent += 1
-            cand_session = await db.get(WhatsAppSession, candidate.phone)
+            # Normalize phone to match the format used by the webhook (+972XXXXXXXXX)
+            norm_phone = candidate.phone.replace("-", "").replace(" ", "")
+            if not norm_phone.startswith("+"):
+                norm_phone = "+972" + norm_phone.lstrip("0")
+            cand_session = await db.get(WhatsAppSession, norm_phone)
             if not cand_session:
-                cand_session = WhatsAppSession(phone=candidate.phone, state="idle", context={})
+                cand_session = WhatsAppSession(phone=norm_phone, state="idle", context={})
                 db.add(cand_session)
                 await db.flush()
             ctx = dict(cand_session.context or {})
