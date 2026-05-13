@@ -145,29 +145,23 @@ class ShiftScheduler:
 
         # Close-then-open is allowed (not ideal but permitted)
 
-        # 5. At least one senior per slot
-        senior_ids = {e.id for e in self.employees if e.role in ("senior", "manager")}
-        for slot in self.shift_slots:
-            if senior_ids:
-                seniors = [self.vars[(e_id, slot.id)] for e_id in senior_ids]
-                self.model.add(sum(seniors) >= 1)
+        # 5. At least one senior per slot — soft (penalty in objective, not hard constraint)
 
-        # 6. Required roles per slot
+        # 6. Required roles per slot — soft if not enough role employees
         for slot in self.shift_slots:
             for role, count in slot.required_roles.items():
                 role_emps = [e for e in self.employees if e.role == role]
-                if role_emps:
+                if len(role_emps) >= count:
                     role_vars = [self.vars[(e.id, slot.id)] for e in role_emps]
                     self.model.add(sum(role_vars) >= count)
 
-        # 7. Weekly hours limits
+        # 7. Weekly hours limits (max is hard, min is soft — enforced via penalty in objective)
         for emp in self.employees:
             total_minutes = sum(
                 self.vars[(emp.id, slot.id)] * int(slot.duration_hours * 60)
                 for slot in self.shift_slots
             )
             self.model.add(total_minutes <= int(emp.max_hours_per_week * 60))
-            self.model.add(total_minutes >= int(emp.min_hours_per_week * 60))
 
         # 8. Max consecutive working days
         dates_sorted = sorted(slots_by_date.keys())
@@ -189,6 +183,27 @@ class ShiftScheduler:
 
     def _build_objective(self) -> cp_model.LinearExprT:
         penalties = []
+
+        # Penalty: under minimum hours (soft version of hard min_hours constraint)
+        for emp in self.employees:
+            total_minutes = sum(
+                self.vars[(emp.id, slot.id)] * int(slot.duration_hours * 60)
+                for slot in self.shift_slots
+            )
+            under_min = self.model.new_int_var(0, int(emp.max_hours_per_week * 60), f"under_min_{emp.id[:6]}")
+            self.model.add(under_min >= int(emp.min_hours_per_week * 60) - total_minutes)
+            penalties.append(under_min * 3)
+
+        # Penalty: no senior in slot
+        senior_ids = {e.id for e in self.employees if e.role in ("senior", "manager")}
+        if senior_ids:
+            for slot in self.shift_slots:
+                seniors = [self.vars[(e_id, slot.id)] for e_id in senior_ids if (e_id, slot.id) in self.vars]
+                if seniors:
+                    no_senior = self.model.new_bool_var(f"no_senior_{slot.id[:8]}")
+                    self.model.add(sum(seniors) >= 1).only_enforce_if(no_senior.negated())
+                    self.model.add(sum(seniors) == 0).only_enforce_if(no_senior)
+                    penalties.append(no_senior * 50)
 
         # Penalty: soft unavailability
         for emp in self.employees:
@@ -395,7 +410,7 @@ class ShiftScheduler:
                 day_prefs = e.day_type_preferences.get(slot.day_index) or \
                             e.day_type_preferences.get(str(slot.day_index))
                 if day_prefs:
-                    return 0 if slot.shift_type in day_prefs else 1
+                    return -1 if slot.shift_type in day_prefs else 1
                 return 0
 
             candidates.sort(key=lambda e: (
