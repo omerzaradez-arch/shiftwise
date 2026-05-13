@@ -192,7 +192,7 @@ export default function SchedulePage() {
               הרץ אופטימייזר
             </button>
 
-            {schedule && schedule.status !== 'published' && (
+            {schedule && (
               <button
                 onClick={() => publishMutation.mutate()}
                 disabled={publishMutation.isPending}
@@ -201,7 +201,7 @@ export default function SchedulePage() {
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                {publishMutation.isPending ? 'מפרסם...' : 'פרסם לעובדים'}
+                {publishMutation.isPending ? 'שולח...' : 'פרסם לעובדים'}
               </button>
             )}
           </div>
