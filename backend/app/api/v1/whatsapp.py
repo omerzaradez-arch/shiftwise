@@ -255,11 +255,12 @@ async def handle_volunteer_acceptance(employee: Employee, ctx: dict, db: AsyncSe
         select(ScheduledShift).where(
             ScheduledShift.employee_id == employee.id,
             ScheduledShift.date == shift.date,
+            ScheduledShift.start_time == shift.start_time,
             ScheduledShift.status != "cancelled",
         )
     )
     if existing.scalar_one_or_none():
-        return "❌ כבר יש לך משמרת ביום הזה, לא ניתן לקחת את המשמרת.\nנסה/י עובד/ת אחר/ת."
+        return "❌ כבר יש לך משמרת באותה שעה ביום הזה, לא ניתן לקחת את המשמרת."
 
     original_emp = await db.get(Employee, shift.employee_id)
     shift.employee_id = employee.id
