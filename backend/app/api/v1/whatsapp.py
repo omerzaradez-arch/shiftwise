@@ -142,8 +142,14 @@ async def send_whatsapp_to(phone: str, body: str, media_url: str | None = None) 
                 data=payload,
                 timeout=10.0,
             )
+            if resp.status_code != 201:
+                print(f"[twilio] ERROR {resp.status_code}: {resp.text}", flush=True)
+            else:
+                body = resp.json()
+                print(f"[twilio] OK to={clean} sid={body.get('sid')} status={body.get('status')} error={body.get('error_code')}", flush=True)
             return resp.status_code == 201
-    except Exception:
+    except Exception as e:
+        print(f"[twilio] exception: {e}", flush=True)
         return False
 
 
