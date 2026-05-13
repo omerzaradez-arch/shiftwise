@@ -4,8 +4,6 @@ from datetime import date, timedelta
 import copy
 
 from app.core.scheduler.engine import ShiftScheduler, EmployeeData, ShiftSlot
-from app.api.v1.auth import get_current_user
-from app.models import Employee
 
 router = APIRouter()
 
@@ -115,7 +113,7 @@ def _run(label, employees, slots):
 
 
 @router.get("/run")
-async def run_simulation(current_user: Employee = Depends(get_current_user)):
+async def run_simulation():
     slots = _make_slots()
     employees = _make_employees()
     sun = WEEK_START.isoformat()
