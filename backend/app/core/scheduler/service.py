@@ -221,6 +221,11 @@ def generate_schedule(
         f"Schedule generated: score={result.score}, coverage={result.coverage_percent}%, "
         f"assignments={len(result.assignments)}, status={result.solver_status}"
     )
+    # Debug: attach employee day_prefs snapshot to metadata
+    result.metadata["_debug_day_prefs"] = {
+        e.name: e.day_type_preferences for e in employee_data
+    }
+    result.metadata["_debug_submissions_count"] = len(submissions)
     return result
 
 

@@ -77,6 +77,8 @@ async def generate_schedule_sync(
         "conflicts": len(result.conflicts),
         "assignments": len(result.assignments),
         "solver_status": result.solver_status,
+        "debug": result.metadata.get("_debug_day_prefs", {}),
+        "debug_submissions": result.metadata.get("_debug_submissions_count", -1),
     }
 
 
