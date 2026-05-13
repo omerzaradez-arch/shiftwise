@@ -143,6 +143,7 @@ async def get_week_schedule(
 @router.post("/{schedule_id}/publish")
 async def publish_schedule(
     schedule_id: str,
+    background_tasks: BackgroundTasks,
     current_user: Employee = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
@@ -158,7 +159,59 @@ async def publish_schedule(
     week.published_at = datetime.now(timezone.utc)
     await db.commit()
 
-    return {"status": "published"}
+    # Load shifts with employee info for notifications
+    shifts_result = await db.execute(
+        select(ScheduledShift)
+        .where(ScheduledShift.week_id == schedule_id)
+        .where(ScheduledShift.status != "cancelled")
+    )
+    shifts = shifts_result.scalars().all()
+
+    # Group shifts by employee
+    by_employee: dict[str, list[ScheduledShift]] = {}
+    for shift in shifts:
+        by_employee.setdefault(shift.employee_id, []).append(shift)
+
+    # Load all relevant employees
+    emp_ids = list(by_employee.keys())
+    employees_result = await db.execute(
+        select(Employee).where(Employee.id.in_(emp_ids))
+    )
+    employees = {e.id: e for e in employees_result.scalars().all()}
+
+    DAY_NAMES = {0: "ראשון", 1: "שני", 2: "שלישי", 3: "רביעי", 4: "חמישי", 5: "שישי", 6: "שבת"}
+    SHIFT_NAMES = {"morning": "בוקר", "afternoon": "אחהצ", "evening": "ערב", "night": "לילה"}
+
+    background_tasks.add_task(_send_schedule_notifications, employees, by_employee, week, DAY_NAMES, SHIFT_NAMES)
+
+    return {"status": "published", "notified": len(emp_ids)}
+
+
+async def _send_schedule_notifications(employees, by_employee, week, DAY_NAMES, SHIFT_NAMES):
+    from app.api.v1.whatsapp import send_whatsapp_to
+    week_str = week.week_start.strftime("%d/%m")
+
+    for emp_id, shifts in by_employee.items():
+        emp = employees.get(emp_id)
+        if not emp or not emp.phone:
+            continue
+
+        shifts_sorted = sorted(shifts, key=lambda s: s.date)
+        lines = []
+        for s in shifts_sorted:
+            day_name = DAY_NAMES.get(s.date.weekday(), "")
+            date_str = s.date.strftime("%d/%m")
+            start = s.start_time.strftime("%H:%M")
+            end = s.end_time.strftime("%H:%M")
+            lines.append(f"• {day_name} {date_str}: {start}–{end}")
+
+        msg = (
+            f"שלום {emp.name} 👋\n"
+            f"הסידור לשבוע {week_str} פורסם:\n\n"
+            + "\n".join(lines)
+            + "\n\nשלח *אני לא יכול* אם יש בעיה עם משמרת."
+        )
+        await send_whatsapp_to(emp.phone, msg)
 
 
 @router.get("/conflicts")
