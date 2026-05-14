@@ -1,9 +1,10 @@
 'use client'
 
-import { useRef, useCallback } from 'react'
+import { useRef, useCallback, useState, useEffect } from 'react'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
+import listPlugin from '@fullcalendar/list'
 import interactionPlugin from '@fullcalendar/interaction'
 import type { EventDropArg } from '@fullcalendar/core'
 import { format } from 'date-fns'
@@ -31,6 +32,22 @@ interface Props {
 
 export function WeeklyCalendar({ schedule, weekStart, onShiftMove, conflicts }: Props) {
   const calendarRef = useRef<FullCalendar>(null)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
+  // When weekStart or mobile mode changes, update the calendar's date/view
+  useEffect(() => {
+    const api = calendarRef.current?.getApi()
+    if (!api) return
+    api.gotoDate(weekStart)
+    api.changeView(isMobile ? 'listWeek' : 'timeGridWeek')
+  }, [weekStart, isMobile])
 
   const conflictDates = new Set(conflicts.map((c) => c.date))
 
@@ -66,6 +83,16 @@ export function WeeklyCalendar({ schedule, weekStart, onShiftMove, conflicts }: 
 
   const renderEventContent = (eventInfo: any) => {
     const { role, shiftName, isManualOverride } = eventInfo.event.extendedProps
+    if (isMobile) {
+      return (
+        <div className="px-1 py-0.5">
+          <span className="font-semibold text-xs">{eventInfo.event.title}</span>
+          <span className="text-xs opacity-60 mx-1">·</span>
+          <span className="text-xs opacity-70">{shiftName}</span>
+          {isManualOverride && <span className="text-xs ml-1">✏️</span>}
+        </div>
+      )
+    }
     return (
       <div className="p-1 overflow-hidden">
         <div className="flex items-center gap-1">
@@ -86,29 +113,32 @@ export function WeeklyCalendar({ schedule, weekStart, onShiftMove, conflicts }: 
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 h-full">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-2 md:p-4 h-full overflow-auto">
       <FullCalendar
         ref={calendarRef}
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="timeGridWeek"
+        plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
+        initialView={isMobile ? 'listWeek' : 'timeGridWeek'}
         initialDate={weekStart}
         locale="he"
         direction="rtl"
         headerToolbar={false}
         {...{ schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source' } as any}
-        editable={true}
-        droppable={true}
+        editable={!isMobile}
+        droppable={!isMobile}
         eventDrop={handleEventDrop}
         events={events}
         eventContent={renderEventContent}
         slotMinTime="07:00:00"
         slotMaxTime="24:00:00"
-        height={700}
+        height={isMobile ? 'auto' : 700}
         allDaySlot={false}
         slotDuration="01:00:00"
         nowIndicator={true}
         scrollTime="10:00:00"
         dayHeaderFormat={{ weekday: 'short', day: 'numeric', month: 'short' }}
+        listDayFormat={{ weekday: 'long', day: 'numeric', month: 'short' }}
+        listDaySideFormat={false}
+        noEventsText="אין משמרות השבוע"
       />
     </div>
   )

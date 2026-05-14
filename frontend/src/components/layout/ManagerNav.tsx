@@ -85,9 +85,9 @@ const NAV_ITEMS = [
 const MOBILE_NAV = [
   { href: '/schedule', label: 'סידור', icon: NAV_ITEMS[0].icon },
   { href: '/employees', label: 'עובדים', icon: NAV_ITEMS[1].icon },
-  { href: '/payroll', label: 'נוכחות', icon: NAV_ITEMS[4].icon },
+  { href: '/submissions', label: 'זמינות', icon: NAV_ITEMS[2].icon },
   { href: '/requests', label: 'בקשות', icon: NAV_ITEMS[3].icon, badge: true },
-  { href: '/settings', label: 'הגדרות', icon: NAV_ITEMS[6].icon },
+  { href: '/payroll', label: 'נוכחות', icon: NAV_ITEMS[4].icon },
 ]
 
 export function ManagerNav() {
