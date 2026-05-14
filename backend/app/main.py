@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 COLUMN_MIGRATIONS = [
     "ALTER TABLE availability_submissions ADD COLUMN IF NOT EXISTS day_preferences JSON DEFAULT '{}'",
     "ALTER TABLE employees ADD COLUMN IF NOT EXISTS hourly_rate FLOAT",
+    "ALTER TABLE scheduled_shifts ADD COLUMN IF NOT EXISTS checkin_notified BOOLEAN DEFAULT FALSE",
 ]
 
 
@@ -24,6 +25,8 @@ COLUMN_MIGRATIONS = [
 async def lifespan(app: FastAPI):
     from app.database import async_engine, Base
     from sqlalchemy import text
+
+    # ── DB migrations ──
     async with async_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
         for sql in COLUMN_MIGRATIONS:
@@ -32,7 +35,27 @@ async def lifespan(app: FastAPI):
                 print(f"[migration] OK: {sql[:60]}", flush=True)
             except Exception as e:
                 print(f"[migration] FAILED: {sql[:60]} — {e}", flush=True)
+
+    # ── Background scheduler ──
+    from apscheduler.schedulers.asyncio import AsyncIOScheduler
+    from app.core.alerts import checkin_alert_job
+
+    scheduler = AsyncIOScheduler(timezone="Asia/Jerusalem")
+    scheduler.add_job(
+        checkin_alert_job,
+        trigger="interval",
+        minutes=5,
+        id="checkin_alert",
+        replace_existing=True,
+        max_instances=1,
+    )
+    scheduler.start()
+    print("[scheduler] started — checkin_alert every 5 min", flush=True)
+
     yield
+
+    scheduler.shutdown(wait=False)
+    print("[scheduler] stopped", flush=True)
 
 
 app = FastAPI(

@@ -44,3 +44,7 @@ async def get_db() -> AsyncSession:
             yield session
         finally:
             await session.close()
+
+
+# For use in background jobs (not as a dependency)
+async_session_factory = AsyncSessionLocal

@@ -20,6 +20,8 @@ class ScheduledShift(Base):
     is_manually_overridden: Mapped[bool] = mapped_column(Boolean, default=False)
     created_by: Mapped[str] = mapped_column(String(50), default="optimizer")
     # optimizer | manager
+    checkin_notified: Mapped[bool] = mapped_column(Boolean, default=False)
+    # True after we've sent the "you haven't checked in" WhatsApp alert
 
     week: Mapped["ScheduleWeek"] = relationship(back_populates="scheduled_shifts")
     template: Mapped["ShiftTemplate"] = relationship()
