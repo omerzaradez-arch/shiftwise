@@ -81,13 +81,14 @@ const NAV_ITEMS = [
   },
 ]
 
-// Mobile bottom nav items (most important only)
+// Mobile bottom nav items
 const MOBILE_NAV = [
   { href: '/schedule', label: 'סידור', icon: NAV_ITEMS[0].icon },
   { href: '/employees', label: 'עובדים', icon: NAV_ITEMS[1].icon },
   { href: '/submissions', label: 'זמינות', icon: NAV_ITEMS[2].icon },
   { href: '/requests', label: 'בקשות', icon: NAV_ITEMS[3].icon, badge: true },
   { href: '/payroll', label: 'נוכחות', icon: NAV_ITEMS[4].icon },
+  { href: '/settings', label: 'הגדרות', icon: NAV_ITEMS[6].icon },
 ]
 
 export function ManagerNav() {
@@ -208,16 +209,19 @@ export function ManagerNav() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex-1 flex flex-col items-center gap-0.5 py-2 px-1 transition-colors relative ${
+              className={`flex-1 flex flex-col items-center gap-0.5 py-2.5 px-0.5 transition-colors relative ${
                 active ? 'text-indigo-400' : 'text-slate-500'
               }`}
             >
               <span className={`transition-colors ${active ? 'text-indigo-400' : 'text-slate-500'}`}>
                 {item.icon}
               </span>
-              <span className="text-[10px] font-medium">{item.label}</span>
+              <span className="text-[9px] font-medium leading-none">{item.label}</span>
+              {active && (
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-indigo-400 rounded-full" />
+              )}
               {badgeCount > 0 && (
-                <span className="absolute top-1 left-1/2 translate-x-2 w-4 h-4 bg-amber-500 text-white text-[9px] rounded-full flex items-center justify-center font-bold">
+                <span className="absolute top-1.5 left-1/2 translate-x-1.5 w-3.5 h-3.5 bg-amber-500 text-white text-[8px] rounded-full flex items-center justify-center font-bold">
                   {badgeCount}
                 </span>
               )}
