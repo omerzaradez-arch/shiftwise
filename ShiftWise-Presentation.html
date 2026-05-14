@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShiftWise — ניהול משמרות חכם</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Heebo', Arial, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      direction: rtl;
+      line-height: 1.6;
+    }
+
+    /* ======= PAGE 1 – COVER ======= */
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto 40px;
+      background: #0f172a;
+      position: relative;
+      overflow: hidden;
+      page-break-after: always;
+    }
+
+    /* Blobs */
+    .blob1 {
+      position: absolute; top: -80px; right: -80px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .blob2 {
+      position: absolute; bottom: -80px; left: -80px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(139,92,246,0.14) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+
+    /* COVER */
+    .cover {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 40px;
+      min-height: 297mm;
+    }
+
+    .logo-box {
+      width: 80px; height: 80px;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      border-radius: 24px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px;
+      box-shadow: 0 20px 60px rgba(79,70,229,0.4);
+    }
+    .logo-box svg { width: 40px; height: 40px; }
+
+    .cover h1 {
+      font-size: 56px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+
+    .cover .tagline {
+      font-size: 22px;
+      color: #818cf8;
+      font-weight: 600;
+      margin-bottom: 32px;
+    }
+
+    .cover .desc {
+      font-size: 16px;
+      color: #94a3b8;
+      max-width: 480px;
+      line-height: 1.8;
+      margin-bottom: 48px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(99,102,241,0.15);
+      border: 1px solid rgba(99,102,241,0.4);
+      border-radius: 100px;
+      padding: 8px 20px;
+      font-size: 14px;
+      color: #a5b4fc;
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+
+    .cover-stats {
+      display: flex;
+      gap: 40px;
+      margin-top: 48px;
+      justify-content: center;
+    }
+
+    .cover-stat {
+      text-align: center;
+    }
+
+    .cover-stat .num {
+      font-size: 32px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #818cf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .cover-stat .lbl {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    .cover-divider {
+      width: 1px;
+      height: 40px;
+      background: rgba(255,255,255,0.1);
+      margin-top: 8px;
+    }
+
+    /* ======= INNER PAGES ======= */
+    .inner {
+      padding: 50px 48px;
+      min-height: 297mm;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 40px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .page-header .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mini-logo {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .mini-logo svg { width: 16px; height: 16px; }
+
+    .page-header .brand-name {
+      font-size: 18px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .page-header .page-num {
+      font-size: 13px;
+      color: #475569;
+    }
+
+    /* Section title */
+    .section-title {
+      font-size: 28px;
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .section-sub {
+      font-size: 15px;
+      color: #64748b;
+      margin-bottom: 32px;
+    }
+
+    /* Pain cards */
+    .pains-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+
+    .pain-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .pain-icon {
+      width: 32px; height: 32px; flex-shrink: 0;
+      background: rgba(239,68,68,0.12);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .pain-card p {
+      font-size: 14px;
+      color: #94a3b8;
+      line-height: 1.6;
+      padding-top: 4px;
+    }
+
+    .solution-banner {
+      background: linear-gradient(135deg, rgba(79,70,229,0.2), rgba(124,58,237,0.2));
+      border: 1px solid rgba(99,102,241,0.3);
+      border-radius: 16px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .solution-icon {
+      width: 40px; height: 40px; flex-shrink: 0;
+      background: rgba(99,102,241,0.25);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .solution-banner p {
+      font-size: 15px;
+      color: #c7d2fe;
+      font-weight: 600;
+      line-height: 1.6;
+    }
+
+    /* Features */
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .feature-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .feature-icon {
+      width: 48px; height: 48px;
+      background: rgba(79,70,229,0.15);
+      border: 1px solid rgba(99,102,241,0.25);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+      color: #818cf8;
+    }
+    .feature-icon svg { width: 24px; height: 24px; }
+
+    .feature-card h3 {
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.7;
+    }
+
+    /* Steps */
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .step {
+      display: flex;
+      gap: 20px;
+      position: relative;
+    }
+
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      right: 19px;
+      top: 44px;
+      width: 2px;
+      height: calc(100% - 24px);
+      background: rgba(99,102,241,0.2);
+    }
+
+    .step-num {
+      width: 40px; height: 40px; flex-shrink: 0;
+      background: rgba(79,70,229,0.2);
+      border: 2px solid rgba(99,102,241,0.4);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      font-weight: 900;
+      color: #818cf8;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-content {
+      padding: 8px 0 28px;
+    }
+
+    .step-content h3 {
+      font-size: 17px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .step-content p {
+      font-size: 14px;
+      color: #64748b;
+      line-height: 1.7;
+    }
+
+    /* Comparison */
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .comp-col {
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .comp-col.before {
+      background: rgba(239,68,68,0.06);
+      border: 1px solid rgba(239,68,68,0.15);
+    }
+
+    .comp-col.after {
+      background: rgba(79,70,229,0.08);
+      border: 1px solid rgba(99,102,241,0.25);
+    }
+
+    .comp-title {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .comp-col.before .comp-title { color: #f87171; }
+    .comp-col.after .comp-title { color: #818cf8; }
+
+    .comp-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+
+    .comp-item .dot {
+      width: 6px; height: 6px; flex-shrink: 0;
+      border-radius: 50%;
+      margin-top: 6px;
+    }
+
+    .comp-col.before .dot { background: #f87171; }
+    .comp-col.after .dot { background: #818cf8; }
+
+    /* CTA / Contact */
+    .cta-box {
+      background: linear-gradient(135deg, rgba(79,70,229,0.18), rgba(124,58,237,0.18));
+      border: 1px solid rgba(99,102,241,0.3);
+      border-radius: 20px;
+      padding: 36px 40px;
+      text-align: center;
+      margin-top: 32px;
+    }
+
+    .cta-box h2 {
+      font-size: 26px;
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .cta-box p {
+      font-size: 15px;
+      color: #94a3b8;
+      margin-bottom: 24px;
+      line-height: 1.7;
+    }
+
+    .cta-url {
+      display: inline-block;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 800;
+      padding: 14px 36px;
+      border-radius: 14px;
+      text-decoration: none;
+      letter-spacing: 0.3px;
+      box-shadow: 0 8px 30px rgba(79,70,229,0.4);
+    }
+
+    .contact-row {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 28px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #64748b;
+    }
+
+    .contact-item svg { width: 16px; height: 16px; color: #818cf8; }
+
+    /* Print styles */
+    @media print {
+      body { background: #0f172a; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .page { margin: 0; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== PAGE 1: COVER ===== -->
+<div class="page">
+  <div class="blob1"></div>
+  <div class="blob2"></div>
+  <div class="cover">
+    <div class="badge">🚀 ניהול משמרות חכם לעסקים</div>
+
+    <div class="logo-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+    </div>
+
+    <h1>ShiftWise</h1>
+    <p class="tagline">תפסיק לבזבז שעות על סידור עובדים</p>
+
+    <p class="desc">
+      מערכת ניהול משמרות חכמה שבונה את הסידור האופטימלי בשניות,
+      שולחת התראות WhatsApp לכל העובדים ומנהלת החלפות אוטומטית —
+      הכל ממסך אחד, בלי Excel ובלי בלגן.
+    </p>
+
+    <div class="cover-stats">
+      <div class="cover-stat">
+        <div class="num">&lt; 30 שנ׳</div>
+        <div class="lbl">לבניית סידור שבועי</div>
+      </div>
+      <div class="cover-divider"></div>
+      <div class="cover-stat">
+        <div class="num">100%</div>
+        <div class="lbl">עובדים מקבלים התראה</div>
+      </div>
+      <div class="cover-divider"></div>
+      <div class="cover-stat">
+        <div class="num">0</div>
+        <div class="lbl">תיאורים ידניים</div>
+      </div>
+      <div class="cover-divider"></div>
+      <div class="cover-stat">
+        <div class="num">24/7</div>
+        <div class="lbl">גישה מכל מקום</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE 2: PAIN POINTS ===== -->
+<div class="page">
+  <div class="blob1"></div>
+  <div class="blob2"></div>
+  <div class="inner">
+    <div class="page-header">
+      <div class="brand">
+        <div class="mini-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+        <span class="brand-name">ShiftWise</span>
+      </div>
+      <span class="page-num">01 / 03</span>
+    </div>
+
+    <p class="section-title">מכיר את זה?</p>
+    <p class="section-sub">הכאבים שכל מנהל עסק חווה מדי שבוע</p>
+
+    <div class="pains-grid">
+      <div class="pain-card">
+        <div class="pain-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </div>
+        <p>מבלה <strong style="color:#e2e8f0">שעות על Excel</strong> בכל שבוע כדי לבנות סידור שישתנה ממילא</p>
+      </div>
+
+      <div class="pain-card">
+        <div class="pain-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </div>
+        <p>עובדים מתקשרים בלילה — <strong style="color:#e2e8f0">"לא ידעתי שיש לי משמרת"</strong></p>
+      </div>
+
+      <div class="pain-card">
+        <div class="pain-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </div>
+        <p>תיאור <strong style="color:#e2e8f0">החלפות משמרות</strong> בקבוצות WhatsApp — כאוטי ומתיש</p>
+      </div>
+
+      <div class="pain-card">
+        <div class="pain-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </div>
+        <p>עובדים <strong style="color:#e2e8f0">שוכחים למלא זמינות</strong> — ואתה צריך לרדוף אחריהם</p>
+      </div>
+
+      <div class="pain-card">
+        <div class="pain-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </div>
+        <p>קשה לדעת <strong style="color:#e2e8f0">מי פנוי לכסות</strong> משמרת שנפתחה ברגע האחרון</p>
+      </div>
+
+      <div class="pain-card">
+        <div class="pain-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </div>
+        <p>אין <strong style="color:#e2e8f0">נראות לעובדים</strong> — כל שבוע מחדש שאלות "מתי יש לי?"</p>
+      </div>
+    </div>
+
+    <div class="solution-banner">
+      <div class="solution-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <p>ShiftWise פותר את כל אלה — בכלי אחד, פשוט, שעובד ישירות מהטלפון.</p>
+    </div>
+
+    <!-- Comparison -->
+    <div style="margin-top: 32px;">
+      <p class="section-title" style="font-size: 22px; margin-bottom: 16px;">לפני ואחרי</p>
+      <div class="comparison">
+        <div class="comp-col before">
+          <div class="comp-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            בלי ShiftWise
+          </div>
+          <div class="comp-item"><span class="dot"></span>2-3 שעות על Excel כל שבוע</div>
+          <div class="comp-item"><span class="dot"></span>עובדים לא יודעים מתי הם עובדים</div>
+          <div class="comp-item"><span class="dot"></span>החלפות דרך קבוצות WhatsApp</div>
+          <div class="comp-item"><span class="dot"></span>טעויות בסידור — כפילויות וחוסרים</div>
+          <div class="comp-item"><span class="dot"></span>לא ניתן לראות סידורים ישנים</div>
+        </div>
+        <div class="comp-col after">
+          <div class="comp-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            עם ShiftWise
+          </div>
+          <div class="comp-item"><span class="dot"></span>סידור אוטומטי תוך פחות מדקה</div>
+          <div class="comp-item"><span class="dot"></span>כל עובד מקבל WhatsApp עם המשמרות שלו</div>
+          <div class="comp-item"><span class="dot"></span>החלפות אוטומטיות — המערכת מוצאת מחליף</div>
+          <div class="comp-item"><span class="dot"></span>AI מחשב סידור אופטימלי בלי טעויות</div>
+          <div class="comp-item"><span class="dot"></span>היסטוריה מלאה וקישור קבוע לסידור</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE 3: FEATURES + HOW IT WORKS ===== -->
+<div class="page">
+  <div class="blob1"></div>
+  <div class="blob2"></div>
+  <div class="inner">
+    <div class="page-header">
+      <div class="brand">
+        <div class="mini-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+        <span class="brand-name">ShiftWise</span>
+      </div>
+      <span class="page-num">02 / 03</span>
+    </div>
+
+    <p class="section-title">מה המערכת עושה?</p>
+    <p class="section-sub">4 יכולות מרכזיות שחוסכות לך שעות בכל שבוע</p>
+
+    <div class="features-grid" style="margin-bottom: 40px;">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+          </svg>
+        </div>
+        <h3>סידור אוטומטי ב-AI</h3>
+        <p>המערכת בונה את הסידור האופטימלי תוך שניות — מחשבת זמינויות, תפקידים ומגבלות של כל עובד.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <h3>התראות WhatsApp אוטומטיות</h3>
+        <p>ברגע שמפרסמים — כל עובד מקבל WhatsApp עם המשמרות שלו. אין יותר "לא ידעתי".</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+            <polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+          </svg>
+        </div>
+        <h3>החלפות חכמות</h3>
+        <p>עובד לא יכול? המערכת שולחת הודעה לכל הפנויים אוטומטית. מחליף נמצא — המנהל מאשר.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <h3>ניהול עובדים מלא</h3>
+        <p>הוספת עובדים, הגדרת תפקידים, מעקב זמינויות — כל עובד ממלא מהטלפון בקלות.</p>
+      </div>
+    </div>
+
+    <p class="section-title" style="font-size: 22px; margin-bottom: 6px;">איך מתחילים?</p>
+    <p class="section-sub" style="margin-bottom: 24px;">4 צעדים פשוטים מהרשמה לסידור שפורסם</p>
+
+    <div class="steps-list">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>פותחים חשבון חינם</h3>
+          <p>הרשמה ב-2 דקות — שם העסק, שם, טלפון, סיסמה. זהו.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>מוסיפים עובדים</h3>
+          <p>מכניסים שם, טלפון ותפקיד לכל עובד. המערכת שולחת להם WhatsApp לאישור.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>עובדים ממלאים זמינות</h3>
+          <p>כל עובד מקבל הודעת WhatsApp ועונה מה הימים הנוחים לו — פשוט ומהיר.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>לוחצים "בנה סידור" → "פרסם"</h3>
+          <p>AI בונה סידור בשניות. לוחצים פרסם — כל העובדים מקבלים WhatsApp עם המשמרות שלהם.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE 4: CTA ===== -->
+<div class="page">
+  <div class="blob1"></div>
+  <div class="blob2"></div>
+  <div class="inner" style="display: flex; flex-direction: column; justify-content: center; min-height: 297mm;">
+    <div class="page-header">
+      <div class="brand">
+        <div class="mini-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+        <span class="brand-name">ShiftWise</span>
+      </div>
+      <span class="page-num">03 / 03</span>
+    </div>
+
+    <!-- Big quote -->
+    <div style="text-align: center; margin-bottom: 48px; padding: 0 20px;">
+      <div style="font-size: 60px; margin-bottom: 16px;">⏱️</div>
+      <h2 style="font-size: 34px; font-weight: 900; color: #fff; line-height: 1.3; margin-bottom: 16px;">
+        כמה שעות אתה מבזבז<br/>
+        <span style="background: linear-gradient(135deg, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">על סידור בכל שבוע?</span>
+      </h2>
+      <p style="font-size: 17px; color: #64748b; max-width: 440px; margin: 0 auto; line-height: 1.8;">
+        2 שעות × 52 שבועות = <strong style="color: #f87171;">104 שעות בשנה</strong> שאפשר לחסוך.
+        <br/>
+        ShiftWise עושה את זה בפחות מדקה.
+      </p>
+    </div>
+
+    <!-- Pricing teaser -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 40px;">
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 24px; text-align: center;">
+        <div style="font-size: 13px; color: #64748b; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">מסלול חינמי</div>
+        <div style="font-size: 36px; font-weight: 900; color: #fff; margin-bottom: 8px;">₪0</div>
+        <div style="font-size: 13px; color: #64748b; margin-bottom: 16px;">לנצח</div>
+        <div style="font-size: 13px; color: #94a3b8; line-height: 1.7;">עד 10 עובדים<br/>כל הפיצ'רים הבסיסיים<br/>WhatsApp התראות</div>
+      </div>
+      <div style="background: linear-gradient(135deg, rgba(79,70,229,0.2), rgba(124,58,237,0.2)); border: 1px solid rgba(99,102,241,0.3); border-radius: 16px; padding: 24px; text-align: center; position: relative;">
+        <div style="position: absolute; top: -10px; right: 50%; transform: translateX(50%); background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 100px;">פופולרי</div>
+        <div style="font-size: 13px; color: #818cf8; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">מסלול עסקי</div>
+        <div style="font-size: 36px; font-weight: 900; color: #fff; margin-bottom: 8px;">₪99</div>
+        <div style="font-size: 13px; color: #64748b; margin-bottom: 16px;">לחודש</div>
+        <div style="font-size: 13px; color: #94a3b8; line-height: 1.7;">עובדים ללא הגבלה<br/>ניתוח ודוחות<br/>תמיכה מלאה</div>
+      </div>
+    </div>
+
+    <div class="cta-box">
+      <h2>התחל עכשיו — בחינם</h2>
+      <p>
+        הרשמה לוקחת 2 דקות.<br/>
+        אין צורך בכרטיס אשראי, אין התחייבות.
+      </p>
+      <a class="cta-url" href="https://humble-blessing-production-bb7a.up.railway.app">
+        humble-blessing-production-bb7a.up.railway.app
+      </a>
+
+      <div class="contact-row">
+        <div class="contact-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.6 19.79 19.79 0 0 1 1.62 5a2 2 0 0 1 1.99-2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.91a16 16 0 0 0 6.07 6.07l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+          <span>הוסף מספר טלפון שלך</span>
+        </div>
+        <div class="contact-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+          </svg>
+          <span>הוסף אימייל שלך</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
