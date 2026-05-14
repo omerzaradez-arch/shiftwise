@@ -339,6 +339,182 @@ function TemplateEditForm({ editing, onChange, onToggleDay, onSave, onCancel, is
   )
 }
 
+// ── Location Section ──────────────────────────────────────────────────────────
+
+function LocationSection({ currentSettings }: { currentSettings: any }) {
+  const qc = useQueryClient()
+  const [lat, setLat] = useState<string>('')
+  const [lng, setLng] = useState<string>('')
+  const [radius, setRadius] = useState<number>(200)
+  const [detecting, setDetecting] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
+
+  useEffect(() => {
+    if (currentSettings) {
+      setLat(currentSettings.location_lat?.toString() ?? '')
+      setLng(currentSettings.location_lng?.toString() ?? '')
+      setRadius(currentSettings.location_radius ?? 200)
+    }
+  }, [currentSettings])
+
+  const detectLocation = () => {
+    if (!navigator.geolocation) { toast.error('הדפדפן לא תומך ב-GPS'); return }
+    setDetecting(true)
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setLat(pos.coords.latitude.toFixed(6))
+        setLng(pos.coords.longitude.toFixed(6))
+        setDetecting(false)
+        toast.success('המיקום זוהה בהצלחה ✅')
+      },
+      () => { toast.error('לא ניתן לזהות מיקום — אפשר הרשאה בדפדפן'); setDetecting(false) },
+      { timeout: 10000 }
+    )
+  }
+
+  const handleSave = async () => {
+    if (!lat || !lng) { toast.error('חסרים נתוני מיקום'); return }
+    setSaving(true)
+    try {
+      await apiClient.patch('/api/v1/settings/', {
+        location_lat: parseFloat(lat),
+        location_lng: parseFloat(lng),
+        location_radius: radius,
+      })
+      setSaved(true)
+      setTimeout(() => setSaved(false), 3000)
+      qc.invalidateQueries({ queryKey: ['settings'] })
+      toast.success('מיקום העסק נשמר ✅')
+    } catch {
+      toast.error('שגיאה בשמירה')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const hasLocation = lat && lng
+
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="px-6 py-4 border-b border-slate-100">
+        <h2 className="text-base font-bold text-slate-900">📍 מיקום העסק</h2>
+        <p className="text-sm text-slate-500 mt-0.5">
+          מגדיר מיקום GPS של העסק — המערכת תאמת שעובדים נמצאים בטווח בעת כניסה לעבודה
+        </p>
+      </div>
+
+      <div className="px-6 py-5 space-y-5">
+        {/* Detect button */}
+        <div>
+          <button
+            type="button"
+            onClick={detectLocation}
+            disabled={detecting}
+            className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition disabled:opacity-60"
+          >
+            {detecting ? (
+              <>
+                <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                </svg>
+                מזהה מיקום...
+              </>
+            ) : (
+              <>
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+                </svg>
+                זהה מיקום נוכחי
+              </>
+            )}
+          </button>
+          <p className="text-xs text-slate-400 mt-1.5">לחץ מהמחשב / טלפון כשאתה נמצא בעסק</p>
+        </div>
+
+        {/* Coordinates */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-slate-600">קו רוחב (Latitude)</label>
+            <input
+              type="number"
+              step="0.000001"
+              value={lat}
+              onChange={e => setLat(e.target.value)}
+              placeholder="31.771959"
+              className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition font-mono"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-slate-600">קו אורך (Longitude)</label>
+            <input
+              type="number"
+              step="0.000001"
+              value={lng}
+              onChange={e => setLng(e.target.value)}
+              placeholder="35.217018"
+              className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition font-mono"
+            />
+          </div>
+        </div>
+
+        {/* Radius slider */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-semibold text-slate-600">טווח מותר מהעסק</label>
+            <span className="text-sm font-bold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-lg">{radius} מ׳</span>
+          </div>
+          <input
+            type="range"
+            min={50}
+            max={500}
+            step={50}
+            value={radius}
+            onChange={e => setRadius(Number(e.target.value))}
+            className="w-full accent-indigo-600"
+          />
+          <div className="flex justify-between text-xs text-slate-400">
+            <span>50 מ׳ (הכי מדויק)</span>
+            <span>500 מ׳ (הכי גמיש)</span>
+          </div>
+        </div>
+
+        {/* Map preview */}
+        {hasLocation && (
+          <div className="rounded-xl overflow-hidden border border-slate-200">
+            <iframe
+              title="מיקום העסק"
+              width="100%"
+              height="220"
+              loading="lazy"
+              src={`https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(lng)-0.003},${parseFloat(lat)-0.002},${parseFloat(lng)+0.003},${parseFloat(lat)+0.002}&layer=mapnik&marker=${lat},${lng}`}
+              className="block"
+            />
+            <div className="px-3 py-2 bg-slate-50 border-t border-slate-200 text-xs text-slate-500 text-center">
+              📍 מיקום העסק — טווח: {radius} מטר
+            </div>
+          </div>
+        )}
+
+        {/* Save button */}
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={saving || !hasLocation}
+          className={`flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-xl transition disabled:opacity-40 ${
+            saved
+              ? 'bg-emerald-500 text-white'
+              : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+          }`}
+        >
+          {saving ? 'שומר...' : saved ? '✅ נשמר!' : 'שמור מיקום'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
 // ── Main Settings Page ─────────────────────────────────────────────────────────
 
 export default function SettingsPage() {
@@ -471,6 +647,11 @@ export default function SettingsPage() {
             </button>
           </div>
         </form>
+
+        {/* Location Section — outside the main form */}
+        <div className="px-6 pb-6 max-w-2xl">
+          <LocationSection currentSettings={settings} />
+        </div>
 
         {/* Shift Templates — outside the form */}
         <div className="px-6 pb-6 max-w-2xl">

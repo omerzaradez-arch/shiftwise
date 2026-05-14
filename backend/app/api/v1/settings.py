@@ -19,6 +19,9 @@ class OrgSettings(BaseModel):
     notes: str | None = None
     operating_days: list | None = None  # [0..6] days open, 0=Sun 6=Sat
     onboarding_complete: bool | None = None
+    location_lat: float | None = None
+    location_lng: float | None = None
+    location_radius: int | None = None  # meters
 
 
 @router.get("/")
@@ -61,7 +64,8 @@ async def update_settings(
     settings = dict(org.settings or {})
     for field in ("min_senior_per_shift", "min_staff_per_shift",
                   "availability_deadline_day", "publish_day", "notes",
-                  "operating_days", "onboarding_complete"):
+                  "operating_days", "onboarding_complete",
+                  "location_lat", "location_lng", "location_radius"):
         val = getattr(req, field)
         if val is not None:
             settings[field] = val
