@@ -28,9 +28,12 @@ DAY_NAMES = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "
 MORNING_TYPES = ["morning", "afternoon"]
 EVENING_TYPES = ["evening", "night"]
 
-MENU = """👋 שלום! אני *הגשת משמרות* של ShiftWise.
+MENU = """👋 שלום! אני *ShiftWise* – ניהול משמרות חכם.
 
-בחר אפשרות:
+🟢 *כניסה* – כניסה לעבודה
+🔴 *יציאה* – יציאה מהעבודה
+📊 *שעות* – שעות ושכר החודש
+─────────────────
 📅 *משמרת* – המשמרת הבאה שלך
 🗓 *סידור* – סידור השבוע
 ✅ *זמינות* – דווח זמינות לשבוע הבא
@@ -470,6 +473,160 @@ async def save_availability(
     return f"✅ *הזמינות נשמרה לשבוע {week_start.strftime('%d/%m')}!*\nתודה {employee.name} 🙏"
 
 
+# ── Attendance commands ────────────────────────────────────────────────────────
+
+from math import radians, sin, cos, sqrt, atan2
+
+def _haversine(lat1, lng1, lat2, lng2) -> float:
+    R = 6_371_000
+    p1, p2 = radians(lat1), radians(lat2)
+    dp = radians(lat2 - lat1)
+    dl = radians(lng2 - lng1)
+    a = sin(dp/2)**2 + cos(p1)*cos(p2)*sin(dl/2)**2
+    return R * 2 * atan2(sqrt(a), sqrt(1-a))
+
+
+async def cmd_checkin(employee: Employee, db: AsyncSession, lat: float | None = None, lng: float | None = None) -> str:
+    from app.models.attendance import Attendance
+    from sqlalchemy import and_
+    today = (datetime.now(timezone.utc) + timedelta(hours=3)).date()
+
+    existing = await db.execute(
+        select(Attendance).where(
+            and_(
+                Attendance.employee_id == employee.id,
+                Attendance.date == today,
+                Attendance.check_out == None,
+            )
+        )
+    )
+    if existing.scalar_one_or_none():
+        return "⚠️ כבר רשום/ה כניסה היום.\nשלח *יציאה* כשאתה יוצא."
+
+    # Check location
+    org = await db.get(Organization, employee.org_id)
+    is_valid = True
+    location_msg = ""
+    if lat is not None and lng is not None and org and org.settings:
+        s = org.settings
+        biz_lat = s.get("location_lat")
+        biz_lng = s.get("location_lng")
+        radius = s.get("location_radius", 200)
+        if biz_lat and biz_lng:
+            dist = _haversine(lat, lng, float(biz_lat), float(biz_lng))
+            is_valid = dist <= float(radius)
+            if is_valid:
+                location_msg = f"\n📍 מיקום אומת ✅ ({int(dist)} מ׳ מהעסק)"
+            else:
+                location_msg = f"\n⚠️ מיקום לא אומת — נמצאת {int(dist)} מ׳ מהעסק"
+
+    import uuid
+    now_utc = datetime.now(timezone.utc)
+    now_il = now_utc + timedelta(hours=3)
+    att = Attendance(
+        id=str(uuid.uuid4()),
+        employee_id=employee.id,
+        org_id=employee.org_id,
+        date=today,
+        check_in=now_utc,
+        check_in_lat=lat,
+        check_in_lng=lng,
+        is_valid_location=is_valid,
+    )
+    db.add(att)
+    await db.commit()
+
+    return (
+        f"🟢 *כניסה נרשמה!*\n"
+        f"⏰ {now_il.strftime('%H:%M')}"
+        f"{location_msg}\n\n"
+        f"שלח *יציאה* כשאתה יוצא מהעבודה."
+    )
+
+
+async def cmd_checkout(employee: Employee, db: AsyncSession) -> str:
+    from app.models.attendance import Attendance
+    from sqlalchemy import and_
+    today = (datetime.now(timezone.utc) + timedelta(hours=3)).date()
+
+    result = await db.execute(
+        select(Attendance).where(
+            and_(
+                Attendance.employee_id == employee.id,
+                Attendance.date == today,
+                Attendance.check_out == None,
+            )
+        )
+    )
+    att = result.scalar_one_or_none()
+    if not att:
+        return "⚠️ לא נמצאת רשומת כניסה פתוחה להיום.\nשלח *כניסה* כדי להתחיל."
+
+    now_utc = datetime.now(timezone.utc)
+    now_il = now_utc + timedelta(hours=3)
+    total_minutes = int((now_utc - att.check_in.replace(tzinfo=timezone.utc) if att.check_in.tzinfo is None else now_utc - att.check_in).total_seconds() / 60)
+    att.check_out = now_utc
+    att.total_minutes = total_minutes
+    await db.commit()
+
+    hours = total_minutes // 60
+    mins = total_minutes % 60
+    pay_msg = ""
+    if employee.hourly_rate:
+        pay = round(employee.hourly_rate * total_minutes / 60, 2)
+        pay_msg = f"\n💰 שכר היום: ₪{pay:,.2f}"
+
+    return (
+        f"🔴 *יציאה נרשמה!*\n"
+        f"⏰ {now_il.strftime('%H:%M')}\n"
+        f"⏱ עבדת היום: *{hours}:{mins:02d} שעות*"
+        f"{pay_msg}\n\n"
+        f"להתראות! 👋"
+    )
+
+
+async def cmd_hours(employee: Employee, db: AsyncSession) -> str:
+    from app.models.attendance import Attendance
+    from sqlalchemy import and_
+    now_il = datetime.now(timezone.utc) + timedelta(hours=3)
+    month = now_il.month
+    year = now_il.year
+    from_date = date(year, month, 1)
+    to_date = date(year + 1, 1, 1) if month == 12 else date(year, month + 1, 1)
+
+    result = await db.execute(
+        select(Attendance).where(
+            and_(
+                Attendance.employee_id == employee.id,
+                Attendance.date >= from_date,
+                Attendance.date < to_date,
+                Attendance.check_out != None,
+            )
+        )
+    )
+    records = result.scalars().all()
+    if not records:
+        return "📊 אין נתוני נוכחות לחודש הנוכחי."
+
+    total_minutes = sum(r.total_minutes or 0 for r in records)
+    hours = total_minutes // 60
+    mins = total_minutes % 60
+    days = len(records)
+
+    month_names = ["ינואר","פברואר","מרץ","אפריל","מאי","יוני","יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר"]
+    pay_line = ""
+    if employee.hourly_rate:
+        pay = round(employee.hourly_rate * total_minutes / 60, 2)
+        pay_line = f"\n💰 שכר לתשלום: *₪{pay:,.2f}*\n   (לפי ₪{employee.hourly_rate}/שעה)"
+
+    return (
+        f"📊 *נוכחות {month_names[month-1]} {year}*\n\n"
+        f"📅 ימים עבדת: *{days}*\n"
+        f"⏱ סה״כ שעות: *{hours}:{mins:02d}*"
+        f"{pay_line}"
+    )
+
+
 # ── Main webhook ───────────────────────────────────────────────────────────────
 
 @router.post("/webhook")
@@ -478,6 +635,12 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
     raw_from = str(form.get("From", ""))
     body = str(form.get("Body", "")).strip()
     phone = raw_from.replace("whatsapp:", "")
+
+    # Handle location messages from WhatsApp
+    lat_str = form.get("Latitude")
+    lng_str = form.get("Longitude")
+    incoming_lat = float(lat_str) if lat_str else None
+    incoming_lng = float(lng_str) if lng_str else None
 
     employee = await find_employee(phone, db)
     if not employee:
@@ -495,8 +658,31 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
 
     normalized = body.lower().strip()
 
+    # ── State: waiting for location after "כניסה" ──
+    if session.state == "checkin_waiting_location":
+        if incoming_lat is not None and incoming_lng is not None:
+            session.state = "idle"
+            session.context = {}
+            session.updated_at = datetime.now(timezone.utc)
+            await db.commit()
+            msg = await cmd_checkin(employee, db, lat=incoming_lat, lng=incoming_lng)
+            return twiml(msg)
+        else:
+            # No location shared — register anyway without GPS
+            session.state = "idle"
+            session.context = {}
+            session.updated_at = datetime.now(timezone.utc)
+            await db.commit()
+            msg = await cmd_checkin(employee, db)
+            return twiml(msg)
+
+    # ── If user shared location while idle — treat as check-in ──
+    if incoming_lat is not None and incoming_lng is not None and session.state == "idle":
+        msg = await cmd_checkin(employee, db, lat=incoming_lat, lng=incoming_lng)
+        return twiml(msg)
+
     # ── Global cancel ──
-    if normalized in ("לא", "ביטול", "cancel", "בטל"):
+    if normalized in ("ביטול", "cancel", "בטל"):
         session.state = "idle"
         session.context = {}
         session.updated_at = datetime.now(timezone.utc)
@@ -664,6 +850,33 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
             session.context = {"shift_ids": shift_ids}
             session.updated_at = datetime.now(timezone.utc)
             await db.commit()
+        return twiml(msg)
+
+    # ── Check-in ──
+    if any(kw in normalized for kw in ["כניסה", "נכנסתי", "התחלתי", "הגעתי"]):
+        org = await db.get(Organization, employee.org_id)
+        has_location = org and org.settings and org.settings.get("location_lat")
+        if has_location:
+            session.state = "checkin_waiting_location"
+            session.updated_at = datetime.now(timezone.utc)
+            await db.commit()
+            return twiml(
+                "📍 *לאימות כניסה — שתף מיקום*\n\n"
+                "לחץ על 📎 ← מיקום ← שלח מיקום נוכחי\n\n"
+                "_או שלח כל הודעה אחרת לכניסה ללא אימות מיקום_"
+            )
+        else:
+            msg = await cmd_checkin(employee, db)
+            return twiml(msg)
+
+    # ── Check-out ──
+    if any(kw in normalized for kw in ["יציאה", "יצאתי", "סיימתי", "עזבתי"]):
+        msg = await cmd_checkout(employee, db)
+        return twiml(msg)
+
+    # ── Hours/salary ──
+    if any(kw in normalized for kw in ["שעות", "שכר", "כמה עבדתי", "נוכחות"]):
+        msg = await cmd_hours(employee, db)
         return twiml(msg)
 
     # Volunteer accepting a replacement offer
