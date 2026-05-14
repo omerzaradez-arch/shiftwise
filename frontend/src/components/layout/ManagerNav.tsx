@@ -49,7 +49,7 @@ const NAV_ITEMS = [
     ),
   },
   {
-    href: '/attendance',
+    href: '/payroll',
     label: 'נוכחות ושכר',
     icon: (
       <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
