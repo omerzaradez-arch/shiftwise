@@ -1,0 +1,39 @@
+{
+  "name": "ShiftWise — ניהול משמרות",
+  "short_name": "ShiftWise",
+  "description": "ניהול משמרות חכם לעסקים",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#4f46e5",
+  "orientation": "portrait",
+  "lang": "he",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "כניסה לעבודה",
+      "url": "/attendance",
+      "description": "דווח כניסה לעבודה"
+    },
+    {
+      "name": "הסידור שלי",
+      "url": "/dashboard",
+      "description": "צפה במשמרות שלך"
+    }
+  ],
+  "categories": ["business", "productivity"]
+}
