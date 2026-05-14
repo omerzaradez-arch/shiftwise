@@ -85,7 +85,7 @@ export default function AvailabilityManagerPage() {
     <div className="flex h-screen bg-slate-50 overflow-hidden" dir="rtl">
       <ManagerNav />
 
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto pt-14 md:pt-0 pb-20 md:pb-0">
         {/* Header */}
         <div className="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-20">
           <div className="flex items-center justify-between">

@@ -100,7 +100,7 @@ export default function SchedulePage() {
     <div className="flex h-screen bg-slate-50 overflow-hidden" dir="rtl">
       <ManagerNav />
 
-      <main className="flex-1 flex flex-col overflow-hidden">
+      <main className="flex-1 flex flex-col overflow-hidden pt-14 md:pt-0 pb-20 md:pb-0">
         {/* Top bar */}
         <div className="bg-white border-b border-slate-200 px-5 py-3 flex items-center gap-4 shadow-sm">
           {/* Week nav */}
