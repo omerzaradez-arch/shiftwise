@@ -279,6 +279,36 @@ async def request_access(data: AccessRequestData, db: AsyncSession = Depends(get
     }
 
 
+@router.get("/debug-admin-whatsapp")
+async def debug_admin_whatsapp():
+    """Debug endpoint — sends a test WhatsApp to ADMIN_PHONE and returns status."""
+    import os
+    from app.api.v1.whatsapp import send_whatsapp_to
+
+    result = {
+        "ADMIN_PHONE_set": bool(os.getenv("ADMIN_PHONE")),
+        "ADMIN_PHONE_value": os.getenv("ADMIN_PHONE", "(not set)"),
+        "TWILIO_ACCOUNT_SID_set": bool(os.getenv("TWILIO_ACCOUNT_SID")),
+        "TWILIO_AUTH_TOKEN_set": bool(os.getenv("TWILIO_AUTH_TOKEN")),
+        "TWILIO_WHATSAPP_NUMBER": os.getenv("TWILIO_WHATSAPP_NUMBER", "+14155238886 (default)"),
+    }
+
+    admin = os.getenv("ADMIN_PHONE", "")
+    if not admin:
+        result["error"] = "ADMIN_PHONE לא מוגדר ב-Railway Variables"
+        return result
+
+    try:
+        ok = await send_whatsapp_to(admin, "🔔 *בדיקה מ-ShiftWise*\n\nאם קיבלת את ההודעה הזו — ה-WhatsApp עובד מצוין! 🎉")
+        result["whatsapp_sent"] = ok
+        if not ok:
+            result["error"] = "Twilio החזיר שגיאה. בדוק את ה-Railway logs."
+    except Exception as e:
+        result["error"] = f"Exception: {e}"
+
+    return result
+
+
 class VerifyCodeRequest(BaseModel):
     phone: str
     code: str
