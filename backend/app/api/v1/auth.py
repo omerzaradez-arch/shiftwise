@@ -150,13 +150,36 @@ class RegisterRequest(BaseModel):
     phone: str
     password: str
     email: str = ""
+    verification_code: str = ""
 
 
 @router.post("/register", response_model=TokenResponse)
 async def register(data: RegisterRequest, db: AsyncSession = Depends(get_db)):
-    from app.models import Organization
+    from app.models import Organization, PendingRegistration
     from app.security import hash_password
-    import uuid
+    from datetime import datetime, timezone
+    import uuid, os
+
+    # Verify the registration code
+    if not data.verification_code:
+        raise HTTPException(status_code=400, detail="חסר קוד אימות. בקש גישה תחילה.")
+
+    # Find pending registration by phone + code
+    clean_phone = data.phone.replace("-", "").replace(" ", "")
+    pending_q = await db.execute(
+        select(PendingRegistration).where(
+            PendingRegistration.verification_code == data.verification_code.strip(),
+            PendingRegistration.status == "pending",
+        )
+    )
+    pending = pending_q.scalar_one_or_none()
+    if not pending:
+        raise HTTPException(status_code=400, detail="קוד אימות שגוי או לא תקף")
+
+    # Phone must match (so the same code can't be used by random people)
+    pending_phone = pending.phone.replace("-", "").replace(" ", "")
+    if pending_phone != clean_phone:
+        raise HTTPException(status_code=400, detail="קוד האימות לא תואם למספר טלפון זה")
 
     # Check phone not already taken
     existing = await db.execute(select(Employee).where(Employee.phone == data.phone))
@@ -180,6 +203,11 @@ async def register(data: RegisterRequest, db: AsyncSession = Depends(get_db)):
         is_active=True,
     )
     db.add(emp)
+
+    # Mark code as used
+    pending.status = "used"
+    pending.used_at = datetime.now(timezone.utc)
+
     await db.commit()
 
     token = create_access_token({"sub": emp.id, "org_id": org.id})
@@ -195,3 +223,87 @@ async def register(data: RegisterRequest, db: AsyncSession = Depends(get_db)):
             "org_name": org.name,
         },
     )
+
+
+class AccessRequestData(BaseModel):
+    org_name: str
+    contact_name: str
+    phone: str
+    email: str = ""
+    notes: str = ""
+
+
+@router.post("/request-access")
+async def request_access(data: AccessRequestData, db: AsyncSession = Depends(get_db)):
+    """Submit a registration request — admin gets a notification with the code."""
+    from app.models import PendingRegistration
+    from app.api.v1.whatsapp import send_whatsapp_to
+    import random, os
+
+    # Generate 6-digit code
+    code = f"{random.randint(0, 999999):06d}"
+
+    pending = PendingRegistration(
+        org_name=data.org_name.strip(),
+        contact_name=data.contact_name.strip(),
+        phone=data.phone.strip(),
+        email=(data.email or "").strip() or None,
+        notes=(data.notes or "").strip() or None,
+        verification_code=code,
+        status="pending",
+    )
+    db.add(pending)
+    await db.commit()
+
+    # Notify admin via WhatsApp
+    admin_phone = os.getenv("ADMIN_PHONE", "")
+    if admin_phone:
+        msg = (
+            f"🔔 *בקשת גישה חדשה ל-ShiftWise*\n\n"
+            f"🏢 עסק: *{data.org_name}*\n"
+            f"👤 איש קשר: {data.contact_name}\n"
+            f"📞 טלפון: {data.phone}\n"
+            f"📧 אימייל: {data.email or '—'}\n"
+            + (f"📝 הערות: {data.notes}\n" if data.notes else "")
+            + f"\n🔑 *קוד אימות:* `{code}`\n\n"
+            f"_מסור את הקוד לעסק כדי שיוכל להשלים את ההרשמה._"
+        )
+        try:
+            await send_whatsapp_to(admin_phone, msg)
+        except Exception as e:
+            print(f"[request-access] failed to notify admin: {e}", flush=True)
+
+    return {
+        "ok": True,
+        "message": "הבקשה התקבלה. ניצור איתך קשר עם קוד אימות בהקדם.",
+    }
+
+
+class VerifyCodeRequest(BaseModel):
+    phone: str
+    code: str
+
+
+@router.post("/verify-code")
+async def verify_code(data: VerifyCodeRequest, db: AsyncSession = Depends(get_db)):
+    """Check if a code is valid for a given phone (used to enable the password step)."""
+    from app.models import PendingRegistration
+    clean_phone = data.phone.replace("-", "").replace(" ", "")
+    pending_q = await db.execute(
+        select(PendingRegistration).where(
+            PendingRegistration.verification_code == data.code.strip(),
+            PendingRegistration.status == "pending",
+        )
+    )
+    pending = pending_q.scalar_one_or_none()
+    if not pending:
+        raise HTTPException(status_code=400, detail="קוד אימות שגוי או לא תקף")
+    pending_phone = pending.phone.replace("-", "").replace(" ", "")
+    if pending_phone != clean_phone:
+        raise HTTPException(status_code=400, detail="הקוד לא תואם למספר הטלפון")
+    return {
+        "ok": True,
+        "org_name": pending.org_name,
+        "contact_name": pending.contact_name,
+        "email": pending.email or "",
+    }
