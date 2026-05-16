@@ -20,6 +20,25 @@ async def get_vapid_public_key():
     return {"key": os.getenv("VAPID_PUBLIC_KEY", "")}
 
 
+@router.get("/debug")
+async def debug_vapid():
+    """Debug — check if VAPID env vars are set correctly."""
+    pub = os.getenv("VAPID_PUBLIC_KEY", "")
+    priv = os.getenv("VAPID_PRIVATE_KEY", "")
+    email = os.getenv("VAPID_CONTACT_EMAIL", "")
+    return {
+        "VAPID_PUBLIC_KEY_set": bool(pub),
+        "VAPID_PUBLIC_KEY_length": len(pub),
+        "VAPID_PUBLIC_KEY_preview": pub[:20] + "..." if pub else "(empty)",
+        "VAPID_PRIVATE_KEY_set": bool(priv),
+        "VAPID_PRIVATE_KEY_length": len(priv),
+        "VAPID_PRIVATE_KEY_starts_with_BEGIN": priv.strip().startswith("-----BEGIN") if priv else False,
+        "VAPID_PRIVATE_KEY_ends_with_END": priv.strip().endswith("-----") if priv else False,
+        "VAPID_PRIVATE_KEY_has_newlines": "\n" in priv,
+        "VAPID_CONTACT_EMAIL": email or "(empty)",
+    }
+
+
 class SubscribeRequest(BaseModel):
     endpoint: str
     p256dh: str
