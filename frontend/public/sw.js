@@ -45,14 +45,22 @@ self.addEventListener('fetch', (e) => {
 
 // Push notifications
 self.addEventListener('push', (e) => {
-  const data = e.data?.json() ?? {}
+  let data = {}
+  try {
+    data = e.data?.json() ?? {}
+  } catch {
+    data = { title: 'ShiftWise', body: e.data?.text() || '' }
+  }
   e.waitUntil(
     self.registration.showNotification(data.title || 'ShiftWise', {
       body: data.body || '',
-      icon: '/icon-192.png',
-      badge: '/icon-192.png',
+      icon: '/icon.svg',
+      badge: '/icon.svg',
       dir: 'rtl',
       lang: 'he',
+      vibrate: [200, 100, 200],
+      tag: data.tag || 'shiftwise',
+      renotify: true,
       data: { url: data.url || '/' },
     })
   )

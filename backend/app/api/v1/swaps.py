@@ -39,6 +39,19 @@ async def request_swap(
     shift.status = "swap_requested"
     await db.commit()
 
+    # Send push notification to managers
+    try:
+        from app.core.push import send_push_to_managers
+        dow = ["ראשון","שני","שלישי","רביעי","חמישי","שישי","שבת"][(shift.date.weekday() + 1) % 7]
+        await send_push_to_managers(
+            org_id=current_user.org_id,
+            title="🔄 בקשת החלפה חדשה",
+            body=f"{current_user.name} מבקש/ת החלפה ליום {dow} {shift.date.strftime('%d/%m')}",
+            url="/requests",
+        )
+    except Exception as e:
+        print(f"[push] failed: {e}", flush=True)
+
     return {"id": swap.id, "status": "pending"}
 
 

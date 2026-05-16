@@ -8,6 +8,7 @@ import { z } from 'zod'
 import { apiClient } from '@/lib/api/client'
 import { shiftTemplatesApi, ShiftTemplate, ShiftTemplateCreate } from '@/lib/api/shiftTemplates'
 import { ManagerNav } from '@/components/layout/ManagerNav'
+import { NotificationsToggle } from '@/components/NotificationsToggle'
 import { toast } from 'sonner'
 
 const schema = z.object({
@@ -651,6 +652,11 @@ export default function SettingsPage() {
         {/* Location Section — outside the main form */}
         <div className="px-6 pb-6 max-w-2xl">
           <LocationSection currentSettings={settings} />
+        </div>
+
+        {/* Push Notifications */}
+        <div className="px-6 pb-6 max-w-2xl">
+          <NotificationsToggle />
         </div>
 
         {/* Shift Templates — outside the form */}

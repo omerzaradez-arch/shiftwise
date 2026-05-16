@@ -91,4 +91,16 @@ async def checkin_alert_job():
             shift.checkin_notified = True
             print(f"[alerts] notified {emp.name} ({emp.phone}) shift={start_str} sent={ok}", flush=True)
 
+            # Push notify managers too
+            try:
+                from app.core.push import send_push_to_managers
+                await send_push_to_managers(
+                    org_id=emp.org_id,
+                    title="⚠️ עובד לא דיווח כניסה",
+                    body=f"{emp.name} — משמרת {start_str} התחילה ולא דווחה כניסה",
+                    url="/payroll",
+                )
+            except Exception as e:
+                print(f"[push] mgr notify failed: {e}", flush=True)
+
         await db.commit()

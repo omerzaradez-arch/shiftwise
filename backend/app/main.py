@@ -12,6 +12,7 @@ from app.api.v1 import whatsapp_meta as whatsapp_meta_router
 from app.api.v1 import simulate as simulate_router
 from app.api.v1 import public as public_router
 from app.api.v1 import attendance as attendance_router
+from app.api.v1 import notifications as notifications_router
 
 logger = logging.getLogger(__name__)
 
@@ -89,6 +90,7 @@ app.include_router(whatsapp_meta_router.router, prefix="/api/v1/whatsapp_meta", 
 app.include_router(simulate_router.router, prefix="/api/v1/simulate", tags=["simulate"])
 app.include_router(public_router.router, prefix="/api/v1/public", tags=["public"])
 app.include_router(attendance_router.router, prefix="/api/v1/attendance", tags=["attendance"])
+app.include_router(notifications_router.router, prefix="/api/v1/notifications", tags=["notifications"])
 
 
 @app.get("/health")
