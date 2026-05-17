@@ -815,38 +815,52 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
         ctx = dict(session.context or {})
         shift_ids: list[str] = ctx.get("shift_ids", [])
         shift_displays: list[str] = ctx.get("shift_displays", [])
-        # Support both numeric input and button-click (display text)
-        idx = -1
-        try:
-            idx = int(body.strip()) - 1
-            if idx < 0 or idx >= len(shift_ids):
-                idx = -1
-        except (ValueError, TypeError):
-            pass
-        if idx == -1 and body.strip() in shift_displays:
-            idx = shift_displays.index(body.strip())
-        if idx < 0 or idx >= len(shift_ids):
-            return twiml(f"⚠️ שלח מספר בין 1 ל-{len(shift_ids)}.")
-        from app.models.scheduled_shift import ScheduledShift
-        shift = await db.get(ScheduledShift, shift_ids[idx])
-        if not shift:
+
+        # Reset and re-handle if user sends a top-level command
+        RESET_KEYWORDS = ["שלום", "היי", "עזרה", "תפריט", "זמינות", "משמרת", "סידור",
+                          "שעות", "שכר", "כניסה", "יציאה", "לא יכול", "לא יכולה",
+                          "החלפה", "בקשת החלפה", "לא", "no"]
+        if any(kw in normalized for kw in RESET_KEYWORDS):
             session.state = "idle"
             session.context = {}
+            session.updated_at = datetime.now(timezone.utc)
             await db.commit()
-            return twiml("❌ המשמרת לא נמצאה.\n\n" + MENU)
-        dow = (shift.date.weekday() + 1) % 7
-        shift_display = f"יום {DAY_NAMES[dow]} {shift.date.strftime('%d/%m')} {shift.start_time.strftime('%H:%M')}–{shift.end_time.strftime('%H:%M')}"
-        ctx["selected_shift_id"] = shift.id
-        ctx["selected_shift_display"] = shift_display
-        session.state = "cant_come_confirm"
-        session.context = ctx
-        session.updated_at = datetime.now(timezone.utc)
-        await db.commit()
-        confirm_body = f"🔄 *אישור בקשת החלפה*\n\n📅 {shift_display}\n\nלאשר את הבקשה?"
-        sent = await send_interactive_confirm(phone, confirm_body)
-        if sent:
-            return empty_twiml()
-        return twiml(f"🔄 *אישור בקשת החלפה*\n\n📅 {shift_display}\n\nלאשר שלח *כן*, לביטול שלח *לא*")
+            # fall through to stateless command handlers below
+
+        else:
+            # Support both numeric input and button-click (display text)
+            idx = -1
+            try:
+                idx = int(body.strip()) - 1
+                if idx < 0 or idx >= len(shift_ids):
+                    idx = -1
+            except (ValueError, TypeError):
+                pass
+            if idx == -1 and body.strip() in shift_displays:
+                idx = shift_displays.index(body.strip())
+            if idx < 0 or idx >= len(shift_ids):
+                return twiml(f"⚠️ שלח מספר בין 1 ל-{len(shift_ids)}.\n_לביטול שלח: לא_")
+
+            from app.models.scheduled_shift import ScheduledShift
+            shift = await db.get(ScheduledShift, shift_ids[idx])
+            if not shift:
+                session.state = "idle"
+                session.context = {}
+                await db.commit()
+                return twiml("❌ המשמרת לא נמצאה.\n\n" + MENU)
+            dow = (shift.date.weekday() + 1) % 7
+            shift_display = f"יום {DAY_NAMES[dow]} {shift.date.strftime('%d/%m')} {shift.start_time.strftime('%H:%M')}–{shift.end_time.strftime('%H:%M')}"
+            ctx["selected_shift_id"] = shift.id
+            ctx["selected_shift_display"] = shift_display
+            session.state = "cant_come_confirm"
+            session.context = ctx
+            session.updated_at = datetime.now(timezone.utc)
+            await db.commit()
+            confirm_body = f"🔄 *אישור בקשת החלפה*\n\n📅 {shift_display}\n\nלאשר את הבקשה?"
+            sent = await send_interactive_confirm(phone, confirm_body)
+            if sent:
+                return empty_twiml()
+            return twiml(f"🔄 *אישור בקשת החלפה*\n\n📅 {shift_display}\n\nלאשר שלח *כן*, לביטול שלח *לא*")
 
     # ── State: cant_come_confirm ──
     if session.state == "cant_come_confirm":
