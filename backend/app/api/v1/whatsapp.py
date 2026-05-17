@@ -47,6 +47,105 @@ def twiml(message: str) -> Response:
     return Response(content=xml, media_type="application/xml")
 
 
+def empty_twiml() -> Response:
+    return Response(
+        content='<?xml version="1.0" encoding="UTF-8"?><Response></Response>',
+        media_type="application/xml"
+    )
+
+
+def _normalize_phone(phone: str) -> str:
+    clean = phone.replace("-", "").replace(" ", "")
+    if not clean.startswith("+"):
+        clean = "+972" + clean.lstrip("0")
+    return clean
+
+
+async def _twilio_send_interactive(phone: str, content_payload: dict) -> bool:
+    """Create a Twilio Content template and send it as an interactive message."""
+    import os, httpx
+    account_sid = os.getenv("TWILIO_ACCOUNT_SID")
+    auth_token = os.getenv("TWILIO_AUTH_TOKEN")
+    from_number = os.getenv("TWILIO_WHATSAPP_NUMBER", "+14155238886")
+    if not account_sid or not auth_token:
+        return False
+    clean = _normalize_phone(phone)
+    try:
+        async with httpx.AsyncClient() as client:
+            create = await client.post(
+                "https://content.twilio.com/v1/Content",
+                auth=(account_sid, auth_token),
+                json=content_payload,
+                timeout=10.0,
+            )
+            if create.status_code not in (200, 201):
+                print(f"[twilio-interactive] CREATE failed {create.status_code}: {create.text[:200]}", flush=True)
+                return False
+            sid = create.json()["sid"]
+            send = await client.post(
+                f"https://api.twilio.com/2010-04-01/Accounts/{account_sid}/Messages.json",
+                auth=(account_sid, auth_token),
+                data={"From": f"whatsapp:{from_number}", "To": f"whatsapp:{clean}", "ContentSid": sid},
+                timeout=10.0,
+            )
+            ok = send.status_code == 201
+            if not ok:
+                print(f"[twilio-interactive] SEND failed {send.status_code}: {send.text[:200]}", flush=True)
+            return ok
+    except Exception as e:
+        print(f"[twilio-interactive] exception: {e}", flush=True)
+        return False
+
+
+async def send_interactive_day_question(
+    phone: str, day_idx: int, day_date: date,
+    week_start: date, week_end: date, current: int, total: int,
+) -> bool:
+    """Send availability day question as a WhatsApp list picker."""
+    import uuid
+    body = (
+        f"📅 זמינות שבוע {week_start.strftime('%d/%m')}–{week_end.strftime('%d/%m')} "
+        f"({current}/{total})\n\n"
+        f"*{DAY_NAMES[day_idx]} {day_date.strftime('%d/%m')}* — מה הזמינות שלך?"
+    )
+    payload = {
+        "friendly_name": f"sw_avail_{uuid.uuid4().hex[:8]}",
+        "language": "he",
+        "types": {
+            "twilio/list-picker": {
+                "body": body,
+                "button": "בחר זמינות",
+                "items": [
+                    {"id": "1", "item": "בוקר"},
+                    {"id": "2", "item": "ערב"},
+                    {"id": "3", "item": "כל משמרת"},
+                    {"id": "4", "item": "לא זמין"},
+                ],
+            }
+        },
+    }
+    return await _twilio_send_interactive(phone, payload)
+
+
+async def send_interactive_confirm(phone: str, body: str) -> bool:
+    """Send yes/no quick-reply buttons."""
+    import uuid
+    payload = {
+        "friendly_name": f"sw_confirm_{uuid.uuid4().hex[:8]}",
+        "language": "he",
+        "types": {
+            "twilio/quick-reply": {
+                "body": body,
+                "actions": [
+                    {"title": "כן", "id": "כן"},
+                    {"title": "לא", "id": "לא"},
+                ],
+            }
+        },
+    }
+    return await _twilio_send_interactive(phone, payload)
+
+
 def next_week_sunday() -> date:
     # Israel timezone (UTC+3) for correct "this week" calculation
     today = (datetime.now(timezone.utc) + timedelta(hours=3)).date()
@@ -117,6 +216,7 @@ OPTION_MAP = {
     "כלום":       {"available": False, "preferred_types": [],            "is_hard": True,  "label": "כלום"},
     "כ":          {"available": False, "preferred_types": [],            "is_hard": True,  "label": "כלום"},
     "לא":         {"available": False, "preferred_types": [],            "is_hard": True,  "label": "כלום"},
+    "לא זמין":    {"available": False, "preferred_types": [],            "is_hard": True,  "label": "כלום"},
 }
 
 
@@ -217,10 +317,11 @@ async def find_and_notify_replacements(
             f"👋 שלום {candidate.name}!\n"
             f"*{requester_name}* מחפש/ת מחליף/ה למשמרת:\n"
             f"📅 {shift_display}\n\n"
-            f"האם תוכל/י להחליף אותו/ה?\n"
-            f"שלח/י *כן* לאישור או *לא* לדחייה"
+            f"האם תוכל/י להחליף?"
         )
-        ok = await send_whatsapp_to(candidate.phone, msg)
+        ok = await send_interactive_confirm(candidate.phone, msg)
+        if not ok:
+            ok = await send_whatsapp_to(candidate.phone, msg + "\n\nשלח/י *כן* לאישור או *לא* לדחייה")
         if ok:
             sent += 1
             # Normalize phone to match the format used by the webhook (+972XXXXXXXXX)
@@ -714,11 +815,11 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
         session.context = ctx
         session.updated_at = datetime.now(timezone.utc)
         await db.commit()
-        return twiml(
-            f"🔄 *אישור בקשת החלפה*\n\n"
-            f"📅 {shift_display}\n\n"
-            f"לאשר שלח *כן*, לביטול שלח *לא*"
-        )
+        confirm_body = f"🔄 *אישור בקשת החלפה*\n\n📅 {shift_display}\n\nלאשר את הבקשה?"
+        sent = await send_interactive_confirm(phone, confirm_body)
+        if sent:
+            return empty_twiml()
+        return twiml(f"🔄 *אישור בקשת החלפה*\n\n📅 {shift_display}\n\nלאשר שלח *כן*, לביטול שלח *לא*")
 
     # ── State: cant_come_confirm ──
     if session.state == "cant_come_confirm":
@@ -784,15 +885,22 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
             session.context = ctx
             session.updated_at = datetime.now(timezone.utc)
             await db.commit()
+            sent = await send_interactive_day_question(phone, next_day_idx, next_date, week_start, week_end, step + 1, len(operating_days))
+            if sent:
+                return empty_twiml()
             return twiml(day_question_message(next_day_idx, next_date, week_start, week_end, step + 1, len(operating_days)))
 
-        # All days answered → show summary
+        # All days answered → show summary with yes/no buttons
         ctx["responses"] = responses
         session.state = "availability_confirm"
         session.context = ctx
         session.updated_at = datetime.now(timezone.utc)
         await db.commit()
-        return twiml(build_summary(responses, operating_days, week_start))
+        summary = build_summary(responses, operating_days, week_start)
+        sent = await send_interactive_confirm(phone, summary)
+        if sent:
+            return empty_twiml()
+        return twiml(summary)
 
     # ── State: confirmation ──
     if session.state == "availability_confirm":
@@ -835,6 +943,9 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
         }
         session.updated_at = datetime.now(timezone.utc)
         await db.commit()
+        sent = await send_interactive_day_question(phone, first_day_idx, first_date, week_start, week_end, 1, len(operating_days))
+        if sent:
+            return empty_twiml()
         return twiml(day_question_message(first_day_idx, first_date, week_start, week_end, 1, len(operating_days)))
 
     if "משמרת" in normalized or "הבא" in normalized:
