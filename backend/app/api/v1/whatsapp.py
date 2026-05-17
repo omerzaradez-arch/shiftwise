@@ -282,7 +282,7 @@ async def cmd_cant_come(employee: Employee, db: AsyncSession) -> tuple[str, list
     now_il = datetime.now(timezone.utc) + timedelta(hours=3)
     today = now_il.date()
     now_time = now_il.time()
-    week_end = today + timedelta(days=7)
+    week_end = today + timedelta(days=30)
 
     result = await db.execute(
         select(ScheduledShift).where(
@@ -346,6 +346,7 @@ async def find_and_notify_replacements(
     )
     same_shift_ids = {s.employee_id for s in same_shift_result.scalars().all()}
     candidates = [e for e in all_employees if e.id not in same_shift_ids]
+    print(f"[swap] all_employees={len(all_employees)} same_shift={len(same_shift_ids)} candidates={len(candidates)} phones={[e.phone for e in candidates]}", flush=True)
     sent = 0
     for candidate in candidates:
         msg = (
