@@ -127,6 +127,26 @@ async def send_interactive_day_question(
     return await _twilio_send_interactive(phone, payload)
 
 
+async def send_interactive_shift_list(phone: str, shifts_data: list[dict]) -> bool:
+    """Send shift selection as a WhatsApp list picker. shifts_data: [{"display": str}, ...]"""
+    import uuid
+    payload = {
+        "friendly_name": f"sw_shifts_{uuid.uuid4().hex[:8]}",
+        "language": "he",
+        "types": {
+            "twilio/list-picker": {
+                "body": "🔄 *בקשת החלפת משמרת*\n\nלאיזו משמרת אינך יכול/ה להגיע?",
+                "button": "בחר משמרת",
+                "items": [
+                    {"id": str(i + 1), "item": d["display"]}
+                    for i, d in enumerate(shifts_data)
+                ],
+            }
+        },
+    }
+    return await _twilio_send_interactive(phone, payload)
+
+
 async def send_interactive_confirm(phone: str, body: str) -> bool:
     """Send yes/no quick-reply buttons."""
     import uuid
@@ -794,11 +814,18 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
     if session.state == "cant_come_selecting":
         ctx = dict(session.context or {})
         shift_ids: list[str] = ctx.get("shift_ids", [])
+        shift_displays: list[str] = ctx.get("shift_displays", [])
+        # Support both numeric input and button-click (display text)
+        idx = -1
         try:
             idx = int(body.strip()) - 1
             if idx < 0 or idx >= len(shift_ids):
-                raise ValueError()
+                idx = -1
         except (ValueError, TypeError):
+            pass
+        if idx == -1 and body.strip() in shift_displays:
+            idx = shift_displays.index(body.strip())
+        if idx < 0 or idx >= len(shift_ids):
             return twiml(f"⚠️ שלח מספר בין 1 ל-{len(shift_ids)}.")
         from app.models.scheduled_shift import ScheduledShift
         shift = await db.get(ScheduledShift, shift_ids[idx])
@@ -957,10 +984,23 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
     if any(kw in normalized for kw in ["לא יכול", "לא יכולה", "החלפה", "מחליף", "להחליף"]):
         msg, shift_ids = await cmd_cant_come(employee, db)
         if shift_ids:
+            from app.models.scheduled_shift import ScheduledShift
+            shifts_data = []
+            for sid in shift_ids:
+                s = await db.get(ScheduledShift, sid)
+                if s:
+                    dow = (s.date.weekday() + 1) % 7
+                    shifts_data.append({"display": f"יום {DAY_NAMES[dow]} {s.date.strftime('%d/%m')} {s.start_time.strftime('%H:%M')}–{s.end_time.strftime('%H:%M')}"})
             session.state = "cant_come_selecting"
-            session.context = {"shift_ids": shift_ids}
+            session.context = {
+                "shift_ids": shift_ids,
+                "shift_displays": [s["display"] for s in shifts_data],
+            }
             session.updated_at = datetime.now(timezone.utc)
             await db.commit()
+            sent = await send_interactive_shift_list(phone, shifts_data)
+            if sent:
+                return empty_twiml()
         return twiml(msg)
 
     # ── Check-in ──
