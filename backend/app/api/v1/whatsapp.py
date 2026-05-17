@@ -303,6 +303,7 @@ async def cmd_cant_come(employee: Employee, db: AsyncSession) -> tuple[str, list
                 continue  # already started — skip
         shifts.append(s)
 
+    print(f"[cant_come] employee={employee.id} name={employee.name} today={today} week_end={week_end} all_shifts={len(all_shifts)} filtered={len(shifts)}", flush=True)
     if not shifts:
         return "😊 אין לך משמרות עתידיות שניתן להחליף.\n_(ניתן לבקש החלפה רק למשמרות שטרם התחילו)_", []
 
