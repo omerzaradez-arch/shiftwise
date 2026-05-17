@@ -278,8 +278,12 @@ async def send_whatsapp_to(phone: str, body: str, media_url: str | None = None) 
 
 async def cmd_cant_come(employee: Employee, db: AsyncSession) -> tuple[str, list[str]]:
     from app.models.scheduled_shift import ScheduledShift
-    today = (datetime.now(timezone.utc) + timedelta(hours=3)).date()
+    from datetime import time as dt_time
+    now_il = datetime.now(timezone.utc) + timedelta(hours=3)
+    today = now_il.date()
+    now_time = now_il.time()
     week_end = today + timedelta(days=7)
+
     result = await db.execute(
         select(ScheduledShift).where(
             ScheduledShift.employee_id == employee.id,
@@ -288,9 +292,20 @@ async def cmd_cant_come(employee: Employee, db: AsyncSession) -> tuple[str, list
             ScheduledShift.status.in_(["assigned", "swap_requested"]),
         ).order_by(ScheduledShift.date, ScheduledShift.start_time)
     )
-    shifts = result.scalars().all()
+    all_shifts = result.scalars().all()
+
+    # Filter out shifts that have already started or ended today
+    shifts = []
+    for s in all_shifts:
+        if s.date == today:
+            shift_start = s.start_time if isinstance(s.start_time, dt_time) else s.start_time
+            if shift_start <= now_time:
+                continue  # already started — skip
+        shifts.append(s)
+
     if not shifts:
-        return "😊 אין לך משמרות קרובות שניתן להחליף.", []
+        return "😊 אין לך משמרות עתידיות שניתן להחליף.\n_(ניתן לבקש החלפה רק למשמרות שטרם התחילו)_", []
+
     lines = ["🔄 *בקשת החלפת משמרת*\n", "לאיזו משמרת אינך יכול/ה להגיע?"]
     shift_ids = []
     for i, s in enumerate(shifts, 1):
