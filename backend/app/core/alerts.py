@@ -1,14 +1,121 @@
 """
 Background alert jobs — runs on a schedule via APScheduler.
-Currently:
-  - checkin_alert: every 5 min — notifies employees who missed check-in
+Jobs:
+  - shift_start_notify: every 5 min — sends start-of-shift WhatsApp with quick-reply buttons
+  - checkin_alert: every 5 min — late reminder for employees who missed check-in
 """
 
+import os
 from datetime import datetime, timedelta, timezone, time as dtime
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import async_session_factory
+
+
+def _checkin_url(token: str) -> str:
+    base = os.getenv("FRONTEND_URL", "https://shiftwise-production.up.railway.app").rstrip("/")
+    return f"{base}/checkin/{token}"
+
+
+async def shift_start_notify_job():
+    """
+    Every 5 minutes:
+    Find shifts that started in the last 5 minutes and haven't been notified yet.
+    Send a WhatsApp quick-reply with "התחלתי" / "עוד לא התחלתי".
+    """
+    from app.models.scheduled_shift import ScheduledShift
+    from app.models.attendance import Attendance
+    from app.models.employee import Employee
+    from app.api.v1.whatsapp import send_interactive_confirm, send_whatsapp_to
+    from app.api.v1.auth import create_checkin_token
+
+    now_utc = datetime.now(timezone.utc)
+    now_il = now_utc + timedelta(hours=3)
+    today = now_il.date()
+    window_start = (now_il - timedelta(minutes=5)).time()
+    window_end = now_il.time()
+
+    if window_start > window_end:
+        return
+
+    async with async_session_factory() as db:
+        shifts = (await db.execute(
+            select(ScheduledShift).where(and_(
+                ScheduledShift.date == today,
+                ScheduledShift.start_time >= window_start,
+                ScheduledShift.start_time <= window_end,
+                ScheduledShift.status.notin_(["cancelled"]),
+                ScheduledShift.checkin_notified == False,
+            ))
+        )).scalars().all()
+
+        if not shifts:
+            return
+
+        print(f"[start_notify] {len(shifts)} shifts starting now", flush=True)
+
+        for shift in shifts:
+            # Skip if already checked in
+            existing = (await db.execute(
+                select(Attendance).where(and_(
+                    Attendance.employee_id == shift.employee_id,
+                    Attendance.date == today,
+                ))
+            )).scalar_one_or_none()
+            if existing:
+                shift.checkin_notified = True
+                continue
+
+            emp = await db.get(Employee, shift.employee_id)
+            if not emp or not emp.phone or not emp.is_active:
+                shift.checkin_notified = True
+                continue
+
+            token = create_checkin_token(shift.id, emp.id)
+            url = _checkin_url(token)
+            start_str = shift.start_time.strftime("%H:%M")
+
+            # Try interactive buttons; fall back to plain message with the link
+            body = (
+                f"היי {emp.name}! 👋\n\n"
+                f"יש לך משמרת עכשיו ({start_str}).\n"
+                f"תעדכן אותי אם התחלת:"
+            )
+            sent = await send_interactive_confirm_with_link(emp.phone, body, url)
+            if not sent:
+                # Fallback plain message
+                fallback = (
+                    f"היי {emp.name}! 👋\n\n"
+                    f"יש לך משמרת עכשיו ({start_str}).\n"
+                    f"לאישור הגעה — לחץ כאן:\n{url}"
+                )
+                await send_whatsapp_to(emp.phone, fallback)
+
+            shift.checkin_notified = True
+            print(f"[start_notify] sent to {emp.name} ({emp.phone}) shift={start_str}", flush=True)
+
+        await db.commit()
+
+
+async def send_interactive_confirm_with_link(phone: str, body: str, url: str) -> bool:
+    """Quick-reply with two buttons; the 'התחלתי' answer routes to the GPS link."""
+    from app.api.v1.whatsapp import _twilio_send_interactive
+    import uuid
+    payload = {
+        "friendly_name": f"sw_start_{uuid.uuid4().hex[:8]}",
+        "language": "he",
+        "types": {
+            "twilio/quick-reply": {
+                "body": body,
+                "actions": [
+                    {"title": "התחלתי", "id": "התחלתי"},
+                    {"title": "עוד לא", "id": "עוד לא"},
+                ],
+            }
+        },
+    }
+    return await _twilio_send_interactive(phone, payload)
 
 
 async def checkin_alert_job():

@@ -37,6 +37,26 @@ def create_access_token(data: dict) -> str:
     )
 
 
+def create_checkin_token(shift_id: str, employee_id: str, hours: int = 6) -> str:
+    """Short-lived signed token for one-tap GPS check-in via web link."""
+    expire = datetime.now(timezone.utc) + timedelta(hours=hours)
+    return jwt.encode(
+        {"sid": shift_id, "eid": employee_id, "exp": expire, "kind": "checkin"},
+        settings.secret_key,
+        algorithm=settings.algorithm,
+    )
+
+
+def verify_checkin_token(token: str) -> dict | None:
+    try:
+        payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
+        if payload.get("kind") != "checkin":
+            return None
+        return payload
+    except JWTError:
+        return None
+
+
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
     db: AsyncSession = Depends(get_db),

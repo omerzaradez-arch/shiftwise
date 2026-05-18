@@ -1177,6 +1177,33 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
         org = await db.get(Organization, employee.org_id)
         has_location = org and org.settings and org.settings.get("location_lat")
         if has_location:
+            # Find the current shift (started within last 2 hours, not yet checked-out)
+            from app.models.scheduled_shift import ScheduledShift
+            from app.api.v1.auth import create_checkin_token
+            import os
+            now_il = datetime.now(timezone.utc) + timedelta(hours=3)
+            today = now_il.date()
+            cutoff = (now_il - timedelta(hours=2)).time()
+            shift = (await db.execute(
+                select(ScheduledShift).where(
+                    ScheduledShift.employee_id == employee.id,
+                    ScheduledShift.date == today,
+                    ScheduledShift.start_time >= cutoff,
+                    ScheduledShift.start_time <= now_il.time(),
+                    ScheduledShift.status != "cancelled",
+                ).order_by(ScheduledShift.start_time.desc()).limit(1)
+            )).scalar_one_or_none()
+
+            if shift:
+                token = create_checkin_token(shift.id, employee.id)
+                base = os.getenv("FRONTEND_URL", "https://shiftwise-production.up.railway.app").rstrip("/")
+                url = f"{base}/checkin/{token}"
+                return twiml(
+                    f"🟢 *לאישור הגעה — לחץ על הקישור:*\n{url}\n\n"
+                    f"_הקישור יבקש הרשאת מיקום ויאשר אוטומטית._"
+                )
+
+            # No active shift — fall back to manual location flow
             session.state = "checkin_waiting_location"
             session.updated_at = datetime.now(timezone.utc)
             await db.commit()
@@ -1188,6 +1215,12 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
         else:
             msg = await cmd_checkin(employee, db)
             return twiml(msg)
+
+    if any(kw in normalized for kw in ["עוד לא", "לא התחלתי", "טרם"]):
+        return twiml(
+            "👌 בסדר, נמתין.\n\n"
+            "שלח *התחלתי* ברגע שהגעת — תקבל קישור לאישור מיקום אוטומטי."
+        )
 
     # ── Check-out ──
     if any(kw in normalized for kw in ["יציאה", "יצאתי", "סיימתי", "עזבתי"]):

@@ -40,9 +40,17 @@ async def lifespan(app: FastAPI):
 
     # ── Background scheduler ──
     from apscheduler.schedulers.asyncio import AsyncIOScheduler
-    from app.core.alerts import checkin_alert_job
+    from app.core.alerts import checkin_alert_job, shift_start_notify_job
 
     scheduler = AsyncIOScheduler(timezone="Asia/Jerusalem")
+    scheduler.add_job(
+        shift_start_notify_job,
+        trigger="interval",
+        minutes=5,
+        id="shift_start_notify",
+        replace_existing=True,
+        max_instances=1,
+    )
     scheduler.add_job(
         checkin_alert_job,
         trigger="interval",
@@ -52,7 +60,7 @@ async def lifespan(app: FastAPI):
         max_instances=1,
     )
     scheduler.start()
-    print("[scheduler] started — checkin_alert every 5 min", flush=True)
+    print("[scheduler] started — shift_start_notify + checkin_alert every 5 min", flush=True)
 
     yield
 
