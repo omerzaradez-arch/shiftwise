@@ -129,6 +129,7 @@ async def get_week_schedule(
                 "duration_hours": template.duration_hours,
                 "shift_name": template.name,
                 "shift_type": template.shift_type,
+                "template_id": template.id,
                 "employee_id": emp.id,
                 "employee_name": emp.name,
                 "employee_role": emp.role,

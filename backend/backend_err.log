@@ -1,0 +1,2405 @@
+INFO:     Will watch for changes in these directories: ['C:\\Users\\omerz\\Desktop\\קלוד\\shiftwise\\backend']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [8164] using WatchFiles
+INFO:     Started server process [29848]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+Job "checkin_alert_job (trigger: interval[0:05:00], next run at: 2026-05-17 11:34:36 IDT)" raised an exception
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameterWARNING:  WatchFiles detected changes in 'app\api\v1\whatsapp.py'. Reloading...
+WARNING:  WatchFiles detected changes in 'app\api\v1\whatsapp.py'. Reloading...
+INFO:     Started server process [48004]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 132, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\starlette\routing.py", line 741, in lifespan
+    await receive()
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+Process SpawnProcess-2:
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\multiprocessing\process.py", line 320, in _bootstrap
+    self.run()
+    ~~~~~~~~^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\uvicorn\_subprocess.py", line 78, in subprocess_started
+    target(sockets=sockets)
+    ~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\uvicorn\server.py", line 65, in run
+    return asyncio.run(self.serve(sockets=sockets))
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 132, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [42432]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app\api\v1\whatsapp.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [42432]
+Process SpawnProcess-3:
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\multiprocessing\process.py", line 320, in _bootstrap
+    self.run()
+    ~~~~~~~~^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\uvicorn\_subprocess.py", line 78, in subprocess_started
+    target(sockets=sockets)
+    ~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\uvicorn\server.py", line 65, in run
+    return asyncio.run(self.serve(sockets=sockets))
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 132, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+WARNING:  WatchFiles detected changes in 'app\api\v1\whatsapp.py'. Reloading...
+INFO:     Started server process [25876]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 132, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\starlette\routing.py", line 741, in lifespan
+    await receive()
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+Process SpawnProcess-4:
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\multiprocessing\process.py", line 320, in _bootstrap
+    self.run()
+    ~~~~~~~~^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\uvicorn\_subprocess.py", line 78, in subprocess_started
+    target(sockets=sockets)
+    ~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\uvicorn\server.py", line 65, in run
+    return asyncio.run(self.serve(sockets=sockets))
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 132, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [3084]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app\api\v1\whatsapp.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [3084]
+Process SpawnProcess-5:
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\multiprocessing\process.py", line 320, in _bootstrap
+    self.run()
+    ~~~~~~~~^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\uvicorn\_subprocess.py", line 78, in subprocess_started
+    target(sockets=sockets)
+    ~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\uvicorn\server.py", line 65, in run
+    return asyncio.run(self.serve(sockets=sockets))
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 132, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+WARNING:  WatchFiles detected changes in 'app\api\v1\whatsapp.py'. Reloading...
+INFO:     Started server process [37916]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 132, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\starlette\routing.py", line 741, in lifespan
+    await receive()
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+Process SpawnProcess-6:
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\multiprocessing\process.py", line 320, in _bootstrap
+    self.run()
+    ~~~~~~~~^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\uvicorn\_subprocess.py", line 78, in subprocess_started
+    target(sockets=sockets)
+    ~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\uvicorn\server.py", line 65, in run
+    return asyncio.run(self.serve(sockets=sockets))
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 132, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [27912]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+Job "checkin_alert_job (trigger: interval[0:05:00], next run at: 2026-05-17 12:19:49 IDT)" raised an exception
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlite3.OperationalError: no such column: scheduled_shifts.checkin_notified
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\apscheduler\executors\base.py", line 181, in run_coroutine_job
+    retval = await job.func(*job.args, **job.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\Desktop\קלוד\shiftwise\backend\app\core\alerts.py", line 43, in checkin_alert_job
+    shifts_result = await db.execute(
+                    ^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\ext\asyncio\session.py", line 449, in execute
+    result = await greenlet_spawn(
+             ^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 201, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: scheduled_shifts.checkin_notified
+[SQL: SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0]
+[parameters: ('2026-05-17', '11:29:49.602492', '11:59:49.602492', 'cancelled')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+WARNING:  WatchFiles detected changes in 'app\api\v1\whatsapp.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [27912]
+Process SpawnProcess-7:
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\multiprocessing\process.py", line 320, in _bootstrap
+    self.run()
+    ~~~~~~~~^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\uvicorn\_subprocess.py", line 78, in subprocess_started
+    target(sockets=sockets)
+    ~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\uvicorn\server.py", line 65, in run
+    return asyncio.run(self.serve(sockets=sockets))
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 132, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+WARNING:  WatchFiles detected changes in 'app\api\v1\whatsapp.py'. Reloading...
+INFO:     Started server process [41808]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 132, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\starlette\routing.py", line 741, in lifespan
+    await receive()
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+Process SpawnProcess-8:
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\multiprocessing\process.py", line 320, in _bootstrap
+    self.run()
+    ~~~~~~~~^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\uvicorn\_subprocess.py", line 78, in subprocess_started
+    target(sockets=sockets)
+    ~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\uvicorn\server.py", line 65, in run
+    return asyncio.run(self.serve(sockets=sockets))
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 132, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [43620]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+Job "checkin_alert_job (trigger: interval[0:05:00], next run at: 2026-05-17 12:29:52 IDT)" raised an exception
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlite3.OperationalError: no such column: scheduled_shifts.checkin_notified
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\apscheduler\executors\base.py", line 181, in run_coroutine_job
+    retval = await job.func(*job.args, **job.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\Desktop\קלוד\shiftwise\backend\app\core\alerts.py", line 43, in checkin_alert_job
+    shifts_result = await db.execute(
+                    ^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\ext\asyncio\session.py", line 449, in execute
+    result = await greenlet_spawn(
+             ^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 201, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: scheduled_shifts.checkin_notified
+[SQL: SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0]
+[parameters: ('2026-05-17', '11:39:52.347640', '12:09:52.347640', 'cancelled')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Job "checkin_alert_job (trigger: interval[0:05:00], next run at: 2026-05-17 12:34:52 IDT)" raised an exception
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlite3.OperationalError: no such column: scheduled_shifts.checkin_notified
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\apscheduler\executors\base.py", line 181, in run_coroutine_job
+    retval = await job.func(*job.args, **job.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\Desktop\קלוד\shiftwise\backend\app\core\alerts.py", line 43, in checkin_alert_job
+    shifts_result = await db.execute(
+                    ^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\ext\asyncio\session.py", line 449, in execute
+    result = await greenlet_spawn(
+             ^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 201, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: scheduled_shifts.checkin_notified
+[SQL: SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0]
+[parameters: ('2026-05-17', '11:44:52.342162', '12:14:52.342162', 'cancelled')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Job "checkin_alert_job (trigger: interval[0:05:00], next run at: 2026-05-17 12:39:52 IDT)" raised an exception
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlite3.OperationalError: no such column: scheduled_shifts.checkin_notified
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\apscheduler\executors\base.py", line 181, in run_coroutine_job
+    retval = await job.func(*job.args, **job.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\Desktop\קלוד\shiftwise\backend\app\core\alerts.py", line 43, in checkin_alert_job
+    shifts_result = await db.execute(
+                    ^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\ext\asyncio\session.py", line 449, in execute
+    result = await greenlet_spawn(
+             ^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 201, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: scheduled_shifts.checkin_notified
+[SQL: SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0]
+[parameters: ('2026-05-17', '11:49:52.352289', '12:19:52.352289', 'cancelled')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+WARNING:  WatchFiles detected changes in 'app\api\v1\whatsapp.py'. Reloading...
+Job "checkin_alert_job (trigger: interval[0:05:00], next run at: 2026-05-17 12:44:52 IDT)" raised an exception
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlite3.OperationalError: no such column: scheduled_shifts.checkin_notified
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\apscheduler\executors\base.py", line 181, in run_coroutine_job
+    retval = await job.func(*job.args, **job.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\Desktop\קלוד\shiftwise\backend\app\core\alerts.py", line 43, in checkin_alert_job
+    shifts_result = await db.execute(
+                    ^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\ext\asyncio\session.py", line 449, in execute
+    result = await greenlet_spawn(
+             ^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 201, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: scheduled_shifts.checkin_notified
+[SQL: SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0]
+[parameters: ('2026-05-17', '11:54:52.350149', '12:24:52.350149', 'cancelled')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Job "checkin_alert_job (trigger: interval[0:05:00], next run at: 2026-05-17 12:49:52 IDT)" raised an exception
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlite3.OperationalError: no such column: scheduled_shifts.checkin_notified
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\apscheduler\executors\base.py", line 181, in run_coroutine_job
+    retval = await job.func(*job.args, **job.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\Desktop\קלוד\shiftwise\backend\app\core\alerts.py", line 43, in checkin_alert_job
+    shifts_result = await db.execute(
+                    ^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\ext\asyncio\session.py", line 449, in execute
+    result = await greenlet_spawn(
+             ^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 201, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: scheduled_shifts.checkin_notified
+[SQL: SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0]
+[parameters: ('2026-05-17', '11:59:52.351108', '12:29:52.351108', 'cancelled')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Job "checkin_alert_job (trigger: interval[0:05:00], next run at: 2026-05-17 12:54:52 IDT)" raised an exception
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlite3.OperationalError: no such column: scheduled_shifts.checkin_notified
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\apscheduler\executors\base.py", line 181, in run_coroutine_job
+    retval = await job.func(*job.args, **job.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\Desktop\קלוד\shiftwise\backend\app\core\alerts.py", line 43, in checkin_alert_job
+    shifts_result = await db.execute(
+                    ^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\ext\asyncio\session.py", line 449, in execute
+    result = await greenlet_spawn(
+             ^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 201, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: scheduled_shifts.checkin_notified
+[SQL: SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0]
+[parameters: ('2026-05-17', '12:04:52.354430', '12:34:52.354430', 'cancelled')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [43620]
+Process SpawnProcess-9:
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\multiprocessing\process.py", line 320, in _bootstrap
+    self.run()
+    ~~~~~~~~^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\uvicorn\_subprocess.py", line 78, in subprocess_started
+    target(sockets=sockets)
+    ~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\uvicorn\server.py", line 65, in run
+    return asyncio.run(self.serve(sockets=sockets))
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 132, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+WARNING:  WatchFiles detected changes in 'app\api\v1\whatsapp.py'. Reloading...
+INFO:     Started server process [34312]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 132, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\starlette\routing.py", line 741, in lifespan
+    await receive()
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+Process SpawnProcess-10:
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\multiprocessing\process.py", line 320, in _bootstrap
+    self.run()
+    ~~~~~~~~^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\uvicorn\_subprocess.py", line 78, in subprocess_started
+    target(sockets=sockets)
+    ~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\uvicorn\server.py", line 65, in run
+    return asyncio.run(self.serve(sockets=sockets))
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py", line 132, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [44348]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+Job "checkin_alert_job (trigger: interval[0:05:00], next run at: 2026-05-17 13:02:44 IDT)" raised an exception
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlite3.OperationalError: no such column: scheduled_shifts.checkin_notified
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\apscheduler\executors\base.py", line 181, in run_coroutine_job
+    retval = await job.func(*job.args, **job.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\Desktop\קלוד\shiftwise\backend\app\core\alerts.py", line 43, in checkin_alert_job
+    shifts_result = await db.execute(
+                    ^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\ext\asyncio\session.py", line 449, in execute
+    result = await greenlet_spawn(
+             ^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 201, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: scheduled_shifts.checkin_notified
+[SQL: SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0]
+[parameters: ('2026-05-17', '12:12:44.390309', '12:42:44.390309', 'cancelled')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Job "checkin_alert_job (trigger: interval[0:05:00], next run at: 2026-05-17 13:07:44 IDT)" raised an exception
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlite3.OperationalError: no such column: scheduled_shifts.checkin_notified
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\apscheduler\executors\base.py", line 181, in run_coroutine_job
+    retval = await job.func(*job.args, **job.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\Desktop\קלוד\shiftwise\backend\app\core\alerts.py", line 43, in checkin_alert_job
+    shifts_result = await db.execute(
+                    ^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\ext\asyncio\session.py", line 449, in execute
+    result = await greenlet_spawn(
+             ^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 201, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: scheduled_shifts.checkin_notified
+[SQL: SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0]
+[parameters: ('2026-05-17', '12:17:44.393150', '12:47:44.393150', 'cancelled')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Job "checkin_alert_job (trigger: interval[0:05:00], next run at: 2026-05-17 13:12:44 IDT)" raised an exception
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlite3.OperationalError: no such column: scheduled_shifts.checkin_notified
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\apscheduler\executors\base.py", line 181, in run_coroutine_job
+    retval = await job.func(*job.args, **job.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\Desktop\קלוד\shiftwise\backend\app\core\alerts.py", line 43, in checkin_alert_job
+    shifts_result = await db.execute(
+                    ^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\ext\asyncio\session.py", line 449, in execute
+    result = await greenlet_spawn(
+             ^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 201, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: scheduled_shifts.checkin_notified
+[SQL: SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0]
+[parameters: ('2026-05-17', '12:22:44.397165', '12:52:44.397165', 'cancelled')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Job "checkin_alert_job (trigger: interval[0:05:00], next run at: 2026-05-17 13:17:44 IDT)" raised an exception
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlite3.OperationalError: no such column: scheduled_shifts.checkin_notified
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\apscheduler\executors\base.py", line 181, in run_coroutine_job
+    retval = await job.func(*job.args, **job.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\Desktop\קלוד\shiftwise\backend\app\core\alerts.py", line 43, in checkin_alert_job
+    shifts_result = await db.execute(
+                    ^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\ext\asyncio\session.py", line 449, in execute
+    result = await greenlet_spawn(
+             ^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 201, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: scheduled_shifts.checkin_notified
+[SQL: SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0]
+[parameters: ('2026-05-17', '12:27:44.392180', '12:57:44.392180', 'cancelled')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Job "checkin_alert_job (trigger: interval[0:05:00], next run at: 2026-05-17 13:22:44 IDT)" raised an exception
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlite3.OperationalError: no such column: scheduled_shifts.checkin_notified
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\apscheduler\executors\base.py", line 181, in run_coroutine_job
+    retval = await job.func(*job.args, **job.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\Desktop\קלוד\shiftwise\backend\app\core\alerts.py", line 43, in checkin_alert_job
+    shifts_result = await db.execute(
+                    ^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\ext\asyncio\session.py", line 449, in execute
+    result = await greenlet_spawn(
+             ^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 201, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 342, in _handle_exception
+    raise error
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 164, in execute
+    self.await_(_cursor.execute(operation, parameters))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\aiosqlite\core.py", line 63, in _connection_worker_thread
+    result = function()
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: scheduled_shifts.checkin_notified
+[SQL: SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0]
+[parameters: ('2026-05-17', '12:32:44.399685', '13:02:44.399685', 'cancelled')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Job "checkin_alert_job (trigger: interval[0:05:00], next run at: 2026-05-17 13:27:44 IDT)" raised an exception
+Traceback (most recent call last):
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omerz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 182, in execute
+    self._adapt_connection._handle_exception(error)
+    ~~~~~~~~~~~~~~~~~~

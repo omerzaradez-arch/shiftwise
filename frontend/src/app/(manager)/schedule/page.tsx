@@ -10,6 +10,7 @@ import { shiftTemplatesApi } from '@/lib/api/shiftTemplates'
 import { WeeklyCalendar } from '@/components/schedule/WeeklyCalendar'
 import { ConflictPanel } from '@/components/schedule/ConflictPanel'
 import { OptimizerPanel } from '@/components/schedule/OptimizerPanel'
+import { ShiftModal } from '@/components/schedule/ShiftModal'
 import { ManagerNav } from '@/components/layout/ManagerNav'
 import { toast } from 'sonner'
 import { Schedule } from '@/types/schedule'
@@ -41,6 +42,11 @@ export default function SchedulePage() {
   )
   const [showOptimizer, setShowOptimizer] = useState(false)
   const [showConflicts, setShowConflicts] = useState(true)
+  const [shiftModal, setShiftModal] = useState<
+    | { mode: 'create'; defaultDate?: string }
+    | { mode: 'edit'; shiftId: string }
+    | null
+  >(null)
 
   const { data: orgSettings } = useQuery({
     queryKey: ['settings'],
@@ -183,6 +189,17 @@ export default function SchedulePage() {
             )}
 
             <button
+              onClick={() => setShiftModal({ mode: 'create' })}
+              className="flex items-center gap-1.5 px-3 py-2 bg-white text-slate-700 text-sm font-medium rounded-xl hover:bg-slate-100 transition border border-slate-200"
+              title="הוסף משמרת ידנית"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              משמרת
+            </button>
+
+            <button
               onClick={() => setShowOptimizer(true)}
               className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-xl hover:bg-indigo-700 transition shadow-sm shadow-indigo-200"
             >
@@ -244,6 +261,8 @@ export default function SchedulePage() {
                   schedule={schedule}
                   weekStart={currentWeek}
                   onShiftMove={handleShiftMove}
+                  onShiftClick={(shiftId) => setShiftModal({ mode: 'edit', shiftId })}
+                  onEmptyClick={(date) => setShiftModal({ mode: 'create', defaultDate: date })}
                   conflicts={conflicts}
                 />
               </div>
@@ -257,13 +276,21 @@ export default function SchedulePage() {
                     </svg>
                   </div>
                   <p className="text-lg font-semibold text-slate-700 mb-1">אין סידור לשבוע זה</p>
-                  <p className="text-sm text-slate-400 mb-6">לחץ על "הרץ אופטימייזר" ליצירת סידור אוטומטי</p>
-                  <button
-                    onClick={() => setShowOptimizer(true)}
-                    className="px-6 py-3 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition shadow-sm"
-                  >
-                    הרץ אופטימייזר
-                  </button>
+                  <p className="text-sm text-slate-400 mb-6">הרץ אופטימייזר אוטומטי או בנה את הסידור ידנית</p>
+                  <div className="flex gap-3 justify-center">
+                    <button
+                      onClick={() => setShowOptimizer(true)}
+                      className="px-6 py-3 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition shadow-sm"
+                    >
+                      הרץ אופטימייזר
+                    </button>
+                    <button
+                      onClick={() => setShiftModal({ mode: 'create' })}
+                      className="px-6 py-3 bg-white text-slate-700 border border-slate-200 font-medium rounded-xl hover:bg-slate-50 transition"
+                    >
+                      + משמרת ידנית
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
@@ -290,6 +317,33 @@ export default function SchedulePage() {
             qc.invalidateQueries({ queryKey: ['schedule'] })
             qc.invalidateQueries({ queryKey: ['conflicts'] })
           }}
+        />
+      )}
+
+      {shiftModal && (
+        <ShiftModal
+          mode={shiftModal.mode}
+          weekStart={currentWeek}
+          defaultDate={shiftModal.mode === 'create' ? shiftModal.defaultDate : undefined}
+          shift={
+            shiftModal.mode === 'edit' && schedule
+              ? (() => {
+                  const s = schedule.shifts.find((x: any) => x.id === shiftModal.shiftId)
+                  return s
+                    ? {
+                        id: s.id,
+                        date: s.date,
+                        start_time: s.start_time,
+                        end_time: s.end_time,
+                        employee_id: s.employee_id,
+                        template_id: (s as any).template_id ?? null,
+                        shift_name: s.shift_name,
+                      }
+                    : undefined
+                })()
+              : undefined
+          }
+          onClose={() => setShiftModal(null)}
         />
       )}
     </div>

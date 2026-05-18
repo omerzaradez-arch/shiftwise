@@ -35,6 +35,34 @@ export const scheduleApi = {
     return data
   },
 
+  createShift: async (params: {
+    week_start: string
+    date: string
+    template_id: string
+    employee_id: string
+    start_time?: string
+    end_time?: string
+  }) => {
+    const { data } = await apiClient.post('/api/v1/shifts/', params)
+    return data
+  },
+
+  updateShift: async (shiftId: string, params: {
+    employee_id?: string
+    date?: string
+    template_id?: string
+    start_time?: string
+    end_time?: string
+  }) => {
+    const { data } = await apiClient.patch(`/api/v1/shifts/${shiftId}`, params)
+    return data
+  },
+
+  deleteShift: async (shiftId: string) => {
+    const { data } = await apiClient.delete(`/api/v1/shifts/${shiftId}`)
+    return data
+  },
+
   getConflicts: async (weekStart: Date): Promise<Conflict[]> => {
     const { data } = await apiClient.get('/api/v1/schedules/conflicts', {
       params: { week_start: format(weekStart, 'yyyy-MM-dd') },

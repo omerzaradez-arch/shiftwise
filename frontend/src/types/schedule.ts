@@ -6,6 +6,7 @@ export interface ScheduledShift {
   duration_hours: number
   shift_name: string
   shift_type: 'morning' | 'afternoon' | 'evening' | 'night'
+  template_id?: string
   employee_id: string
   employee_name: string
   employee_role: 'senior' | 'junior' | 'trainee' | 'manager'

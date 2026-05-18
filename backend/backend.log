@@ -1,0 +1,413 @@
+2026-05-17 11:24:35,938 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 11:24:35,938 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("organizations")
+2026-05-17 11:24:35,938 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:24:35,952 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("employees")
+2026-05-17 11:24:35,953 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:24:35,953 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("shift_templates")
+2026-05-17 11:24:35,953 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:24:35,954 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("schedule_weeks")
+2026-05-17 11:24:35,954 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:24:35,954 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("availability_submissions")
+2026-05-17 11:24:35,955 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:24:35,955 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("unavailability_slots")
+2026-05-17 11:24:35,955 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:24:35,955 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("scheduled_shifts")
+2026-05-17 11:24:35,955 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:24:35,956 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("swap_requests")
+2026-05-17 11:24:35,956 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:24:35,957 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("fairness_tracking")
+2026-05-17 11:24:35,957 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:24:35,957 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("whatsapp_sessions")
+2026-05-17 11:24:35,957 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:24:35,958 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("attendance")
+2026-05-17 11:24:35,958 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:24:35,959 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("pending_registrations")
+2026-05-17 11:24:35,959 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:24:35,959 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("push_subscriptions")
+2026-05-17 11:24:35,959 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:24:35,960 INFO sqlalchemy.engine.Engine ALTER TABLE availability_submissions ADD COLUMN IF NOT EXISTS day_preferences JSON DEFAULT '{}'
+2026-05-17 11:24:35,960 INFO sqlalchemy.engine.Engine [generated in 0.00023s] ()
+[migration] FAILED: ALTER TABLE availability_submissions ADD COLUMN IF NOT EXIST — (sqlite3.OperationalError) near "EXISTS": syntax error
+[SQL: ALTER TABLE availability_submissions ADD COLUMN IF NOT EXISTS day_preferences JSON DEFAULT '{}']
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-17 11:24:35,961 INFO sqlalchemy.engine.Engine ALTER TABLE employees ADD COLUMN IF NOT EXISTS hourly_rate FLOAT
+2026-05-17 11:24:35,961 INFO sqlalchemy.engine.Engine [generated in 0.00017s] ()
+[migration] FAILED: ALTER TABLE employees ADD COLUMN IF NOT EXISTS hourly_rate F — (sqlite3.OperationalError) near "EXISTS": syntax error
+[SQL: ALTER TABLE employees ADD COLUMN IF NOT EXISTS hourly_rate FLOAT]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-17 11:24:35,962 INFO sqlalchemy.engine.Engine ALTER TABLE scheduled_shifts ADD COLUMN IF NOT EXISTS checkin_notified BOOLEAN DEFAULT FALSE
+2026-05-17 11:24:35,962 INFO sqlalchemy.engine.Engine [generated in 0.00016s] ()
+[migration] FAILED: ALTER TABLE scheduled_shifts ADD COLUMN IF NOT EXISTS checki — (sqlite3.OperationalError) near "EXISTS": syntax error
+[SQL: ALTER TABLE scheduled_shifts ADD COLUMN IF NOT EXISTS checkin_notified BOOLEAN DEFAULT FALSE]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-17 11:24:35,962 INFO sqlalchemy.engine.Engine COMMIT
+[scheduler] started — checkin_alert every 5 min
+INFO:     127.0.0.1:59658 - "GET /health HTTP/1.1" 200 OK
+[alerts] checkin check — window 10:44–11:14 IL
+2026-05-17 11:29:36,106 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 11:29:36,137 INFO sqlalchemy.engine.Engine SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0
+2026-05-17 11:29:36,139 INFO sqlalchemy.engine.Engine [generated in 0.00181s] ('2026-05-17', '10:44:36.102227', '11:14:36.102227', 'cancelled')
+2026-05-17 11:29:36,140 INFO sqlalchemy.engine.Engine ROLLBACK
+[alerts] checkin check — window 10:49–11:19 IL
+2026-05-17 11:34:36,089 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 11:34:36,090 INFO sqlalchemy.engine.Engine SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0
+2026-05-17 11:34:36,090 INFO sqlalchemy.engine.Engine [cached since 300s ago] ('2026-05-17', '10:49:36.087807', '11:19:36.087807', 'cancelled')
+2026-05-17 11:34:36,091 INFO sqlalchemy.engine.Engine ROLLBACK
+[alerts] checkin check — window 10:54–11:24 IL
+2026-05-17 11:39:36,098 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 11:39:36,099 INFO sqlalchemy.engine.Engine SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0
+2026-05-17 11:39:36,099 INFO sqlalchemy.engine.Engine [cached since 600s ago] ('2026-05-17', '10:54:36.095979', '11:24:36.095979', 'cancelled')
+2026-05-17 11:39:36,100 INFO sqlalchemy.engine.Engine ROLLBACK
+[alerts] checkin check — window 10:59–11:29 IL
+2026-05-17 11:44:36,094 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 11:44:36,095 INFO sqlalchemy.engine.Engine SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_tim2026-05-17 11:59:42,959 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 11:59:42,960 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("organizations")
+2026-05-17 11:59:42,960 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:59:42,983 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("employees")
+2026-05-17 11:59:42,984 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:59:42,985 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("shift_templates")
+2026-05-17 11:59:42,985 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:59:42,986 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("schedule_weeks")
+2026-05-17 11:59:42,986 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:59:42,987 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("availability_submissions")
+2026-05-17 11:59:42,987 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:59:42,988 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("unavailability_slots")
+2026-05-17 11:59:42,988 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:59:42,989 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("scheduled_shifts")
+2026-05-17 11:59:42,989 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:59:42,990 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("swap_requests")
+2026-05-17 11:59:42,990 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:59:42,991 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("fairness_tracking")
+2026-05-17 11:59:42,991 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:59:42,992 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("whatsapp_sessions")
+2026-05-17 11:59:42,992 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:59:42,993 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("attendance")
+2026-05-17 11:59:42,993 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:59:42,994 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("pending_registrations")
+2026-05-17 11:59:42,994 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:59:42,994 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("push_subscriptions")
+2026-05-17 11:59:42,994 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 11:59:42,996 INFO sqlalchemy.engine.Engine ALTER TABLE availability_submissions ADD COLUMN IF NOT EXISTS day_preferences JSON DEFAULT '{}'
+2026-05-17 11:59:42,996 INFO sqlalchemy.engine.Engine [generated in 0.00025s] ()
+[migration] FAILED: ALTER TABLE availability_submissions ADD COLUMN IF NOT EXIST — (sqlite3.OperationalError) near "EXISTS": syntax error
+[SQL: ALTER TABLE availability_submissions ADD COLUMN IF NOT EXISTS day_preferences JSON DEFAULT '{}']
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-17 11:59:42,997 INFO sqlalchemy.engine.Engine ALTER TABLE employees ADD COLUMN IF NOT EXISTS hourly_rate FLOAT
+2026-05-17 11:59:42,997 INFO sqlalchemy.engine.Engine [generated in 0.00018s] ()
+[migration] FAILED: ALTER TABLE employees ADD COLUMN IF NOT EXISTS hourly_rate F — (sqlite3.OperationalError) near "EXISTS": syntax error
+[SQL: ALTER TABLE employees ADD COLUMN IF NOT EXISTS hourly_rate FLOAT]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-17 11:59:42,998 INFO sqlalchemy.engine.Engine ALTER TABLE scheduled_shif[alerts] checkin check — window 11:19–11:49 IL
+2026-05-17 12:04:36,091 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 12:04:36,092 INFO sqlalchemy.engine.Engine SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0
+2026-05-17 12:04:36,092 INFO sqlalchemy.engine.Engine [cached since 2100s ago] ('2026-05-17', '11:19:36.088905', '11:49:36.088905', 'cancelled')
+2026-05-17 12:04:36,093 INFO sqlalchemy.engine.Engine ROLLBACK
+[alerts] checkin check — window 11:24–11:54 IL
+2026-05-17 12:09:36,102 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 12:09:36,103 INFO sqlalchemy.engine.Engine SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0
+2026-05-17 12:09:36,103 INFO sqlalchemy.engine.Engine [cached since 2400s ago] ('2026-05-17', '11:24:36.101163', '11:54:36.101163', 'cancelled')
+2026-05-17 12:09:36,104 INFO sqlalchemy.engine.Engine ROLLBACK
+[alerts] checkin check — window 11:29–11:59 IL
+2026-05-17 12:14:36,102 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 12:14:36,102 INFO sqlalchemy.engine.Engine SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0
+2026-05-17 12:14:36,102 INFO sqlalchemy.engine.Engine [cached since 2700s ago] ('2026-05-17', '11:29:36.099429', '11:59:36.099429', 'cancelled')
+2026-05-17 12:14:36,103 INFO sqlalchemy.engine.Engine ROLLBACK
+[alerts] checkin check — window 11:34–12:04 IL
+2026-05-17 12:19:36,099 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 12:19:36,100 INFO sqlalchemy.engine.Engine SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0
+2026-05-17 12:19:36,100 INFO sqlalchemy.engine.Engine [cached since 3000s ago] ('2026-05-17', '11:34:36.096710', '12:04:36.096710', 'cancelled')
+2026-05-17 12:19:36,101 INFO sqlalchemy.engine.Engine ROLLBACK
+[scheduler] stopped
+2026-05-17 12:24:10,072 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 12:24:10,073 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("organizations")
+2026-05-17 12:24:10,073 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:10,074 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("employees")
+2026-05-17 12:24:10,074 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:10,075 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("shift_templates")
+2026-05-17 12:24:10,075 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:10,075 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("schedule_weeks")
+2026-05-17 12:24:10,075 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:10,076 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("availability_submissions")
+2026-05-17 12:24:10,076 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:10,076 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("unavailability_slots")
+2026-05-17 12:24:10,076 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:10,077 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("scheduled_shifts")
+2026-05-17 12:24:10,077 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:10,078 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("swap_requests")
+2026-05-17 12:24:10,078 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:10,078 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("fairness_tracking")
+2026-05-17 12:24:10,078 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:10,079 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("whatsapp_sessions")
+2026-05-17 12:24:10,079 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:10,080 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("attendance")
+2026-05-17 12:24:10,080 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:10,080 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("pending_registrations")
+2026-05-17 12:24:10,080 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:10,081 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("push_subscriptions")
+2026-05-17 12:24:10,081 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:10,082 INFO sqlalchemy.engine.Engine ALTER TABLE availability_submissions ADD COLUMN IF NOT EXISTS day_preferences JSON DEFAULT '{}'
+2026-05-17 12:24:10,082 INFO sqlalchemy.engine.Engine [generated in 0.00017s] ()
+[migration] FAILED: ALTER TABLE availability_submissions ADD COLUMN IF NOT EXIST — (sqlite3.OperationalError) near "EXISTS": syntax error
+[SQL: ALTER TABLE availability_submissions ADD COLUMN IF NOT EXISTS day_preferences JSON DEFAULT '{}']
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-17 12:24:10,083 INFO sqlalchemy.engine.Engine ALTER TABLE employees ADD COLUMN IF NOT EXISTS hourly_rate FLOAT
+2026-05-17 12:24:10,083 INFO sqlalchemy.engine.Engine [generated in 0.00026s] ()
+[migration] FAILED: ALTER TABLE employees ADD COLUMN IF NOT EXISTS hourly_rate F — (sqlite3.OperationalError) near "EXISTS": syntax error
+[SQL: ALTER TABLE employees ADD COLUMN IF NOT EXISTS hourly_rate FLOAT]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-17 12:24:10,083 INFO sqlalchemy.engine.Engine ALTER TABLE scheduled_shifts ADD COLUMN IF NOT EXISTS checkin_notified BOOLEAN DEFAULT FALSE
+2026-05-17 12:24:10,083 INFO sqlalchemy.engine.Engine [generated in 0.00014s] ()
+[migration] FAILED: ALTER TABLE scheduled_shifts ADD COLUMN IF NOT EXISTS checki — (sqlite3.OperationalError) near "EXISTS": syntax error
+[SQL: ALTER TABLE scheduled_shifts ADD COLUMN IF NOT EXISTS checkin_notified BOOLEAN DEFAULT FALSE]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-17 12:24:10,084 INFO sqlalchemy.engine.Engine COMMIT
+[scheduler] started — checkin_alert every 5 min
+2026-05-17 12:24:11,802 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 12:24:11,802 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("organizations")
+2026-05-17 12:24:11,802 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:11,811 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("employees")
+2026-05-17 12:24:11,811 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:11,811 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("shift_templates")
+2026-05-17 12:24:11,811 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:11,812 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("schedule_weeks")
+2026-05-17 12:24:11,812 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:11,813 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("availability_submissions")
+2026-05-17 12:24:11,813 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:11,814 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("unavailability_slots")
+2026-05-17 12:24:11,814 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:11,814 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("scheduled_shifts")
+2026-05-17 12:24:11,814 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:11,814 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("swap_requests")
+2026-05-17 12:24:11,815 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:11,815 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("fairness_tracking")
+2026-05-17 12:24:11,815 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:11,815 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("whatsapp_sessions")
+2026-05-17 12:24:11,815 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:11,815 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("attendance")
+2026-05-17 12:24:11,816 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:11,816 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("pending_registrations")
+2026-05-17 12:24:11,816 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:11,816 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("push_subscriptions")
+2026-05-17 12:24:11,817 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:24:11,817 INFO sqlalchemy.engine.Engine ALTER TABLE availability_submissions ADD COLUMN IF NOT EXISTS day_preferences JSON DEFAULT '{}'
+2026-05-17 12:24:11,818 INFO sqlalchemy.engine.Engine [generated in 0.00026s] ()
+[migration] FAILED: ALTER TABLE availability_submissions ADD COLUMN IF NOT EXIST — (sqlite3.OperationalError) near "EXISTS": syntax error
+[SQL: ALTER TABLE availability_submissions ADD COLUMN IF NOT EXISTS day_preferences JSON DEFAULT '{}']
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-17 12:24:11,818 INFO sqlalchemy.engine.Engine ALTER TABLE employees ADD COLUMN IF NOT EXISTS hourly_rate FLOAT
+2026-05-17 12:24:11,818 INFO sqlalchemy.engine.Engine [generated in 0.00010s] ()
+[migration] FAILED: ALTER TABLE employees ADD COLUMN IF NOT EXISTS hourly_rate F — (sqlite3.OperationalError) near "EXISTS": syntax error
+[SQL: ALTER TABLE employees ADD COLUMN IF NOT EXISTS hourly_rate FLOAT]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-17 12:24:11,818 INFO sqlalchemy.engine.Engine ALTER TABLE scheduled_shifts ADD COLUMN IF NOT EXISTS checkin_notified BOOLEAN DEFAULT FALSE
+2026-05-17 12:24:11,819 INFO sqlalchemy.engine.Engine [generated in 0.00009s] ()
+[migration] FAILED: ALTER TABLE scheduled_shifts ADD COLUMN IF NOT EXISTS checki — (sqlite3.OperationalError) near "EXISTS": syntax error
+[SQL: ALTER TABLE scheduled_shifts ADD COLUMN IF NOT EXISTS checkin_notified BOOLEAN DEFAULT FALSE]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-17 12:24:11,819 INFO sqlalchemy.engine.Engine COMMIT
+[scheduler] started — checkin_alert every 5 min
+[alerts] checkin check — window 11:44–12:14 IL
+2026-05-17 12:29:11,891 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 12:29:11,906 INFO sqlalchemy.engine.Engine SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0
+2026-05-17 12:29:11,906 INFO sqlalchemy.engine.Engine [generated in 0.00029s] ('2026-05-17', '11:44:11.888960', '12:14:11.888960', 'cancelled')
+2026-05-17 12:29:11,907 INFO sqlalchemy.engine.Engine ROLLBACK
+[alerts] checkin check — window 11:49–12:19 IL
+2026-05-17 12:34:11,895 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 12:34:11,895 INFO sqlalchemy.engine.Engine SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0
+2026-05-17 12:34:11,896 INFO sqlalchemy.engine.Engine [cached since 300s ago] ('2026-05-17', '11:49:11.893959', '12:19:11.893959', 'cancelled')
+2026-05-17 12:34:11,897 INFO sqlalchemy.engine.Engine ROLLBACK
+[alerts] checkin check — window 11:54–12:24 IL
+2026-05-17 12:39:11,886 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 12:39:11,886 INFO sqlalchemy.engine.Engine SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0
+2026-05-17 12:39:11,886 INFO sqlalchemy.engine.Engine [cached since 600s ago] ('2026-05-17', '11:54:11.884450', '12:24:11.884450', 'cancelled')
+2026-05-17 12:39:11,887 INFO sqlalchemy.engine.Engine ROLLBACK
+[scheduler] stopped
+2026-05-17 12:42:06,535 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 12:42:06,536 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("organizations")
+2026-05-17 12:42:06,536 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:42:06,537 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("employees")
+2026-05-17 12:42:06,537 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:42:06,537 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("shift_templates")
+2026-05-17 12:42:06,538 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:42:06,538 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("schedule_weeks")
+2026-05-17 12:42:06,538 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:42:06,538 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("availability_submissions")
+2026-05-17 12:42:06,538 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:42:06,538 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("unavailability_slots")
+2026-05-17 12:42:06,539 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:42:06,539 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("scheduled_shifts")
+2026-05-17 12:42:06,539 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:42:06,539 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("swap_requests")
+2026-05-17 12:42:06,539 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:42:06,540 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("fairness_tracking")
+2026-05-17 12:42:06,540 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:42:06,540 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("whatsapp_sessions")
+2026-05-17 12:42:06,541 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:42:06,541 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("attendance")
+2026-05-17 12:42:06,541 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:42:06,541 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("pending_registrations")
+2026-05-17 12:42:06,541 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:42:06,541 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("push_subscriptions")
+2026-05-17 12:42:06,542 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:42:06,542 INFO sqlalchemy.engine.Engine ALTER TABLE availability_submissions ADD COLUMN IF NOT EXISTS day_preferences JSON DEFAULT '{}'
+2026-05-17 12:42:06,542 INFO sqlalchemy.engine.Engine [generated in 0.00027s] ()
+[migration] FAILED: ALTER TABLE availability_submissions ADD COLUMN IF NOT EXIST — (sqlite3.OperationalError) near "EXISTS": syntax error
+[SQL: ALTER TABLE availability_submissions ADD COLUMN IF NOT EXISTS day_preferences JSON DEFAULT '{}']
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-17 12:42:06,543 INFO sqlalchemy.engine.Engine ALTER TABLE employees ADD COLUMN IF NOT EXISTS hourly_rate FLOAT
+2026-05-17 12:42:06,543 INFO sqlalchemy.engine.Engine [generated in 0.00010s] ()
+[migration] FAILED: ALTER TABLE employees ADD COLUMN IF NOT EXISTS hourly_rate F — (sqlite3.OperationalError) near "EXISTS": syntax error
+[SQL: ALTER TABLE employees ADD COLUMN IF NOT EXISTS hourly_rate FLOAT]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-17 12:42:06,543 INFO sqlalchemy.engine.Engine ALTER TABLE scheduled_shifts ADD COLUMN IF NOT EXISTS checkin_notified BOOLEAN DEFAULT FALSE
+2026-05-17 12:42:06,543 INFO sqlalchemy.engine.Engine [generated in 0.00009s] ()
+[migration] FAILED: ALTER TABLE scheduled_shifts ADD COLUMN IF NOT EXISTS checki — (sqlite3.OperationalError) near "EXISTS": syntax error
+[SQL: ALTER TABLE scheduled_shifts ADD COLUMN IF NOT EXISTS checkin_notified BOOLEAN DEFAULT FALSE]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-17 12:42:06,544 INFO sqlalchemy.engine.Engine COMMIT
+[scheduler] started — checkin_alert every 5 min
+[scheduler] stopped
+2026-05-17 12:47:07,070 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 12:47:07,070 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("organizations")
+2026-05-17 12:47:07,070 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:47:07,071 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("employees")
+2026-05-17 12:47:07,071 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:47:07,071 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("shift_templates")
+2026-05-17 12:47:07,072 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:47:07,072 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("schedule_weeks")
+2026-05-17 12:47:07,072 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:47:07,073 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("availability_submissions")
+2026-05-17 12:47:07,073 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:47:07,073 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("unavailability_slots")
+2026-05-17 12:47:07,073 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:47:07,074 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("scheduled_shifts")
+2026-05-17 12:47:07,074 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:47:07,074 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("swap_requests")
+2026-05-17 12:47:07,074 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:47:07,074 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("fairness_tracking")
+2026-05-17 12:47:07,075 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:47:07,075 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("whatsapp_sessions")
+2026-05-17 12:47:07,075 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:47:07,076 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("attendance")
+2026-05-17 12:47:07,076 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:47:07,077 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("pending_registrations")
+2026-05-17 12:47:07,077 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:47:07,077 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("push_subscriptions")
+2026-05-17 12:47:07,077 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-05-17 12:47:07,078 INFO sqlalchemy.engine.Engine ALTER TABLE availability_submissions ADD COLUMN IF NOT EXISTS day_preferences JSON DEFAULT '{}'
+2026-05-17 12:47:07,078 INFO sqlalchemy.engine.Engine [generated in 0.00014s] ()
+[migration] FAILED: ALTER TABLE availability_submissions ADD COLUMN IF NOT EXIST — (sqlite3.OperationalError) near "EXISTS": syntax error
+[SQL: ALTER TABLE availability_submissions ADD COLUMN IF NOT EXISTS day_preferences JSON DEFAULT '{}']
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-17 12:47:07,079 INFO sqlalchemy.engine.Engine ALTER TABLE employees ADD COLUMN IF NOT EXISTS hourly_rate FLOAT
+2026-05-17 12:47:07,079 INFO sqlalchemy.engine.Engine [generated in 0.00013s] ()
+[migration] FAILED: ALTER TABLE employees ADD COLUMN IF NOT EXISTS hourly_rate F — (sqlite3.OperationalError) near "EXISTS": syntax error
+[SQL: ALTER TABLE employees ADD COLUMN IF NOT EXISTS hourly_rate FLOAT]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-17 12:47:07,079 INFO sqlalchemy.engine.Engine ALTER TABLE scheduled_shifts ADD COLUMN IF NOT EXISTS checkin_notified BOOLEAN DEFAULT FALSE
+2026-05-17 12:47:07,079 INFO sqlalchemy.engine.Engine [generated in 0.00010s] ()
+[migration] FAILED: ALTER TABLE scheduled_shifts ADD COLUMN IF NOT EXISTS checki — (sqlite3.OperationalError) near "EXISTS": syntax error
+[SQL: ALTER TABLE scheduled_shifts ADD COLUMN IF NOT EXISTS checkin_notified BOOLEAN DEFAULT FALSE]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-17 12:47:07,079 INFO sqlalchemy.engine.Engine COMMIT
+[scheduler] started — checkin_alert every 5 min
+[alerts] checkin check — window 12:07–12:37 IL
+2026-05-17 12:52:07,163 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 12:52:07,179 INFO sqlalchemy.engine.Engine SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0
+2026-05-17 12:52:07,180 INFO sqlalchemy.engine.Engine [generated in 0.00069s] ('2026-05-17', '12:07:07.160301', '12:37:07.160301', 'cancelled')
+2026-05-17 12:52:07,181 INFO sqlalchemy.engine.Engine ROLLBACK
+[alerts] checkin check — window 12:12–12:42 IL
+2026-05-17 12:57:07,158 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 12:57:07,159 INFO sqlalchemy.engine.Engine SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0
+2026-05-17 12:57:07,160 INFO sqlalchemy.engine.Engine [cached since 300s ago] ('2026-05-17', '12:12:07.155515', '12:42:07.155515', 'cancelled')
+2026-05-17 12:57:07,162 INFO sqlalchemy.engine.Engine ROLLBACK
+[alerts] checkin check — window 12:17–12:47 IL
+2026-05-17 13:02:07,147 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 13:02:07,148 INFO sqlalchemy.engine.Engine SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0
+2026-05-17 13:02:07,148 INFO sqlalchemy.engine.Engine [cached since 600s ago] ('2026-05-17', '12:17:07.147105', '12:47:07.147105', 'cancelled')
+2026-05-17 13:02:07,149 INFO sqlalchemy.engine.Engine ROLLBACK
+[alerts] checkin check — window 12:22–12:52 IL
+2026-05-17 13:07:07,162 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 13:07:07,163 INFO sqlalchemy.engine.Engine SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0
+2026-05-17 13:07:07,165 INFO sqlalchemy.engine.Engine [cached since 900s ago] ('2026-05-17', '12:22:07.159146', '12:52:07.159146', 'cancelled')
+2026-05-17 13:07:07,167 INFO sqlalchemy.engine.Engine ROLLBACK
+[alerts] checkin check — window 12:27–12:57 IL
+2026-05-17 13:12:07,170 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 13:12:07,172 INFO sqlalchemy.engine.Engine SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0
+2026-05-17 13:12:07,172 INFO sqlalchemy.engine.Engine [cached since 1200s ago] ('2026-05-17', '12:27:07.161347', '12:57:07.161347', 'cancelled')
+2026-05-17 13:12:07,175 INFO sqlalchemy.engine.Engine ROLLBACK
+[alerts] checkin check — window 12:32–13:02 IL
+2026-05-17 13:17:07,159 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 13:17:07,160 INFO sqlalchemy.engine.Engine SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0
+2026-05-17 13:17:07,160 INFO sqlalchemy.engine.Engine [cached since 1500s ago] ('2026-05-17', '12:32:07.150810', '13:02:07.150810', 'cancelled')
+2026-05-17 13:17:07,162 INFO sqlalchemy.engine.Engine ROLLBACK
+[alerts] checkin check — window 12:37–13:07 IL
+2026-05-17 13:22:07,157 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 13:22:07,158 INFO sqlalchemy.engine.Engine SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0
+2026-05-17 13:22:07,158 INFO sqlalchemy.engine.Engine [cached since 1800s ago] ('2026-05-17', '12:37:07.148484', '13:07:07.148484', 'cancelled')
+2026-05-17 13:22:07,160 INFO sqlalchemy.engine.Engine ROLLBACK
+[alerts] checkin check — window 12:42–13:12 IL
+2026-05-17 13:27:07,157 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 13:27:07,158 INFO sqlalchemy.engine.Engine SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0
+2026-05-17 13:27:07,158 INFO sqlalchemy.engine.Engine [cached since 2100s ago] ('2026-05-17', '12:42:07.148486', '13:12:07.148486', 'cancelled')
+2026-05-17 13:27:07,160 INFO sqlalchemy.engine.Engine ROLLBACK
+[alerts] checkin check — window 12:47–13:17 IL
+2026-05-17 13:32:07,164 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 13:32:07,166 INFO sqlalchemy.engine.Engine SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0
+2026-05-17 13:32:07,166 INFO sqlalchemy.engine.Engine [cached since 2400s ago] ('2026-05-17', '12:47:07.155301', '13:17:07.155301', 'cancelled')
+2026-05-17 13:32:07,168 INFO sqlalchemy.engine.Engine ROLLBACK
+[alerts] checkin check — window 12:52–13:22 IL
+2026-05-17 13:37:07,158 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 13:37:07,160 INFO sqlalchemy.engine.Engine SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0
+2026-05-17 13:37:07,161 INFO sqlalchemy.engine.Engine [cached since 2700s ago] ('2026-05-17', '12:52:07.148778', '13:22:07.148778', 'cancelled')
+2026-05-17 13:37:07,164 INFO sqlalchemy.engine.Engine ROLLBACK
+[alerts] checkin check — window 12:57–13:27 IL
+2026-05-17 13:42:07,167 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 13:42:07,168 INFO sqlalchemy.engine.Engine SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled_shifts.template_id, scheduled_shifts.employee_id, scheduled_shifts.date, scheduled_shifts.start_time, scheduled_shifts.end_time, scheduled_shifts.status, scheduled_shifts.is_manually_overridden, scheduled_shifts.created_by, scheduled_shifts.checkin_notified 
+FROM scheduled_shifts 
+WHERE scheduled_shifts.date = ? AND scheduled_shifts.start_time >= ? AND scheduled_shifts.start_time <= ? AND (scheduled_shifts.status NOT IN (?)) AND scheduled_shifts.checkin_notified = 0
+2026-05-17 13:42:07,169 INFO sqlalchemy.engine.Engine [cached since 3000s ago] ('2026-05-17', '12:57:07.157638', '13:27:07.157638', 'cancelled')
+2026-05-17 13:42:07,171 INFO sqlalchemy.engine.Engine ROLLBACK
+[alerts] checkin check — window 13:02–13:32 IL
+2026-05-17 13:47:07,160 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-05-17 13:47:07,161 INFO sqlalchemy.engine.Engine SELECT scheduled_shifts.id, scheduled_shifts.week_id, scheduled

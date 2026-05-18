@@ -6,7 +6,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import listPlugin from '@fullcalendar/list'
 import interactionPlugin from '@fullcalendar/interaction'
-import type { EventDropArg } from '@fullcalendar/core'
+import type { EventDropArg, EventClickArg, DateSelectArg } from '@fullcalendar/core'
 import { format } from 'date-fns'
 import { Schedule, Conflict } from '@/types/schedule'
 
@@ -27,10 +27,12 @@ interface Props {
   schedule: Schedule
   weekStart: Date
   onShiftMove: (shiftId: string, newEmployeeId: string, newDate: string) => void
+  onShiftClick?: (shiftId: string) => void
+  onEmptyClick?: (date: string) => void
   conflicts: Conflict[]
 }
 
-export function WeeklyCalendar({ schedule, weekStart, onShiftMove, conflicts }: Props) {
+export function WeeklyCalendar({ schedule, weekStart, onShiftMove, onShiftClick, onEmptyClick, conflicts }: Props) {
   const calendarRef = useRef<FullCalendar>(null)
   const [isMobile, setIsMobile] = useState(false)
 
@@ -81,6 +83,24 @@ export function WeeklyCalendar({ schedule, weekStart, onShiftMove, conflicts }: 
     [onShiftMove]
   )
 
+  const handleEventClick = useCallback(
+    (info: EventClickArg) => {
+      if (onShiftClick) onShiftClick(info.event.extendedProps.shiftId)
+    },
+    [onShiftClick]
+  )
+
+  const handleSelect = useCallback(
+    (info: DateSelectArg) => {
+      if (onEmptyClick) {
+        const d = format(info.start, 'yyyy-MM-dd')
+        onEmptyClick(d)
+      }
+      info.view.calendar.unselect()
+    },
+    [onEmptyClick]
+  )
+
   const renderEventContent = (eventInfo: any) => {
     const { role, shiftName, isManualOverride } = eventInfo.event.extendedProps
     if (isMobile) {
@@ -125,7 +145,10 @@ export function WeeklyCalendar({ schedule, weekStart, onShiftMove, conflicts }: 
         {...{ schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source' } as any}
         editable={!isMobile}
         droppable={!isMobile}
+        selectable={!isMobile && !!onEmptyClick}
+        select={handleSelect}
         eventDrop={handleEventDrop}
+        eventClick={handleEventClick}
         events={events}
         eventContent={renderEventContent}
         slotMinTime="07:00:00"
