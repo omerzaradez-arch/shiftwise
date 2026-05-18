@@ -1,5 +1,6 @@
 import uuid
-from datetime import date, time
+from datetime import date as _date, time as _time
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -14,24 +15,24 @@ router = APIRouter()
 
 class MoveShiftRequest(BaseModel):
     employee_id: str
-    date: date
+    date: _date
 
 
 class CreateShiftRequest(BaseModel):
-    week_start: date
-    date: date
+    week_start: _date
+    date: _date
     template_id: str
     employee_id: str
-    start_time: time | None = None
-    end_time: time | None = None
+    start_time: Optional[_time] = None
+    end_time: Optional[_time] = None
 
 
 class UpdateShiftRequest(BaseModel):
-    employee_id: str | None = None
-    date: date | None = None
-    template_id: str | None = None
-    start_time: time | None = None
-    end_time: time | None = None
+    employee_id: Optional[str] = None
+    date: Optional[_date] = None
+    template_id: Optional[str] = None
+    start_time: Optional[_time] = None
+    end_time: Optional[_time] = None
 
 
 def _require_manager(user: Employee):
@@ -41,7 +42,7 @@ def _require_manager(user: Employee):
 
 @router.get("/my")
 async def get_my_shifts(
-    week_start: date,
+    week_start: _date,
     current_user: Employee = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
