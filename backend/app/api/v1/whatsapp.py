@@ -100,14 +100,34 @@ async def _twilio_send_interactive(phone: str, content_payload: dict) -> bool:
 async def send_interactive_day_question(
     phone: str, day_idx: int, day_date: date,
     week_start: date, week_end: date, current: int, total: int,
+    day_saturation: dict | None = None,
 ) -> bool:
     """Send availability day question as a WhatsApp list picker."""
     import uuid
+    sat = day_saturation or {}
+    morning_full = sat.get("morning", {}).get("full", False)
+    evening_full = sat.get("evening", {}).get("full", False)
+    note = ""
+    blocked = []
+    if morning_full:
+        blocked.append("בוקר")
+    if evening_full:
+        blocked.append("ערב")
+    if blocked:
+        note = f"\n\n⚠️ {' ו'.join(blocked)} כבר תפוס/ים"
     body = (
         f"📅 זמינות שבוע {week_start.strftime('%d/%m')}–{week_end.strftime('%d/%m')} "
         f"({current}/{total})\n\n"
-        f"*{DAY_NAMES[day_idx]} {day_date.strftime('%d/%m')}* — מה הזמינות שלך?"
+        f"*{DAY_NAMES[day_idx]} {day_date.strftime('%d/%m')}* — מה הזמינות שלך?{note}"
     )
+    items = []
+    if not morning_full:
+        items.append({"id": "1", "item": "בוקר"})
+    if not evening_full:
+        items.append({"id": "2", "item": "ערב"})
+    if not morning_full and not evening_full:
+        items.append({"id": "3", "item": "כל משמרת"})
+    items.append({"id": "4", "item": "לא זמין"})
     payload = {
         "friendly_name": f"sw_avail_{uuid.uuid4().hex[:8]}",
         "language": "he",
@@ -115,12 +135,7 @@ async def send_interactive_day_question(
             "twilio/list-picker": {
                 "body": body,
                 "button": "בחר זמינות",
-                "items": [
-                    {"id": "1", "item": "בוקר"},
-                    {"id": "2", "item": "ערב"},
-                    {"id": "3", "item": "כל משמרת"},
-                    {"id": "4", "item": "לא זמין"},
-                ],
+                "items": items,
             }
         },
     }
@@ -182,16 +197,34 @@ DAY_NAME_TO_IDX = {
 }
 
 
-def day_question_message(day_idx: int, day_date: date, week_start: date, week_end: date, current: int, total: int) -> str:
-    return (
-        f"📅 *זמינות שבוע {week_start.strftime('%d/%m')}–{week_end.strftime('%d/%m')}* ({current}/{total})\n\n"
-        f"*{DAY_NAMES[day_idx]} {day_date.strftime('%d/%m')}* — מה הזמינות שלך?\n\n"
-        f"1️⃣ בוקר\n"
-        f"2️⃣ ערב\n"
-        f"3️⃣ כל משמרת\n"
-        f"4️⃣ לא זמין\n\n"
-        f"_שלח 1 / 2 / 3 / 4_\n_לביטול שלח: ביטול_"
-    )
+def day_question_message(
+    day_idx: int, day_date: date, week_start: date, week_end: date,
+    current: int, total: int, day_saturation: dict | None = None,
+) -> str:
+    sat = day_saturation or {}
+    morning_full = sat.get("morning", {}).get("full", False)
+    evening_full = sat.get("evening", {}).get("full", False)
+
+    lines = [
+        f"📅 *זמינות שבוע {week_start.strftime('%d/%m')}–{week_end.strftime('%d/%m')}* ({current}/{total})",
+        "",
+        f"*{DAY_NAMES[day_idx]} {day_date.strftime('%d/%m')}* — מה הזמינות שלך?",
+        "",
+    ]
+    if not morning_full:
+        lines.append("1️⃣ בוקר")
+    else:
+        lines.append("~1️⃣ בוקר~ ⚠️ תפוס")
+    if not evening_full:
+        lines.append("2️⃣ ערב")
+    else:
+        lines.append("~2️⃣ ערב~ ⚠️ תפוס")
+    if not morning_full and not evening_full:
+        lines.append("3️⃣ כל משמרת")
+    lines.append("4️⃣ לא זמין")
+    lines.append("")
+    lines.append("_שלח 1 / 2 / 3 / 4_\n_לביטול שלח: ביטול_")
+    return "\n".join(lines)
 
 
 def parse_day_response(body: str, operating_days: list[int]) -> dict | None:
@@ -512,6 +545,94 @@ async def cmd_week_schedule(employee: Employee, db: AsyncSession) -> str:
 
 
 # ── Availability flow ──────────────────────────────────────────────────────────
+
+async def get_day_slot_saturation(
+    week_start: date, org_id: str, employee_id: str, db: AsyncSession,
+) -> dict[int, dict[str, dict]]:
+    """
+    Returns {day_idx: {"morning": {"available", "required", "full"},
+                       "evening": {...}}}
+    Excludes the current employee's previous submission to avoid self-blocking.
+    """
+    from app.models.shift_template import ShiftTemplate
+
+    # Find existing schedule week (may not exist yet)
+    week_result = await db.execute(
+        select(ScheduleWeek).where(
+            ScheduleWeek.org_id == org_id,
+            ScheduleWeek.week_start == week_start,
+        )
+    )
+    week = week_result.scalar_one_or_none()
+
+    # Required staffing per (day, period) from shift templates
+    tmpl_result = await db.execute(
+        select(ShiftTemplate).where(
+            ShiftTemplate.org_id == org_id,
+            ShiftTemplate.is_active == True,
+        )
+    )
+    templates = tmpl_result.scalars().all()
+    required: dict[int, dict[str, int]] = {}
+    for tmpl in templates:
+        for d in (tmpl.days_of_week or []):
+            try:
+                d_int = int(d)
+            except (TypeError, ValueError):
+                continue
+            required.setdefault(d_int, {"morning": 0, "evening": 0})
+            if tmpl.shift_type in MORNING_TYPES:
+                required[d_int]["morning"] += tmpl.min_employees or 0
+            elif tmpl.shift_type in EVENING_TYPES:
+                required[d_int]["evening"] += tmpl.min_employees or 0
+
+    # Count current availability per (day, period), excluding current employee
+    available: dict[int, dict[str, int]] = {}
+    if week:
+        subs_result = await db.execute(
+            select(AvailabilitySubmission).where(
+                AvailabilitySubmission.week_id == week.id,
+                AvailabilitySubmission.employee_id != employee_id,
+            )
+        )
+        for sub in subs_result.scalars().all():
+            prefs = sub.day_preferences or {}
+            for day_key, p in prefs.items():
+                if not p.get("available"):
+                    continue
+                try:
+                    d = int(day_key)
+                except (TypeError, ValueError):
+                    continue
+                available.setdefault(d, {"morning": 0, "evening": 0})
+                pts = p.get("preferred_types") or []
+                if not pts:
+                    available[d]["morning"] += 1
+                    available[d]["evening"] += 1
+                else:
+                    if any(t in MORNING_TYPES for t in pts):
+                        available[d]["morning"] += 1
+                    if any(t in EVENING_TYPES for t in pts):
+                        available[d]["evening"] += 1
+
+    result: dict[int, dict[str, dict]] = {}
+    for d in set(required.keys()) | set(available.keys()):
+        req = required.get(d, {"morning": 0, "evening": 0})
+        avl = available.get(d, {"morning": 0, "evening": 0})
+        result[d] = {
+            "morning": {
+                "available": avl["morning"],
+                "required": req["morning"],
+                "full": req["morning"] > 0 and avl["morning"] >= req["morning"],
+            },
+            "evening": {
+                "available": avl["evening"],
+                "required": req["evening"],
+                "full": req["evening"] > 0 and avl["evening"] >= req["evening"],
+            },
+        }
+    return result
+
 
 def build_summary(responses: dict, operating_days: list[int], week_start: date) -> str:
     lines = [f"📋 *סיכום זמינות שבוע {week_start.strftime('%d/%m')}:*"]
@@ -922,16 +1043,30 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
         responses: dict = ctx.get("responses", {})
         step: int = ctx.get("step", 0)
 
+        saturation = await get_day_slot_saturation(week_start, employee.org_id, employee.id, db)
+        current_day_idx = operating_days[step]
+        current_date = week_start + timedelta(days=current_day_idx)
+        current_sat = saturation.get(current_day_idx, {})
+        morning_full = current_sat.get("morning", {}).get("full", False)
+        evening_full = current_sat.get("evening", {}).get("full", False)
+
         option = OPTION_MAP.get(normalized) or OPTION_MAP.get(body.strip())
         if not option:
-            current_day_idx = operating_days[step]
-            current_date = week_start + timedelta(days=current_day_idx)
             return twiml(
                 "⚠️ לא הבנתי, שלח 1 / 2 / 3 / 4\n\n"
-                + day_question_message(current_day_idx, current_date, week_start, week_end, step + 1, len(operating_days))
+                + day_question_message(current_day_idx, current_date, week_start, week_end, step + 1, len(operating_days), current_sat)
             )
 
-        current_day_idx = operating_days[step]
+        # Reject full slots
+        chose_morning = option.get("preferred_types") == MORNING_TYPES
+        chose_evening = option.get("preferred_types") == EVENING_TYPES
+        chose_any = option.get("available") and not option.get("preferred_types")
+        if (chose_morning and morning_full) or (chose_evening and evening_full) or (chose_any and morning_full and evening_full):
+            return twiml(
+                f"⚠️ המשמרת הזאת כבר מלאה ביום {DAY_NAMES[current_day_idx]}. בחר אופציה אחרת.\n\n"
+                + day_question_message(current_day_idx, current_date, week_start, week_end, step + 1, len(operating_days), current_sat)
+            )
+
         responses[str(current_day_idx)] = option
         step += 1
 
@@ -943,10 +1078,11 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
             session.context = ctx
             session.updated_at = datetime.now(timezone.utc)
             await db.commit()
-            sent = await send_interactive_day_question(phone, next_day_idx, next_date, week_start, week_end, step + 1, len(operating_days))
+            next_sat = saturation.get(next_day_idx, {})
+            sent = await send_interactive_day_question(phone, next_day_idx, next_date, week_start, week_end, step + 1, len(operating_days), next_sat)
             if sent:
                 return empty_twiml()
-            return twiml(day_question_message(next_day_idx, next_date, week_start, week_end, step + 1, len(operating_days)))
+            return twiml(day_question_message(next_day_idx, next_date, week_start, week_end, step + 1, len(operating_days), next_sat))
 
         # All days answered → show summary with yes/no buttons
         ctx["responses"] = responses
@@ -1001,10 +1137,12 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
         }
         session.updated_at = datetime.now(timezone.utc)
         await db.commit()
-        sent = await send_interactive_day_question(phone, first_day_idx, first_date, week_start, week_end, 1, len(operating_days))
+        saturation = await get_day_slot_saturation(week_start, employee.org_id, employee.id, db)
+        first_sat = saturation.get(first_day_idx, {})
+        sent = await send_interactive_day_question(phone, first_day_idx, first_date, week_start, week_end, 1, len(operating_days), first_sat)
         if sent:
             return empty_twiml()
-        return twiml(day_question_message(first_day_idx, first_date, week_start, week_end, 1, len(operating_days)))
+        return twiml(day_question_message(first_day_idx, first_date, week_start, week_end, 1, len(operating_days), first_sat))
 
     if "משמרת" in normalized or "הבא" in normalized:
         return twiml(await cmd_next_shift(employee, db))
