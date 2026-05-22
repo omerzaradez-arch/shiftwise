@@ -300,29 +300,82 @@ async def request_access(data: AccessRequestData, db: AsyncSession = Depends(get
 
 
 @router.get("/debug-admin-whatsapp")
-async def debug_admin_whatsapp():
-    """Debug endpoint — sends a test WhatsApp to ADMIN_PHONE and returns status."""
-    import os
-    from app.api.v1.whatsapp import send_whatsapp_to
+async def debug_admin_whatsapp(phone: str | None = None, recheck: str | None = None):
+    """Debug endpoint — sends a test WhatsApp and returns full Twilio response.
+
+    Query params:
+      phone:   override target phone (default: ADMIN_PHONE env var)
+      recheck: a Twilio message SID — skip sending, just fetch its current status
+    """
+    import os, httpx
+
+    account_sid = os.getenv("TWILIO_ACCOUNT_SID")
+    auth_token = os.getenv("TWILIO_AUTH_TOKEN")
+    whatsapp_number = os.getenv("TWILIO_WHATSAPP_NUMBER", "+14155238886")
 
     result = {
         "ADMIN_PHONE_set": bool(os.getenv("ADMIN_PHONE")),
         "ADMIN_PHONE_value": os.getenv("ADMIN_PHONE", "(not set)"),
-        "TWILIO_ACCOUNT_SID_set": bool(os.getenv("TWILIO_ACCOUNT_SID")),
-        "TWILIO_AUTH_TOKEN_set": bool(os.getenv("TWILIO_AUTH_TOKEN")),
-        "TWILIO_WHATSAPP_NUMBER": os.getenv("TWILIO_WHATSAPP_NUMBER", "+14155238886 (default)"),
+        "TWILIO_ACCOUNT_SID_set": bool(account_sid),
+        "TWILIO_AUTH_TOKEN_set": bool(auth_token),
+        "TWILIO_WHATSAPP_NUMBER": whatsapp_number,
     }
 
-    admin = os.getenv("ADMIN_PHONE", "")
-    if not admin:
-        result["error"] = "ADMIN_PHONE לא מוגדר ב-Railway Variables"
+    if not account_sid or not auth_token:
+        result["error"] = "TWILIO_ACCOUNT_SID או TWILIO_AUTH_TOKEN חסר ב-Railway Variables"
         return result
 
+    # Re-check an existing message's status
+    if recheck:
+        try:
+            async with httpx.AsyncClient() as client:
+                resp = await client.get(
+                    f"https://api.twilio.com/2010-04-01/Accounts/{account_sid}/Messages/{recheck}.json",
+                    auth=(account_sid, auth_token),
+                    timeout=10.0,
+                )
+                result["recheck_http_status"] = resp.status_code
+                result["recheck_body"] = resp.json() if resp.status_code == 200 else resp.text
+        except Exception as e:
+            result["error"] = f"Recheck exception: {e}"
+        return result
+
+    target = phone or os.getenv("ADMIN_PHONE", "")
+    if not target:
+        result["error"] = "ADMIN_PHONE לא מוגדר וגם לא הועבר ?phone=..."
+        return result
+
+    clean = target.replace("-", "").replace(" ", "")
+    if not clean.startswith("+"):
+        clean = "+972" + clean.lstrip("0")
+    result["target_phone"] = clean
+
     try:
-        ok = await send_whatsapp_to(admin, "🔔 *בדיקה מ-ShiftWise*\n\nאם קיבלת את ההודעה הזו — ה-WhatsApp עובד מצוין! 🎉")
-        result["whatsapp_sent"] = ok
-        if not ok:
-            result["error"] = "Twilio החזיר שגיאה. בדוק את ה-Railway logs."
+        payload = {
+            "From": f"whatsapp:{whatsapp_number}",
+            "To": f"whatsapp:{clean}",
+            "Body": "🔔 *בדיקה מ-ShiftWise*\n\nאם קיבלת את ההודעה הזו — ה-WhatsApp עובד מצוין! 🎉",
+        }
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(
+                f"https://api.twilio.com/2010-04-01/Accounts/{account_sid}/Messages.json",
+                auth=(account_sid, auth_token),
+                data=payload,
+                timeout=15.0,
+            )
+            result["twilio_http_status"] = resp.status_code
+            try:
+                body = resp.json()
+            except Exception:
+                body = {"raw": resp.text}
+
+            # Surface the key diagnostic fields directly
+            result["twilio_sid"] = body.get("sid")
+            result["twilio_status"] = body.get("status")
+            result["twilio_error_code"] = body.get("error_code") or body.get("code")
+            result["twilio_error_message"] = body.get("error_message") or body.get("message")
+            result["twilio_more_info"] = body.get("more_info")
+            result["twilio_full_response"] = body
     except Exception as e:
         result["error"] = f"Exception: {e}"
 
