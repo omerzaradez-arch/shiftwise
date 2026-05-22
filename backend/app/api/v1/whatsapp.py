@@ -888,9 +888,45 @@ async def cmd_hours(employee: Employee, db: AsyncSession) -> str:
 
 # ── Main webhook ───────────────────────────────────────────────────────────────
 
+async def _verify_twilio_signature(request: Request, form_data: dict) -> bool:
+    """Verify X-Twilio-Signature.
+
+    If TWILIO_AUTH_TOKEN is unset, signature verification is skipped (logs a
+    warning). In production both should be set; an invalid signature returns
+    False and the caller must reject the request.
+
+    Twilio signs the public webhook URL (always https) — but behind Railway's
+    proxy `request.url` may report http. We try both schemes and accept either.
+    """
+    import os, hmac, hashlib, base64
+    auth_token = os.getenv("TWILIO_AUTH_TOKEN", "")
+    if not auth_token:
+        print("[twilio-webhook] WARNING: TWILIO_AUTH_TOKEN missing — skipping signature check", flush=True)
+        return True
+    signature = request.headers.get("X-Twilio-Signature", "")
+    if not signature:
+        print("[twilio-webhook] missing X-Twilio-Signature header", flush=True)
+        return False
+    sorted_params = "".join(f"{k}{form_data[k]}" for k in sorted(form_data.keys()))
+    candidate_urls = {str(request.url)}
+    fwd_proto = request.headers.get("x-forwarded-proto", "").split(",")[0].strip()
+    if fwd_proto:
+        candidate_urls.add(str(request.url.replace(scheme=fwd_proto)))
+    candidate_urls.add(str(request.url.replace(scheme="https")))
+    for url in candidate_urls:
+        digest = hmac.new(auth_token.encode(), (url + sorted_params).encode(), hashlib.sha1).digest()
+        if hmac.compare_digest(base64.b64encode(digest).decode(), signature):
+            return True
+    print(f"[twilio-webhook] signature mismatch (tried {len(candidate_urls)} URL variants)", flush=True)
+    return False
+
+
 @router.post("/webhook")
 async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db)):
     form = await request.form()
+    form_dict = {k: str(v) for k, v in form.items()}
+    if not await _verify_twilio_signature(request, form_dict):
+        return Response(content="invalid signature", status_code=403)
     raw_from = str(form.get("From", ""))
     body = str(form.get("Body", "")).strip()
     phone = raw_from.replace("whatsapp:", "")

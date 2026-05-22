@@ -1,18 +1,30 @@
 from datetime import datetime, timedelta, timezone
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from jose import jwt, JWTError
 
 from app.database import get_db
 from app.models import Employee
 from app.config import settings
 from app.security import verify_password
+from app.limiter import limiter
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
+
+
+MIN_PASSWORD_LENGTH = 8
+
+
+def _validate_password_strength(value: str) -> str:
+    if len(value) < MIN_PASSWORD_LENGTH:
+        raise ValueError(f"הסיסמה חייבת להיות לפחות {MIN_PASSWORD_LENGTH} תווים")
+    if value.isdigit():
+        raise ValueError("הסיסמה לא יכולה להיות מספרים בלבד")
+    return value
 
 
 class LoginRequest(BaseModel):
@@ -81,7 +93,8 @@ async def get_current_user(
 
 
 @router.post("/login", response_model=TokenResponse)
-async def login(data: LoginRequest, db: AsyncSession = Depends(get_db)):
+@limiter.limit("10/minute")
+async def login(data: LoginRequest, request: Request, db: AsyncSession = Depends(get_db)):
     result = await db.execute(
         select(Employee).where(Employee.phone == data.phone)
     )
@@ -137,6 +150,11 @@ class SetupRequest(BaseModel):
     phone: str
     password: str
 
+    @field_validator("password")
+    @classmethod
+    def _check_password(cls, v: str) -> str:
+        return _validate_password_strength(v)
+
 
 @router.post("/setup")
 async def setup(data: SetupRequest, db: AsyncSession = Depends(get_db)):
@@ -171,6 +189,11 @@ class RegisterRequest(BaseModel):
     password: str
     email: str = ""
     verification_code: str = ""
+
+    @field_validator("password")
+    @classmethod
+    def _check_password(cls, v: str) -> str:
+        return _validate_password_strength(v)
 
 
 @router.post("/register", response_model=TokenResponse)
@@ -254,7 +277,8 @@ class AccessRequestData(BaseModel):
 
 
 @router.post("/request-access")
-async def request_access(data: AccessRequestData, db: AsyncSession = Depends(get_db)):
+@limiter.limit("3/hour")
+async def request_access(data: AccessRequestData, request: Request, db: AsyncSession = Depends(get_db)):
     """Submit a registration request — admin gets a notification with the code."""
     from app.models import PendingRegistration
     from app.api.v1.whatsapp import send_whatsapp_to
@@ -299,14 +323,35 @@ async def request_access(data: AccessRequestData, db: AsyncSession = Depends(get
     }
 
 
+def _require_debug_token(token: str | None) -> None:
+    """Gate debug endpoints behind DEBUG_TOKEN env var.
+
+    Set DEBUG_TOKEN in Railway → Variables, then call:
+      /api/v1/auth/debug-admin-whatsapp?debug_token=<value>&phone=...
+    """
+    import os, hmac
+    expected = os.getenv("DEBUG_TOKEN", "")
+    if not expected:
+        raise HTTPException(status_code=404, detail="Not Found")
+    if not token or not hmac.compare_digest(token, expected):
+        raise HTTPException(status_code=404, detail="Not Found")
+
+
 @router.get("/debug-admin-whatsapp")
-async def debug_admin_whatsapp(phone: str | None = None, recheck: str | None = None):
+async def debug_admin_whatsapp(
+    debug_token: str | None = None,
+    phone: str | None = None,
+    recheck: str | None = None,
+):
     """Debug endpoint — sends a test WhatsApp and returns full Twilio response.
+
+    Requires DEBUG_TOKEN env var set; pass as ?debug_token=<value>.
 
     Query params:
       phone:   override target phone (default: ADMIN_PHONE env var)
       recheck: a Twilio message SID — skip sending, just fetch its current status
     """
+    _require_debug_token(debug_token)
     import os, httpx
 
     account_sid = os.getenv("TWILIO_ACCOUNT_SID")

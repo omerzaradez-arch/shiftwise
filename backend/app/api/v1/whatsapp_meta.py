@@ -575,9 +575,33 @@ async def verify_webhook(request: Request):
     return Response(content="Forbidden", status_code=403)
 
 
+def _verify_meta_signature(raw_body: bytes, signature_header: str) -> bool:
+    """Verify Meta's X-Hub-Signature-256 against the raw request body.
+
+    Meta signs with HMAC-SHA256 using the App Secret. If WHATSAPP_META_APP_SECRET
+    is unset, verification is skipped (logged warning). In production both
+    should be set.
+    """
+    import os, hmac, hashlib
+    app_secret = os.getenv("WHATSAPP_META_APP_SECRET", "")
+    if not app_secret:
+        print("[meta-webhook] WARNING: WHATSAPP_META_APP_SECRET missing — skipping signature check", flush=True)
+        return True
+    if not signature_header or not signature_header.startswith("sha256="):
+        print("[meta-webhook] missing or malformed X-Hub-Signature-256", flush=True)
+        return False
+    provided = signature_header.split("=", 1)[1]
+    expected = hmac.new(app_secret.encode(), raw_body, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(expected, provided)
+
+
 @router.post("/webhook")
 async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db)):
-    body = await request.json()
+    raw_body = await request.body()
+    if not _verify_meta_signature(raw_body, request.headers.get("X-Hub-Signature-256", "")):
+        return Response(content="invalid signature", status_code=403)
+    import json as _json
+    body = _json.loads(raw_body or b"{}")
 
     # Extract message from Meta's nested format
     try:

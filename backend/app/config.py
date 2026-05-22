@@ -38,6 +38,27 @@ class Settings(BaseSettings):
                 self.async_database_url = url.replace("sqlite://", "sqlite+aiosqlite://", 1)
         return self
 
+    @model_validator(mode="after")
+    def enforce_production_safety(self) -> "Settings":
+        """Refuse to boot in production with insecure defaults."""
+        if self.debug:
+            return self
+        problems = []
+        if self.secret_key in ("", "dev-secret-key-change-in-production", "change-me-in-production"):
+            problems.append(
+                "SECRET_KEY is the development default. Set a strong random value "
+                "in Railway → Variables (e.g. `python -c 'import secrets; print(secrets.token_urlsafe(64))'`)."
+            )
+        if "sqlite" in self.database_url.lower():
+            problems.append(
+                "DATABASE_URL points at SQLite. Production must use Postgres "
+                "(Railway provides a Postgres plugin; set DATABASE_URL accordingly)."
+            )
+        if problems:
+            msg = "Refusing to start: insecure production configuration.\n  - " + "\n  - ".join(problems)
+            raise RuntimeError(msg)
+        return self
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

@@ -51,7 +51,7 @@ def seed():
                 org_id=org.id,
                 name=emp_data["name"],
                 phone=emp_data["phone"],
-                hashed_password=hash_password("1234"),
+                hashed_password=hash_password("Demo1234!"),
                 role=emp_data["role"],
                 employment_type=emp_data["employment_type"],
                 max_hours_per_week=emp_data["max_hours"],
@@ -107,7 +107,7 @@ def seed():
 
         db.commit()
         print(f"Seeded org: {org.name} (id: {org.id})")
-        print("Employees created with password: 1234")
+        print("Employees created with password: Demo1234!")
         print("Shift templates: בוקר, ערב, שישי צהריים")
 
 

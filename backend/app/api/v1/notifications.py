@@ -21,8 +21,13 @@ async def get_vapid_public_key():
 
 
 @router.get("/debug")
-async def debug_vapid():
-    """Debug — check if VAPID env vars are set correctly."""
+async def debug_vapid(debug_token: str | None = None):
+    """Debug — check if VAPID env vars are set correctly.
+
+    Requires DEBUG_TOKEN env var; pass as ?debug_token=<value>.
+    """
+    from app.api.v1.auth import _require_debug_token
+    _require_debug_token(debug_token)
     pub = os.getenv("VAPID_PUBLIC_KEY", "")
     priv = os.getenv("VAPID_PRIVATE_KEY", "")
     email = os.getenv("VAPID_CONTACT_EMAIL", "")
