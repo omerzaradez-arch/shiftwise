@@ -40,7 +40,8 @@ async def lifespan(app: FastAPI):
 
     # ── Background scheduler ──
     from apscheduler.schedulers.asyncio import AsyncIOScheduler
-    from app.core.alerts import checkin_alert_job, shift_start_notify_job
+    from apscheduler.triggers.cron import CronTrigger
+    from app.core.alerts import checkin_alert_job, shift_start_notify_job, availability_request_job
 
     scheduler = AsyncIOScheduler(timezone="Asia/Jerusalem")
     scheduler.add_job(
@@ -59,8 +60,15 @@ async def lifespan(app: FastAPI):
         replace_existing=True,
         max_instances=1,
     )
+    scheduler.add_job(
+        availability_request_job,
+        trigger=CronTrigger(day_of_week="mon,tue,wed", hour=9, minute=0, timezone="Asia/Jerusalem"),
+        id="availability_request",
+        replace_existing=True,
+        max_instances=1,
+    )
     scheduler.start()
-    print("[scheduler] started — shift_start_notify + checkin_alert every 5 min", flush=True)
+    print("[scheduler] started — shift_start_notify+checkin_alert every 5min, availability_request Mon/Tue/Wed 09:00 IL", flush=True)
 
     yield
 

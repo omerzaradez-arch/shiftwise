@@ -17,3 +17,12 @@ frontend/.env.local
 # OS
 .DS_Store
 Thumbs.db
+
+# Logs
+*.log
+backend/backend.log
+backend/backend_err.log
+frontend/frontend.log
+
+# Next.js build artifacts
+frontend/tsconfig.tsbuildinfo
