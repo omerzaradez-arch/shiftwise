@@ -100,6 +100,9 @@ async def get_current_user(
     return emp
 
 
+MANAGER_ROLES = ("owner", "manager", "super_admin")
+
+
 @router.post("/login", response_model=TokenResponse)
 @limiter.limit("10/minute")
 async def login(data: LoginRequest, request: Request, db: AsyncSession = Depends(get_db)):
@@ -112,6 +115,13 @@ async def login(data: LoginRequest, request: Request, db: AsyncSession = Depends
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="פרטי התחברות שגויים",
+        )
+
+    # Employees interact via WhatsApp only — block their login.
+    if emp.role not in MANAGER_ROLES:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="המערכת מיועדת למנהלים בלבד. עובדים מקבלים שירות ב-WhatsApp.",
         )
 
     token = create_access_token({"sub": emp.id, "org_id": emp.org_id})
@@ -305,6 +315,72 @@ async def register(data: RegisterRequest, db: AsyncSession = Depends(get_db)):
             "org_name": org.name,
         },
     )
+
+
+class ForgotPasswordRequest(BaseModel):
+    phone: str
+
+
+@router.post("/forgot-password")
+@limiter.limit("3/hour")
+async def forgot_password(
+    data: ForgotPasswordRequest,
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+):
+    """Generate a new random password and WhatsApp it to the manager.
+
+    Always returns 200 — never leaks whether the phone exists in the system
+    (prevents user enumeration). Rate limited to 3 per hour per IP.
+    """
+    from app.security import hash_password
+    from app.api.v1.whatsapp import send_whatsapp_to
+    import secrets, string
+
+    clean_phone = data.phone.replace("-", "").replace(" ", "")
+    result = await db.execute(
+        select(Employee).where(Employee.phone == clean_phone, Employee.is_active == True)
+    )
+    emp = result.scalar_one_or_none()
+
+    # Same response whether the phone exists or not.
+    generic_response = {
+        "ok": True,
+        "message": "אם המספר רשום במערכת ושייך למנהל, סיסמה חדשה נשלחה ל-WhatsApp.",
+    }
+
+    if not emp or emp.role not in MANAGER_ROLES:
+        return generic_response
+
+    # Build an easy-to-type 10-char password (no ambiguous chars 0/O/1/l/I).
+    alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789"
+    new_password = "".join(secrets.choice(alphabet) for _ in range(10))
+    # Ensure it passes our own validator (mixed types, length 10).
+    _validate_password_strength(new_password)
+
+    emp.hashed_password = hash_password(new_password)
+    # Force-logout any existing sessions immediately.
+    emp.tokens_invalidated_at = datetime.now(timezone.utc)
+    await db.commit()
+
+    message = (
+        "🔐 *איפוס סיסמה ל-ShiftWise*\n\n"
+        f"שלום {emp.name},\n"
+        "ביקשת לאפס את הסיסמה למערכת ShiftWise.\n\n"
+        f"הסיסמה החדשה שלך: *{new_password}*\n\n"
+        "מומלץ להחליף אותה לסיסמה משלך בהגדרות המערכת אחרי הכניסה.\n\n"
+        "אם לא ביקשת את האיפוס — מישהו ניסה להיכנס לחשבון שלך. "
+        "פנה אלינו מיד."
+    )
+
+    try:
+        sent = await send_whatsapp_to(emp.phone, message)
+        if not sent:
+            print(f"[forgot-password] WhatsApp send returned False for {emp.phone}", flush=True)
+    except Exception as e:
+        print(f"[forgot-password] WhatsApp exception: {e}", flush=True)
+
+    return generic_response
 
 
 class AccessRequestData(BaseModel):

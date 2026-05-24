@@ -86,6 +86,11 @@ export default function LoginPage() {
                 className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition text-sm"
               />
               {errors.password && <p className="text-red-400 text-xs mt-1">{errors.password.message}</p>}
+              <div className="text-left mt-2">
+                <a href="/forgot-password" className="text-xs text-indigo-400 hover:text-indigo-300">
+                  שכחתי סיסמה
+                </a>
+              </div>
             </div>
 
             <button

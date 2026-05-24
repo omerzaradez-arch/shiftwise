@@ -38,6 +38,11 @@ export const authApi = {
     await apiClient.post('/api/v1/auth/logout-everywhere')
   },
 
+  forgotPassword: async (phone: string): Promise<{ ok: boolean; message: string }> => {
+    const { data } = await apiClient.post('/api/v1/auth/forgot-password', { phone })
+    return data
+  },
+
   requestAccess: async (
     orgName: string,
     contactName: string,
