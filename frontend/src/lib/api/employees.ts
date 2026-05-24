@@ -8,7 +8,7 @@ export interface CreateEmployeePayload {
   employment_type: string
   max_hours_per_week: number
   min_hours_per_week: number
-  password: string
+  password?: string  // only required for manager/owner roles
 }
 
 export interface UpdateEmployeePayload {

@@ -39,7 +39,16 @@ const createEmployeeSchema = z.object({
   max_hours_per_week: z.coerce.number().min(1).max(60),
   min_hours_per_week: z.coerce.number().min(0).max(60),
   hourly_rate: z.coerce.number().min(0).optional().or(z.literal('')),
-  password: z.string().min(4, 'סיסמה חייבת להכיל לפחות 4 תווים'),
+  password: z.string().optional(),
+}).refine((data) => {
+  // Only manager role needs a password (employees use WhatsApp only).
+  if (data.role === 'manager') {
+    return data.password && data.password.length >= 8 && !/^\d+$/.test(data.password)
+  }
+  return true
+}, {
+  message: 'תפקיד ניהולי דורש סיסמה של 8 תווים לפחות (לא רק ספרות)',
+  path: ['password'],
 })
 
 const editEmployeeSchema = z.object({
@@ -116,11 +125,14 @@ export default function EmployeesPage() {
     register: registerCreate,
     handleSubmit: handleCreate,
     reset: resetCreate,
+    watch: watchCreate,
     formState: { errors: createErrors },
   } = useForm<CreateEmployeeForm>({
     resolver: zodResolver(createEmployeeSchema),
     defaultValues: { role: 'junior', employment_type: 'part_time', max_hours_per_week: 25, min_hours_per_week: 0 },
   })
+  const watchedRole = watchCreate('role')
+  const needsPassword = watchedRole === 'manager'
 
   const {
     register: registerEdit,
@@ -422,10 +434,19 @@ export default function EmployeesPage() {
               <FormField label="שכר שעתי (₪)">
                 <input {...registerCreate('hourly_rate')} type="number" min={0} step="0.5" placeholder="לדוגמה: 35" className={inputCls} />
               </FormField>
-              <FormField label="סיסמה זמנית *" error={createErrors.password?.message}>
-                <input {...registerCreate('password')} type="text" placeholder="לפחות 4 תווים" className={inputCls} />
-                <p className="text-xs text-slate-400 mt-1">העובד יוכל לשנות את הסיסמה בהמשך</p>
-              </FormField>
+              {needsPassword ? (
+                <FormField label="סיסמה למנהל החדש *" error={createErrors.password?.message}>
+                  <input {...registerCreate('password')} type="text" placeholder="לפחות 8 תווים" className={inputCls} />
+                  <p className="text-xs text-slate-400 mt-1">
+                    רק מנהלים מתחברים למערכת. עובדים מקבלים שירות אך ורק דרך WhatsApp.
+                  </p>
+                </FormField>
+              ) : (
+                <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-xs text-indigo-800 leading-relaxed">
+                  💡 <strong>אין צורך בסיסמה.</strong> עובדים אינם מתחברים לאתר —
+                  כל התקשורת איתם (זמינות, סידור, החלפות) מתבצעת ב-WhatsApp.
+                </div>
+              )}
 
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => { setShowForm(false); resetCreate() }}

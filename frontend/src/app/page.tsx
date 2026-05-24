@@ -265,6 +265,86 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Pricing */}
+      <section id="pricing" className="py-24 border-t border-white/5">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-black text-white mb-4">מחירים פשוטים</h2>
+            <p className="text-slate-400 text-lg">14 יום ניסיון חינם — בלי כרטיס אשראי</p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {[
+              {
+                name: 'Starter',
+                price: '199',
+                desc: 'לעסק קטן עד 10 עובדים',
+                features: ['סידור אוטומטי', 'WhatsApp Bot מלא', 'דשבורד נוכחות', 'תמיכה בעברית'],
+                cta: 'התחל ניסיון',
+              },
+              {
+                name: 'Growth',
+                price: '399',
+                desc: 'לעסק עם 10-25 עובדים',
+                features: ['כל מה ש-Starter', 'אנליטיקות מתקדמות', 'ייצוא PDF/CSV', 'תמיכה עדיפה'],
+                cta: 'התחל ניסיון',
+                featured: true,
+              },
+              {
+                name: 'Pro',
+                price: '699',
+                desc: 'לעסק עם 25-50 עובדים',
+                features: ['כל מה ש-Growth', 'אינטגרציית שכר', 'API גישה', 'מנהל לקוח אישי'],
+                cta: 'דבר איתנו',
+              },
+            ].map((p, i) => (
+              <div
+                key={i}
+                className={`rounded-2xl p-7 border ${
+                  p.featured
+                    ? 'bg-gradient-to-br from-indigo-600/20 to-purple-600/20 border-indigo-500/40 shadow-xl shadow-indigo-900/30 scale-105'
+                    : 'bg-white/5 border-white/10'
+                }`}
+              >
+                {p.featured && (
+                  <div className="inline-block bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-3">
+                    הכי פופולרי
+                  </div>
+                )}
+                <h3 className="text-xl font-bold text-white">{p.name}</h3>
+                <p className="text-slate-400 text-sm mt-1">{p.desc}</p>
+                <div className="mt-5 mb-6">
+                  <span className="text-5xl font-black text-white">₪{p.price}</span>
+                  <span className="text-slate-400 mr-2">/ חודש</span>
+                </div>
+                <ul className="space-y-2 mb-6">
+                  {p.features.map((f, j) => (
+                    <li key={j} className="flex items-start gap-2 text-slate-300 text-sm">
+                      <span className="text-indigo-400 mt-0.5">✓</span>
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  href="/register"
+                  className={`block text-center font-bold py-3 rounded-xl transition ${
+                    p.featured
+                      ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-900/40'
+                      : 'bg-white/10 hover:bg-white/20 text-white'
+                  }`}
+                >
+                  {p.cta}
+                </Link>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-center text-slate-500 text-sm mt-8">
+            עסק עם מעל 50 עובדים או מספר סניפים? <a href="mailto:hello@shiftwise.app" className="text-indigo-400 hover:underline">דבר איתנו ישירות</a>
+          </p>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-24 border-t border-white/5">
         <div className="max-w-3xl mx-auto px-6 text-center">
@@ -310,9 +390,11 @@ export default function LandingPage() {
             <span className="font-bold text-white">ShiftWise</span>
           </div>
           <p className="text-slate-500 text-sm">© {new Date().getFullYear()} ShiftWise — ניהול משמרות חכם לעסקים</p>
-          <div className="flex gap-6 text-sm text-slate-500">
+          <div className="flex gap-6 text-sm text-slate-500 flex-wrap justify-center">
             <Link href="/login" className="hover:text-white transition">כניסה</Link>
             <Link href="/register" className="hover:text-white transition">הרשמה</Link>
+            <Link href="/privacy" className="hover:text-white transition">מדיניות פרטיות</Link>
+            <Link href="/terms" className="hover:text-white transition">תנאי שימוש</Link>
           </div>
         </div>
       </footer>

@@ -173,6 +173,38 @@ async def logout_everywhere(
     return {"ok": True, "invalidated_at": current_user.tokens_invalidated_at.isoformat()}
 
 
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str
+
+    @field_validator("new_password")
+    @classmethod
+    def _check_new_password(cls, v: str) -> str:
+        return _validate_password_strength(v)
+
+
+@router.post("/change-password")
+async def change_password(
+    data: ChangePasswordRequest,
+    current_user: Employee = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Change the logged-in user's password.
+
+    Verifies the current password, then sets the new one and invalidates all
+    existing sessions so the user must log in again with the new password.
+    """
+    from app.security import hash_password
+    if not verify_password(data.current_password, current_user.hashed_password):
+        raise HTTPException(status_code=400, detail="הסיסמה הנוכחית שגויה")
+    if data.current_password == data.new_password:
+        raise HTTPException(status_code=400, detail="הסיסמה החדשה חייבת להיות שונה מהנוכחית")
+    current_user.hashed_password = hash_password(data.new_password)
+    current_user.tokens_invalidated_at = datetime.now(timezone.utc)
+    await db.commit()
+    return {"ok": True, "message": "הסיסמה הוחלפה בהצלחה. אנא היכנס מחדש."}
+
+
 class SetupRequest(BaseModel):
     org_name: str
     name: str

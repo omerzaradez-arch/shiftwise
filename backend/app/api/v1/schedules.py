@@ -223,6 +223,60 @@ async def get_schedule_image(schedule_id: str):
     return Response(content=img_bytes, media_type="image/png")
 
 
+@router.get("/{schedule_id}/pdf")
+async def get_schedule_pdf(
+    schedule_id: str,
+    current_user: Employee = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Generate a printable PDF of the schedule (one page per week).
+
+    Builds the schedule image (cached) and wraps it in a single-page PDF with
+    a Hebrew title and the publication date. Used for printing on the wall.
+    """
+    from fastapi.responses import Response
+    from io import BytesIO
+    from PIL import Image
+
+    # Verify caller has access to this schedule
+    week_q = await db.execute(select(ScheduleWeek).where(ScheduleWeek.id == schedule_id))
+    week = week_q.scalar_one_or_none()
+    if not week or week.org_id != current_user.org_id:
+        raise HTTPException(status_code=404, detail="סידור לא נמצא")
+    if current_user.role not in ("manager", "owner", "super_admin"):
+        raise HTTPException(status_code=403, detail="הרשאה נדרשת")
+
+    # Build (or reuse cached) image
+    img_bytes = _image_cache.get(schedule_id)
+    if not img_bytes:
+        from app.core.schedule_image import ensure_font, generate_schedule_image
+        shifts_q = await db.execute(
+            select(ScheduledShift).where(ScheduledShift.week_id == schedule_id)
+        )
+        shifts = shifts_q.scalars().all()
+        shifts_by_day: dict = {}
+        for s in shifts:
+            shifts_by_day.setdefault(s.date, []).append(s)
+        # Default to all 7 days; the image generator hides empty ones anyway
+        operating_days = [0, 1, 2, 3, 4, 5, 6]
+        await ensure_font()
+        img_bytes = generate_schedule_image(week.week_start, shifts_by_day, operating_days)
+        _image_cache[schedule_id] = img_bytes
+
+    # Wrap image in a single-page PDF (Pillow handles this natively)
+    pdf_buf = BytesIO()
+    img = Image.open(BytesIO(img_bytes)).convert("RGB")
+    img.save(pdf_buf, format="PDF", title=f"ShiftWise — {week.week_start.strftime('%d/%m/%Y')}")
+    pdf_buf.seek(0)
+
+    filename = f"shiftwise_{week.week_start.strftime('%Y-%m-%d')}.pdf"
+    return Response(
+        content=pdf_buf.getvalue(),
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
 async def _send_schedule_notifications(
     employees, by_employee, week, all_employees_map,
     shifts_by_day, operating_days, schedule_id,

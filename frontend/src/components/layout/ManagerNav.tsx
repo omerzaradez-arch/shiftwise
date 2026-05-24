@@ -155,7 +155,11 @@ export function ManagerNav() {
 
         {/* User */}
         <div className="px-3 py-4 border-t border-slate-800">
-          <div className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-slate-800 transition-colors group">
+          <Link
+            href="/account"
+            className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-slate-800 transition-colors group"
+            title="החשבון שלי"
+          >
             <div className="w-8 h-8 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center text-sm font-bold text-white flex-none">
               {user?.name?.[0]}
             </div>
@@ -164,7 +168,7 @@ export function ManagerNav() {
               <p className="text-xs text-slate-500">{user?.role === 'manager' ? 'מנהל' : 'בעלים'}</p>
             </div>
             <button
-              onClick={logout}
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); logout() }}
               title="התנתק"
               className="text-slate-600 hover:text-slate-300 transition-colors p-1 rounded-lg"
             >
@@ -173,7 +177,7 @@ export function ManagerNav() {
                   d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
               </svg>
             </button>
-          </div>
+          </Link>
         </div>
       </aside>
 

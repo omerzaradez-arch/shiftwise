@@ -43,6 +43,14 @@ export const authApi = {
     return data
   },
 
+  changePassword: async (currentPassword: string, newPassword: string): Promise<{ ok: boolean; message: string }> => {
+    const { data } = await apiClient.post('/api/v1/auth/change-password', {
+      current_password: currentPassword,
+      new_password: newPassword,
+    })
+    return data
+  },
+
   requestAccess: async (
     orgName: string,
     contactName: string,
