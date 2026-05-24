@@ -39,11 +39,10 @@ class TokenResponse(BaseModel):
 
 
 def create_access_token(data: dict) -> str:
-    expire = datetime.now(timezone.utc) + timedelta(
-        minutes=settings.access_token_expire_minutes
-    )
+    now = datetime.now(timezone.utc)
+    expire = now + timedelta(minutes=settings.access_token_expire_minutes)
     return jwt.encode(
-        {**data, "exp": expire},
+        {**data, "iat": now, "exp": expire},
         settings.secret_key,
         algorithm=settings.algorithm,
     )
@@ -81,6 +80,7 @@ async def get_current_user(
     try:
         payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
         emp_id: str = payload.get("sub")
+        token_iat = payload.get("iat")
         if not emp_id:
             raise credentials_exc
     except JWTError:
@@ -89,6 +89,14 @@ async def get_current_user(
     emp = await db.get(Employee, emp_id)
     if not emp or not emp.is_active:
         raise credentials_exc
+
+    # Reject tokens issued before the user's last revocation moment.
+    if emp.tokens_invalidated_at and token_iat is not None:
+        from datetime import datetime as _dt, timezone as _tz
+        iat_dt = _dt.fromtimestamp(token_iat, tz=_tz.utc)
+        if iat_dt < emp.tokens_invalidated_at:
+            raise credentials_exc
+
     return emp
 
 
@@ -144,16 +152,35 @@ async def logout():
     return {"ok": True}
 
 
+@router.post("/logout-everywhere")
+async def logout_everywhere(
+    current_user: Employee = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Invalidate every JWT issued before now for the current user."""
+    current_user.tokens_invalidated_at = datetime.now(timezone.utc)
+    await db.commit()
+    return {"ok": True, "invalidated_at": current_user.tokens_invalidated_at.isoformat()}
+
+
 class SetupRequest(BaseModel):
     org_name: str
     name: str
     phone: str
     password: str
+    privacy_accepted: bool = False
 
     @field_validator("password")
     @classmethod
     def _check_password(cls, v: str) -> str:
         return _validate_password_strength(v)
+
+    @field_validator("privacy_accepted")
+    @classmethod
+    def _must_accept_privacy(cls, v: bool) -> bool:
+        if not v:
+            raise ValueError("חובה לאשר את מדיניות הפרטיות לפני יצירת החשבון")
+        return v
 
 
 @router.post("/setup")
@@ -165,7 +192,8 @@ async def setup(data: SetupRequest, db: AsyncSession = Depends(get_db)):
     count = await db.execute(select(func.count()).select_from(Employee))
     if count.scalar() > 0:
         raise HTTPException(status_code=403, detail="Setup already done")
-    org = Organization(id=str(uuid.uuid4()), name=data.org_name)
+    now = datetime.now(timezone.utc)
+    org = Organization(id=str(uuid.uuid4()), name=data.org_name, privacy_accepted_at=now)
     db.add(org)
     await db.flush()
     emp = Employee(
@@ -176,6 +204,7 @@ async def setup(data: SetupRequest, db: AsyncSession = Depends(get_db)):
         hashed_password=hash_password(data.password),
         role="manager",
         is_active=True,
+        privacy_accepted_at=now,
     )
     db.add(emp)
     await db.commit()
@@ -189,11 +218,19 @@ class RegisterRequest(BaseModel):
     password: str
     email: str = ""
     verification_code: str = ""
+    privacy_accepted: bool = False
 
     @field_validator("password")
     @classmethod
     def _check_password(cls, v: str) -> str:
         return _validate_password_strength(v)
+
+    @field_validator("privacy_accepted")
+    @classmethod
+    def _must_accept_privacy(cls, v: bool) -> bool:
+        if not v:
+            raise ValueError("חובה לאשר את מדיניות הפרטיות לפני יצירת החשבון")
+        return v
 
 
 @router.post("/register", response_model=TokenResponse)
@@ -230,7 +267,8 @@ async def register(data: RegisterRequest, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=400, detail="מספר הטלפון כבר רשום במערכת")
 
     # Create org
-    org = Organization(id=str(uuid.uuid4()), name=data.org_name)
+    now = datetime.now(timezone.utc)
+    org = Organization(id=str(uuid.uuid4()), name=data.org_name, privacy_accepted_at=now)
     db.add(org)
     await db.flush()
 
@@ -244,6 +282,7 @@ async def register(data: RegisterRequest, db: AsyncSession = Depends(get_db)):
         hashed_password=hash_password(data.password),
         role="owner",
         is_active=True,
+        privacy_accepted_at=now,
     )
     db.add(emp)
 

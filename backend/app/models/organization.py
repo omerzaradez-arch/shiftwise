@@ -13,6 +13,9 @@ class Organization(Base):
     plan: Mapped[str] = mapped_column(String(50), default="free")
     settings: Mapped[dict] = mapped_column(JSON, default=dict)
     timezone: Mapped[str] = mapped_column(String(100), default="Asia/Jerusalem")
+    privacy_accepted_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True, default=None
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )

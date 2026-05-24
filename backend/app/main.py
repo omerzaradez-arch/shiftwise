@@ -1,4 +1,5 @@
 import logging
+import os
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -7,6 +8,25 @@ from slowapi.errors import RateLimitExceeded
 
 from app.config import settings
 from app.limiter import limiter
+
+# ── Sentry: capture unhandled errors in production ─────────────────────────────
+_sentry_dsn = os.getenv("SENTRY_DSN", "")
+if _sentry_dsn:
+    import sentry_sdk
+    from sentry_sdk.integrations.fastapi import FastApiIntegration
+    from sentry_sdk.integrations.starlette import StarletteIntegration
+
+    sentry_sdk.init(
+        dsn=_sentry_dsn,
+        environment=os.getenv("SENTRY_ENVIRONMENT", "production" if not settings.debug else "development"),
+        release=os.getenv("RAILWAY_GIT_COMMIT_SHA", "unknown")[:7],
+        traces_sample_rate=0.1,  # 10% of requests traced for performance
+        send_default_pii=False,  # don't send phone numbers etc to Sentry
+        integrations=[FastApiIntegration(), StarletteIntegration()],
+    )
+    print(f"[sentry] enabled (env={os.getenv('SENTRY_ENVIRONMENT', 'production')})", flush=True)
+else:
+    print("[sentry] SENTRY_DSN not set — error monitoring disabled", flush=True)
 from app.api.v1 import auth, employees, schedules, availability, shifts, swaps, analytics
 from app.api.v1 import settings as settings_router
 from app.api.v1 import shift_templates as shift_templates_router
@@ -23,6 +43,9 @@ COLUMN_MIGRATIONS = [
     "ALTER TABLE availability_submissions ADD COLUMN IF NOT EXISTS day_preferences JSON DEFAULT '{}'",
     "ALTER TABLE employees ADD COLUMN IF NOT EXISTS hourly_rate FLOAT",
     "ALTER TABLE scheduled_shifts ADD COLUMN IF NOT EXISTS checkin_notified BOOLEAN DEFAULT FALSE",
+    "ALTER TABLE employees ADD COLUMN IF NOT EXISTS tokens_invalidated_at TIMESTAMP WITH TIME ZONE",
+    "ALTER TABLE employees ADD COLUMN IF NOT EXISTS privacy_accepted_at TIMESTAMP WITH TIME ZONE",
+    "ALTER TABLE organizations ADD COLUMN IF NOT EXISTS privacy_accepted_at TIMESTAMP WITH TIME ZONE",
 ]
 
 

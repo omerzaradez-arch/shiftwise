@@ -26,6 +26,15 @@ class Employee(Base):
     hourly_rate: Mapped[float | None] = mapped_column(Float, nullable=True, default=None)
 
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    # Set to "now" to invalidate every JWT issued before this timestamp.
+    # Used when an admin revokes access or the user logs out everywhere.
+    tokens_invalidated_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True, default=None
+    )
+    # Set when the employee first accepts the privacy policy.
+    privacy_accepted_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True, default=None
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )

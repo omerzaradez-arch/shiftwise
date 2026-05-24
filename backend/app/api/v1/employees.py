@@ -131,6 +131,32 @@ async def deactivate_employee(
     if not emp or emp.org_id != current_user.org_id:
         raise HTTPException(status_code=404)
 
+    from datetime import datetime, timezone
     emp.is_active = False
+    emp.tokens_invalidated_at = datetime.now(timezone.utc)
     await db.commit()
     return {"status": "deactivated"}
+
+
+@router.post("/{employee_id}/revoke-tokens")
+async def revoke_tokens(
+    employee_id: str,
+    current_user: Employee = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Force-logout an employee from every device without deactivating them.
+
+    Useful when you suspect a stolen session, or as a step before a password
+    reset. The employee can keep working — they'll just need to log in again.
+    """
+    if current_user.role not in ("manager", "owner", "super_admin"):
+        raise HTTPException(status_code=403)
+
+    emp = await db.get(Employee, employee_id)
+    if not emp or emp.org_id != current_user.org_id:
+        raise HTTPException(status_code=404)
+
+    from datetime import datetime, timezone
+    emp.tokens_invalidated_at = datetime.now(timezone.utc)
+    await db.commit()
+    return {"status": "tokens_revoked", "invalidated_at": emp.tokens_invalidated_at.isoformat()}

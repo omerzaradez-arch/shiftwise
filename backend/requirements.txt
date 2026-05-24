@@ -19,6 +19,7 @@ python-bidi==0.4.2
 # cache-bust: twilio added
 apscheduler==3.10.4
 slowapi==0.1.9
+sentry-sdk[fastapi]==2.15.0
 pywebpush==2.0.0
 cryptography==43.0.1
 pytest==8.3.1

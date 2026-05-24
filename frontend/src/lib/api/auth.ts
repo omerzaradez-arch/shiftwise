@@ -19,7 +19,8 @@ export const authApi = {
     phone: string,
     password: string,
     verificationCode: string,
-    email?: string
+    email?: string,
+    privacyAccepted: boolean = false
   ): Promise<LoginResponse> => {
     const { data } = await apiClient.post('/api/v1/auth/register', {
       org_name: orgName,
@@ -28,8 +29,13 @@ export const authApi = {
       password,
       email: email || '',
       verification_code: verificationCode,
+      privacy_accepted: privacyAccepted,
     })
     return data
+  },
+
+  logoutEverywhere: async () => {
+    await apiClient.post('/api/v1/auth/logout-everywhere')
   },
 
   requestAccess: async (

@@ -178,6 +178,7 @@ function CompleteRegistrationForm({
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
+  const [privacyAccepted, setPrivacyAccepted] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const verifyCode = async () => {
@@ -202,17 +203,25 @@ function CompleteRegistrationForm({
 
   const completeRegistration = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!password || password.length < 6) {
-      toast.error('סיסמה חייבת להכיל לפחות 6 תווים')
+    if (!password || password.length < 8) {
+      toast.error('סיסמה חייבת להכיל לפחות 8 תווים')
+      return
+    }
+    if (/^\d+$/.test(password)) {
+      toast.error('סיסמה לא יכולה להיות מספרים בלבד')
       return
     }
     if (password !== confirm) {
       toast.error('הסיסמאות לא תואמות')
       return
     }
+    if (!privacyAccepted) {
+      toast.error('חובה לאשר את מדיניות הפרטיות')
+      return
+    }
     setLoading(true)
     try {
-      const res = await authApi.register(orgName, contactName, phone, password, code, email)
+      const res = await authApi.register(orgName, contactName, phone, password, code, email, privacyAccepted)
       toast.success(`ברוך הבא ${contactName}! העסק נפתח בהצלחה 🎉`)
       onSuccess(res.access_token, res.user)
     } catch (e: any) {
@@ -283,9 +292,25 @@ function CompleteRegistrationForm({
         />
       </div>
 
+      <label className="flex items-start gap-2 text-xs text-slate-300 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={privacyAccepted}
+          onChange={(e) => setPrivacyAccepted(e.target.checked)}
+          className="mt-0.5 w-4 h-4 rounded border-white/20 bg-white/10 text-indigo-600 focus:ring-indigo-500"
+        />
+        <span>
+          אני מסכים/ה ל
+          <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-indigo-400 underline hover:text-indigo-300 mx-1">
+            מדיניות הפרטיות
+          </a>
+          של ShiftWise
+        </span>
+      </label>
+
       <button
         type="submit"
-        disabled={loading}
+        disabled={loading || !privacyAccepted}
         className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-60 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-emerald-900/40"
       >
         {loading ? 'יוצר חשבון...' : 'צור חשבון 🎉'}
