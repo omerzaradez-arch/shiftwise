@@ -39,6 +39,9 @@ from app.api.v1 import notifications as notifications_router
 
 logger = logging.getLogger(__name__)
 
+_wa_provider = os.getenv("WHATSAPP_PROVIDER", "meta").strip().lower()
+print(f"[whatsapp] provider={_wa_provider}", flush=True)
+
 COLUMN_MIGRATIONS = [
     "ALTER TABLE availability_submissions ADD COLUMN IF NOT EXISTS day_preferences JSON DEFAULT '{}'",
     "ALTER TABLE employees ADD COLUMN IF NOT EXISTS hourly_rate FLOAT",
@@ -130,8 +133,12 @@ app.include_router(swaps.router, prefix="/api/v1/swaps", tags=["swaps"])
 app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["analytics"])
 app.include_router(settings_router.router, prefix="/api/v1/settings", tags=["settings"])
 app.include_router(shift_templates_router.router, prefix="/api/v1/shift-templates", tags=["shift-templates"])
-app.include_router(whatsapp_router.router, prefix="/api/v1/whatsapp", tags=["whatsapp"])
-app.include_router(whatsapp_meta_router.router, prefix="/api/v1/whatsapp_meta", tags=["whatsapp-meta"])
+# Only the active provider's webhook is mounted, so an old Twilio webhook can't
+# race the Meta one and answer the same employee twice.
+if _wa_provider == "twilio":
+    app.include_router(whatsapp_router.router, prefix="/api/v1/whatsapp", tags=["whatsapp"])
+else:
+    app.include_router(whatsapp_meta_router.router, prefix="/api/v1/whatsapp_meta", tags=["whatsapp-meta"])
 app.include_router(simulate_router.router, prefix="/api/v1/simulate", tags=["simulate"])
 app.include_router(public_router.router, prefix="/api/v1/public", tags=["public"])
 app.include_router(attendance_router.router, prefix="/api/v1/attendance", tags=["attendance"])

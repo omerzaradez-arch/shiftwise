@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
-
-const API = process.env.NEXT_PUBLIC_API_URL || 'https://shiftwise-production.up.railway.app'
+import { API_BASE_URL as API } from '@/lib/apiUrl'
 
 interface ShiftEntry { name: string; start: string; end: string }
 interface Day {

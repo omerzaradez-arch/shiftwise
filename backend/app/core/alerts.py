@@ -1,22 +1,19 @@
 """
 Background alert jobs — runs on a schedule via APScheduler.
+
+All sending goes through app.core.wa, so the active provider (Meta Cloud API or
+Twilio) is decided by the WHATSAPP_PROVIDER env var, not by this module.
+
 Jobs:
   - shift_start_notify: every 5 min — sends start-of-shift WhatsApp with quick-reply buttons
   - checkin_alert: every 5 min — late reminder for employees who missed check-in
   - availability_request: Mon/Tue/Wed 09:00 IL — kicks off weekly availability flow for employees who haven't submitted
 """
 
-import os
-from datetime import datetime, timedelta, timezone, time as dtime
+from datetime import datetime, timedelta, timezone
 from sqlalchemy import select, and_
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import async_session_factory
-
-
-def _checkin_url(token: str) -> str:
-    base = os.getenv("FRONTEND_URL", "https://shiftwise-production.up.railway.app").rstrip("/")
-    return f"{base}/checkin/{token}"
 
 
 async def shift_start_notify_job():
@@ -28,8 +25,7 @@ async def shift_start_notify_job():
     from app.models.scheduled_shift import ScheduledShift
     from app.models.attendance import Attendance
     from app.models.employee import Employee
-    from app.api.v1.whatsapp import send_interactive_confirm, send_whatsapp_to
-    from app.api.v1.auth import create_checkin_token
+    from app.core import wa
 
     now_utc = datetime.now(timezone.utc)
     now_il = now_utc + timedelta(hours=3)
@@ -73,50 +69,13 @@ async def shift_start_notify_job():
                 shift.checkin_notified = True
                 continue
 
-            token = create_checkin_token(shift.id, emp.id)
-            url = _checkin_url(token)
             start_str = shift.start_time.strftime("%H:%M")
-
-            # Try interactive buttons; fall back to plain message with the link
-            body = (
-                f"היי {emp.name}! 👋\n\n"
-                f"יש לך משמרת עכשיו ({start_str}).\n"
-                f"תעדכן אותי אם התחלת:"
-            )
-            sent = await send_interactive_confirm_with_link(emp.phone, body, url)
-            if not sent:
-                # Fallback plain message
-                fallback = (
-                    f"היי {emp.name}! 👋\n\n"
-                    f"יש לך משמרת עכשיו ({start_str}).\n"
-                    f"לאישור הגעה — לחץ כאן:\n{url}"
-                )
-                await send_whatsapp_to(emp.phone, fallback)
+            ok = await wa.notify_shift_start(emp.phone, emp.name, start_str)
 
             shift.checkin_notified = True
-            print(f"[start_notify] sent to {emp.name} ({emp.phone}) shift={start_str}", flush=True)
+            print(f"[start_notify] sent to {emp.name} ({emp.phone}) shift={start_str} ok={ok}", flush=True)
 
         await db.commit()
-
-
-async def send_interactive_confirm_with_link(phone: str, body: str, url: str) -> bool:
-    """Quick-reply with two buttons; the 'התחלתי' answer routes to the GPS link."""
-    from app.api.v1.whatsapp import _twilio_send_interactive
-    import uuid
-    payload = {
-        "friendly_name": f"sw_start_{uuid.uuid4().hex[:8]}",
-        "language": "he",
-        "types": {
-            "twilio/quick-reply": {
-                "body": body,
-                "actions": [
-                    {"title": "התחלתי", "id": "התחלתי"},
-                    {"title": "עוד לא", "id": "עוד לא"},
-                ],
-            }
-        },
-    }
-    return await _twilio_send_interactive(phone, payload)
 
 
 async def checkin_alert_job():
@@ -129,7 +88,7 @@ async def checkin_alert_job():
     from app.models.scheduled_shift import ScheduledShift
     from app.models.attendance import Attendance
     from app.models.employee import Employee
-    from app.api.v1.whatsapp import send_whatsapp_to
+    from app.core import wa
 
     now_utc = datetime.now(timezone.utc)
     now_il = now_utc + timedelta(hours=3)  # Israel time
@@ -189,13 +148,7 @@ async def checkin_alert_job():
 
             # Send WhatsApp
             start_str = shift.start_time.strftime("%H:%M")
-            msg = (
-                f"⏰ שלום {emp.name}!\n\n"
-                f"המשמרת שלך התחילה בשעה *{start_str}* ועדיין לא דיווחת כניסה.\n\n"
-                f"שלח *כניסה* אם הגעת לעבודה 🟢\n"
-                f"שלח *לא יכול* אם אינך יכול להגיע 🔄"
-            )
-            ok = await send_whatsapp_to(emp.phone, msg)
+            ok = await wa.notify_shift_late(emp.phone, emp.name, start_str)
             shift.checkin_notified = True
             print(f"[alerts] notified {emp.name} ({emp.phone}) shift={start_str} sent={ok}", flush=True)
 
@@ -221,23 +174,21 @@ async def availability_request_job():
     for next week — but only if they haven't already submitted for that week,
     and aren't currently in the middle of answering.
     """
-    from datetime import date
     from app.models.employee import Employee
     from app.models.availability import AvailabilitySubmission
     from app.models.schedule_week import ScheduleWeek
     from app.models.whatsapp_session import WhatsAppSession
-    from app.api.v1.whatsapp import (
+    from app.core import wa
+    from app.api.v1.whatsapp_meta import (
+        DAY_NAMES,
         next_week_sunday,
         get_org_operating_days,
-        get_day_slot_saturation,
-        send_interactive_day_question,
-        send_whatsapp_to,
-        day_question_message,
+        send_day_availability_buttons,
     )
 
     week_start = next_week_sunday()
     week_end = week_start + timedelta(days=6)
-    print(f"[avail_req] starting — target week {week_start} → {week_end}", flush=True)
+    print(f"[avail_req] starting - target week {week_start} .. {week_end}", flush=True)
 
     async with async_session_factory() as db:
         # Active employees with phones, grouped by org
@@ -304,7 +255,18 @@ async def availability_request_job():
                         total_skipped += 1
                         continue
 
-                # Initialize session
+                # Preferred path: an approved template. Meta only permits
+                # free-form messages inside the 24h customer-service window, and
+                # a Monday-morning kickoff is almost always outside it. The
+                # employee taps the template's button and the webhook opens the
+                # day-by-day flow itself — so don't touch the session here.
+                if await wa.request_availability(emp.phone, emp.name, week_start, week_end):
+                    total_sent += 1
+                    print(f"[avail_req] template sent to {emp.name} ({emp.phone})", flush=True)
+                    continue
+
+                # Fallback (inside the window / local testing): seed the session
+                # and push the first day question straight away.
                 if sess is None:
                     sess = WhatsAppSession(phone=emp.phone)
                     db.add(sess)
@@ -317,24 +279,13 @@ async def availability_request_job():
                 }
                 sess.updated_at = datetime.now(timezone.utc)
 
-                saturation = await get_day_slot_saturation(week_start, org_id, emp.id, db)
-                first_sat = saturation.get(first_day_idx, {})
-                sent = await send_interactive_day_question(
-                    emp.phone, first_day_idx, first_date,
-                    week_start, week_end, 1, len(operating_days), first_sat,
+                await send_day_availability_buttons(
+                    emp.phone, DAY_NAMES[first_day_idx], first_date,
+                    week_start, week_end, 1, len(operating_days),
                 )
-                if not sent:
-                    # Fallback to plain text — still kicks off the flow
-                    await send_whatsapp_to(
-                        emp.phone,
-                        day_question_message(
-                            first_day_idx, first_date, week_start, week_end,
-                            1, len(operating_days), first_sat,
-                        ),
-                    )
 
                 total_sent += 1
-                print(f"[avail_req] sent to {emp.name} ({emp.phone})", flush=True)
+                print(f"[avail_req] interactive sent to {emp.name} ({emp.phone})", flush=True)
 
         await db.commit()
         print(f"[avail_req] done — sent={total_sent} skipped={total_skipped}", flush=True)

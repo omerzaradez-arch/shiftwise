@@ -360,13 +360,19 @@ async def forgot_password(
     request: Request,
     db: AsyncSession = Depends(get_db),
 ):
-    """Generate a new random password and WhatsApp it to the manager.
+    """Generate a new random password and send it to the manager.
+
+    Email is the delivery channel whenever we have an address for them — a
+    password sitting in a WhatsApp thread is readable by anyone who picks up
+    the phone, and stays there forever. WhatsApp then only carries a notice
+    with no secret in it. Without an address on file we fall back to sending
+    the password over WhatsApp, as before.
 
     Always returns 200 — never leaks whether the phone exists in the system
     (prevents user enumeration). Rate limited to 3 per hour per IP.
     """
     from app.security import hash_password
-    from app.api.v1.whatsapp import send_whatsapp_to
+    from app.core import wa, mail
     import secrets, string
 
     clean_phone = data.phone.replace("-", "").replace(" ", "")
@@ -378,7 +384,7 @@ async def forgot_password(
     # Same response whether the phone exists or not.
     generic_response = {
         "ok": True,
-        "message": "אם המספר רשום במערכת ושייך למנהל, סיסמה חדשה נשלחה ל-WhatsApp.",
+        "message": "אם המספר רשום במערכת ושייך למנהל, סיסמה חדשה נשלחה במייל או ב-WhatsApp.",
     }
 
     if not emp or emp.role not in MANAGER_ROLES:
@@ -395,20 +401,39 @@ async def forgot_password(
     emp.tokens_invalidated_at = datetime.now(timezone.utc)
     await db.commit()
 
-    message = (
-        "🔐 *איפוס סיסמה ל-ShiftWise*\n\n"
-        f"שלום {emp.name},\n"
-        "ביקשת לאפס את הסיסמה למערכת ShiftWise.\n\n"
-        f"הסיסמה החדשה שלך: *{new_password}*\n\n"
-        "מומלץ להחליף אותה לסיסמה משלך בהגדרות המערכת אחרי הכניסה.\n\n"
-        "אם לא ביקשת את האיפוס — מישהו ניסה להיכנס לחשבון שלך. "
-        "פנה אלינו מיד."
-    )
+    emailed = False
+    if emp.email and mail.is_configured():
+        try:
+            emailed = await mail.send_password_reset(emp.email, emp.name, new_password)
+        except Exception as e:
+            print(f"[forgot-password] email exception: {e}", flush=True)
 
     try:
-        sent = await send_whatsapp_to(emp.phone, message)
-        if not sent:
-            print(f"[forgot-password] WhatsApp send returned False for {emp.phone}", flush=True)
+        if emailed:
+            # Secret already delivered — WhatsApp just points them at the inbox.
+            masked = mail.mask_email(emp.email)
+            notice = (
+                "🔐 *איפוס סיסמה ל-ShiftWise*\n\n"
+                f"שלום {emp.name},\n"
+                f"שלחנו סיסמה חדשה לכתובת {masked}.\n\n"
+                "אם לא ביקשת את האיפוס — מישהו ניסה להיכנס לחשבון שלך. פנה אלינו מיד."
+            )
+            await wa.notify_password_reset(emp.phone, emp.name, masked, fallback_body=notice)
+        else:
+            if emp.email:
+                print("[forgot-password] email failed — falling back to WhatsApp", flush=True)
+            message = (
+                "🔐 *איפוס סיסמה ל-ShiftWise*\n\n"
+                f"שלום {emp.name},\n"
+                "ביקשת לאפס את הסיסמה למערכת ShiftWise.\n\n"
+                f"הסיסמה החדשה שלך: *{new_password}*\n\n"
+                "מומלץ להחליף אותה לסיסמה משלך בהגדרות המערכת אחרי הכניסה.\n\n"
+                "אם לא ביקשת את האיפוס — מישהו ניסה להיכנס לחשבון שלך. "
+                "פנה אלינו מיד."
+            )
+            sent = await wa.send_text(emp.phone, message)
+            if not sent:
+                print(f"[forgot-password] WhatsApp send returned False for {emp.phone}", flush=True)
     except Exception as e:
         print(f"[forgot-password] WhatsApp exception: {e}", flush=True)
 
@@ -428,7 +453,6 @@ class AccessRequestData(BaseModel):
 async def request_access(data: AccessRequestData, request: Request, db: AsyncSession = Depends(get_db)):
     """Submit a registration request — admin gets a notification with the code."""
     from app.models import PendingRegistration
-    from app.api.v1.whatsapp import send_whatsapp_to
     import random, os
 
     # Generate 6-digit code
@@ -460,7 +484,11 @@ async def request_access(data: AccessRequestData, request: Request, db: AsyncSes
             f"_מסור את הקוד לעסק כדי שיוכל להשלים את ההרשמה._"
         )
         try:
-            await send_whatsapp_to(admin_phone, msg)
+            from app.core import wa
+            await wa.notify_admin_new_registration(
+                admin_phone, data.org_name, data.contact_name, data.phone, code,
+                fallback_body=msg,
+            )
         except Exception as e:
             print(f"[request-access] failed to notify admin: {e}", flush=True)
 

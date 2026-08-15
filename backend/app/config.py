@@ -22,8 +22,11 @@ class Settings(BaseSettings):
     ]
 
     optimizer_time_limit_seconds: int = 30
-    backend_url: str = "https://shiftwise-production.up.railway.app"
-    frontend_url: str = "https://humble-blessing-production-bb7a.up.railway.app"
+    # Public origins of the deployed apps. These end up inside WhatsApp messages
+    # (schedule links, the check-in page), so a stale value silently sends
+    # employees to a dead host — hence the production check below.
+    backend_url: str = "http://localhost:8001"
+    frontend_url: str = "http://localhost:3000"
 
     @model_validator(mode="after")
     def derive_async_url(self) -> "Settings":
@@ -54,6 +57,12 @@ class Settings(BaseSettings):
                 "DATABASE_URL points at SQLite. Production must use Postgres "
                 "(Railway provides a Postgres plugin; set DATABASE_URL accordingly)."
             )
+        for field, var in (("backend_url", "BACKEND_URL"), ("frontend_url", "FRONTEND_URL")):
+            if "localhost" in getattr(self, field):
+                problems.append(
+                    f"{var} still points at localhost. Set it to the deployed public "
+                    "URL — it is embedded in the links employees receive over WhatsApp."
+                )
         if problems:
             msg = "Refusing to start: insecure production configuration.\n  - " + "\n  - ".join(problems)
             raise RuntimeError(msg)

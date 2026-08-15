@@ -283,7 +283,7 @@ async def _send_schedule_notifications(
 ):
     print(f"[notify] starting — {len(all_employees_map)} employees", flush=True)
     try:
-        from app.api.v1.whatsapp import send_whatsapp_to
+        from app.core import wa
         from app.core.schedule_image import ensure_font, generate_schedule_image
         from app.config import settings
     except Exception as e:
@@ -321,8 +321,11 @@ async def _send_schedule_notifications(
                 day_name = DAY_NAMES.get((s.date.weekday() + 1) % 7, "")
                 lines.append(f"• {day_name} {s.date.strftime('%d/%m')}: {s.start_time.strftime('%H:%M')}–{s.end_time.strftime('%H:%M')}")
             personal = "המשמרות שלך:\n" + "\n".join(lines)
+            n = len(my_shifts_sorted)
+            status_text = "משמרת אחת" if n == 1 else f"{n} משמרות"
         else:
             personal = "אין לך משמרות השבוע."
+            status_text = "לא שובצו משמרות"
 
         view_url = f"{settings.frontend_url}/view/{week.org_id}"
 
@@ -335,7 +338,10 @@ async def _send_schedule_notifications(
         )
 
         try:
-            ok = await send_whatsapp_to(emp.phone, msg)
+            week_range = f"{week.week_start.strftime('%d/%m')}–{week.week_end.strftime('%d/%m')}"
+            ok = await wa.notify_schedule_published(
+                emp.phone, emp.name, week_range, status_text, fallback_body=msg
+            )
             print(f"[notify] sent to {emp.name}: {'ok' if ok else 'failed'}", flush=True)
         except Exception as e:
             print(f"[notify] error sending to {emp.name}: {e}", flush=True)

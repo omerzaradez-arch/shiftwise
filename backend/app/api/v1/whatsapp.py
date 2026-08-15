@@ -9,6 +9,7 @@ Setup:
 4. Employee phone numbers in the system must match (Israeli format: 05XXXXXXXX).
 """
 
+import copy
 from fastapi import APIRouter, Request, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -403,7 +404,7 @@ async def find_and_notify_replacements(
                 cand_session = WhatsAppSession(phone=norm_phone, state="idle", context={})
                 db.add(cand_session)
                 await db.flush()
-            ctx = dict(cand_session.context or {})
+            ctx = copy.deepcopy(cand_session.context or {})
             ctx["pending_swap_shift_id"] = shift_id
             ctx["pending_swap_display"] = shift_display
             ctx["pending_swap_requester"] = requester_name
@@ -986,7 +987,7 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
 
     # ── State: cant_come_selecting ──
     if session.state == "cant_come_selecting":
-        ctx = dict(session.context or {})
+        ctx = copy.deepcopy(session.context or {})
         shift_ids: list[str] = ctx.get("shift_ids", [])
         shift_displays: list[str] = ctx.get("shift_displays", [])
 
@@ -1038,7 +1039,7 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
 
     # ── State: cant_come_confirm ──
     if session.state == "cant_come_confirm":
-        ctx = dict(session.context or {})
+        ctx = copy.deepcopy(session.context or {})
         if normalized in ("כן", "yes", "אישור", "אשר", "ok", "✅"):
             shift_id = ctx.get("selected_shift_id")
             shift_display = ctx.get("selected_shift_display", "")
@@ -1071,7 +1072,7 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
 
     # ── State: day-by-day availability ──
     if session.state == "availability_day_by_day":
-        ctx = dict(session.context or {})
+        ctx = copy.deepcopy(session.context or {})
         operating_days: list[int] = ctx.get("operating_days", [0, 1, 2, 3, 4, 5])
         week_start_str: str = ctx.get("week_start", "")
         week_start = date.fromisoformat(week_start_str)
@@ -1134,7 +1135,7 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
 
     # ── State: confirmation ──
     if session.state == "availability_confirm":
-        ctx = dict(session.context or {})
+        ctx = copy.deepcopy(session.context or {})
         if normalized in ("כן", "yes", "אישור", "אשר", "ok", "✅"):
             week_start = date.fromisoformat(ctx["week_start"])
             operating_days = ctx.get("operating_days", [0, 1, 2, 3, 4, 5])
@@ -1270,7 +1271,7 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
 
     # Volunteer accepting a replacement offer
     if normalized in ("כן", "yes", "אישור", "אשר", "ok", "✅"):
-        ctx = dict(session.context or {})
+        ctx = copy.deepcopy(session.context or {})
         if "pending_swap_shift_id" in ctx:
             result_msg = await handle_volunteer_acceptance(employee, ctx, db)
             ctx.pop("pending_swap_shift_id", None)

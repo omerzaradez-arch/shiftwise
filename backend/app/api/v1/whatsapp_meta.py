@@ -15,6 +15,7 @@ Setup:
 Note: Keep existing Twilio webhook for fallback / testing.
 """
 
+import copy
 import os, httpx
 from fastapi import APIRouter, Request, Response
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -128,6 +129,50 @@ async def send_list(to: str, body: str, sections: list[dict], button_label: str 
             },
         },
     }
+    return await _post(payload)
+
+
+async def send_template(
+    to: str,
+    name: str,
+    body_params: list[str] | None = None,
+    button_payloads: list[str] | None = None,
+    lang: str | None = None,
+) -> bool:
+    """Send a pre-approved template — the only way to message outside the 24h window.
+
+    body_params fill the {{1}}, {{2}}... placeholders in the template body.
+    button_payloads set the payload of each quick-reply button, in order; the
+    payload comes back in the webhook as a `button` message and is routed just
+    like an interactive button id.
+    """
+    phone = _normalize_phone(to)
+    components: list[dict] = []
+    if body_params:
+        components.append({
+            "type": "body",
+            "parameters": [{"type": "text", "text": str(p)} for p in body_params],
+        })
+    for idx, payload_value in enumerate(button_payloads or []):
+        components.append({
+            "type": "button",
+            "sub_type": "quick_reply",
+            "index": str(idx),
+            "parameters": [{"type": "payload", "payload": payload_value}],
+        })
+
+    payload = {
+        "messaging_product": "whatsapp",
+        "recipient_type": "individual",
+        "to": phone,
+        "type": "template",
+        "template": {
+            "name": name,
+            "language": {"code": lang or os.getenv("WHATSAPP_TEMPLATE_LANG", "he")},
+        },
+    }
+    if components:
+        payload["template"]["components"] = components
     return await _post(payload)
 
 
@@ -437,21 +482,12 @@ async def find_and_notify_replacements(shift_id: str, requester_name: str, org_i
     )
     same_shift_ids = {s.employee_id for s in same_shift_result.scalars().all()}
     candidates = [e for e in all_employees if e.id not in same_shift_ids]
+    from app.core import wa
+
     sent = 0
     for candidate in candidates:
-        body_text = (
-            f"👋 שלום {candidate.name}!\n"
-            f"*{requester_name}* מחפש/ת מחליף/ה למשמרת:\n"
-            f"📅 {shift_display}\n\n"
-            f"האם תוכל/י להחליף?"
-        )
-        ok = await send_buttons(
-            to=candidate.phone,
-            body=body_text,
-            buttons=[
-                {"id": f"swap_yes_{shift_id[:20]}", "title": "✅ אני יכול/ה"},
-                {"id": "swap_no", "title": "❌ לא יכול/ה"},
-            ],
+        ok = await wa.notify_swap_request(
+            candidate.phone, candidate.name, requester_name, shift_display
         )
         if ok:
             sent += 1
@@ -461,7 +497,7 @@ async def find_and_notify_replacements(shift_id: str, requester_name: str, org_i
                 cand_session = WhatsAppSession(phone=norm_phone, state="idle", context={})
                 db.add(cand_session)
                 await db.flush()
-            ctx = dict(cand_session.context or {})
+            ctx = copy.deepcopy(cand_session.context or {})
             ctx["pending_swap_shift_id"] = shift_id
             ctx["pending_swap_display"] = shift_display
             ctx["pending_swap_requester"] = requester_name
@@ -493,7 +529,11 @@ async def handle_volunteer_acceptance(employee: Employee, ctx: dict, db: AsyncSe
     shift.status = "assigned"
     await db.commit()
     if original_emp and original_emp.phone:
-        await send_text(original_emp.phone, f"✅ *{employee.name}* יחליף אותך במשמרת:\n{shift_display}")
+        from app.core import wa
+        await wa.notify_swap_accepted(
+            original_emp.phone, original_emp.name, employee.name, shift_display,
+            fallback_body=f"✅ *{employee.name}* יחליף אותך במשמרת:\n{shift_display}",
+        )
     managers = await db.execute(
         select(Employee).where(Employee.org_id == employee.org_id,
                                Employee.role.in_(["manager", "owner"]),
@@ -637,6 +677,10 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
         elif itype == "list_reply":
             button_id = interactive["list_reply"]["id"]
             text_body = interactive["list_reply"]["title"]
+    elif msg_type == "button":
+        # Quick-reply on a template message — payload was set by send_template()
+        button_id = message.get("button", {}).get("payload", "")
+        text_body = message.get("button", {}).get("text", "")
     elif msg_type == "location":
         lat = message["location"].get("latitude")
         lng = message["location"].get("longitude")
@@ -716,6 +760,14 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
         await send_text(phone, msg)
         return {"status": "ok"}
 
+    # ── Button: "not started yet" on the shift-start reminder ──
+    if button_id == "start_later":
+        await send_text(
+            phone,
+            "בסדר גמור 👍\nכשתתחיל/י — שלח/י *כניסה* ונרשום את השעה.",
+        )
+        return {"status": "ok"}
+
     # ── Button: check-out ──
     if button_id == "checkout" or any(kw in normalized for kw in ["יציאה", "יצאתי", "סיימתי"]):
         msg = await cmd_checkout(employee, db)
@@ -770,7 +822,7 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
 
     # ── State: availability day-by-day ──
     if session.state == "availability_day_by_day":
-        ctx = dict(session.context or {})
+        ctx = copy.deepcopy(session.context or {})
         operating_days: list[int] = ctx.get("operating_days", [0, 1, 2, 3, 4, 5])
         week_start = date.fromisoformat(ctx.get("week_start", ""))
         week_end = week_start + timedelta(days=6)
@@ -815,7 +867,7 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
 
     # ── State: availability confirm ──
     if session.state == "availability_confirm":
-        ctx = dict(session.context or {})
+        ctx = copy.deepcopy(session.context or {})
         if button_id in ("avail_confirm_yes",) or normalized in ("כן", "yes", "אישור"):
             week_start = date.fromisoformat(ctx["week_start"])
             operating_days = ctx.get("operating_days", [0, 1, 2, 3, 4, 5])
@@ -837,7 +889,7 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
 
     # ── State: cant_come selecting ──
     if session.state == "cant_come_selecting":
-        ctx = dict(session.context or {})
+        ctx = copy.deepcopy(session.context or {})
         shift_ids: list[str] = ctx.get("shift_ids", [])
         try:
             idx = int(text_body.strip()) - 1
@@ -870,7 +922,7 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
 
     # ── State: cant_come confirm ──
     if session.state == "cant_come_confirm":
-        ctx = dict(session.context or {})
+        ctx = copy.deepcopy(session.context or {})
         if button_id == "swap_confirm_yes" or normalized in ("כן", "yes"):
             shift_id = ctx.get("selected_shift_id")
             shift_display = ctx.get("selected_shift_display", "")
@@ -897,7 +949,7 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
 
     # ── Swap offer response ──
     if button_id.startswith("swap_yes_"):
-        ctx = dict(session.context or {})
+        ctx = copy.deepcopy(session.context or {})
         if "pending_swap_shift_id" in ctx:
             result_msg = await handle_volunteer_acceptance(employee, ctx, db)
             ctx.pop("pending_swap_shift_id", None)
@@ -910,7 +962,7 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
         return {"status": "ok"}
 
     if button_id == "swap_no":
-        ctx = dict(session.context or {})
+        ctx = copy.deepcopy(session.context or {})
         ctx.pop("pending_swap_shift_id", None)
         ctx.pop("pending_swap_display", None)
         ctx.pop("pending_swap_requester", None)
