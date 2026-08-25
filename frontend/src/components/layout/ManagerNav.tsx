@@ -106,26 +106,21 @@ export function ManagerNav() {
       {/* ── Desktop sidebar ── */}
       <aside className="hidden md:flex w-56 bg-slate-900 flex-col h-screen sticky top-0 select-none">
         {/* Logo */}
-        <div className="px-5 py-5 border-b border-slate-800">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-indigo-500 rounded-xl flex items-center justify-center flex-none shadow-lg shadow-indigo-900/40">
-              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} style={{color:'white'}}>
-                <path strokeLinecap="round" strokeLinejoin="round"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            </div>
-            <div>
-              <p className="font-bold text-white text-sm tracking-wide">ShiftWise</p>
-              {user?.org_name && (
-                <p className="text-xs text-slate-400 truncate max-w-[100px]">{user.org_name}</p>
-              )}
-            </div>
+        <div className="px-5 py-6 border-b border-slate-800">
+          <div className="flex items-baseline gap-2">
+            <span className="h-2 w-2 bg-vermilion-500 flex-none" />
+            <p className="font-display font-black text-white text-[19px] leading-none tracking-tightest">
+              ShiftWise
+            </p>
           </div>
+          {user?.org_name && (
+            <p className="label-caps mt-2.5 text-slate-500 truncate">{user.org_name}</p>
+          )}
         </div>
 
         {/* Nav */}
         <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider px-3 mb-2">תפריט</p>
+          <p className="label-caps px-3 mb-2.5 text-slate-600">תפריט</p>
           {NAV_ITEMS.map((item) => {
             const active = pathname.startsWith(item.href)
             const badgeCount = (item as any).badge ? pendingSwaps.length : 0
@@ -133,18 +128,20 @@ export function ManagerNav() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group ${
-                  active
-                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/30'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100'
-                }`}
+                aria-current={active ? 'page' : undefined}
+                className={`relative flex items-center gap-3 ps-4 pe-3 py-2.5 text-sm transition-colors group
+                  before:absolute before:inset-y-0 before:end-full before:w-[3px] before:content-['']
+                  ${active
+                    ? "font-semibold text-white bg-slate-800/70 before:bg-vermilion-500 before:!end-auto before:!start-0"
+                    : 'font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/40'
+                  }`}
               >
-                <span className={`flex-none transition-colors ${active ? 'text-white' : 'text-slate-500 group-hover:text-slate-300'}`}>
+                <span className={`flex-none transition-colors ${active ? 'text-vermilion-400' : 'text-slate-600 group-hover:text-slate-400'}`}>
                   {item.icon}
                 </span>
                 <span className="flex-1">{item.label}</span>
                 {badgeCount > 0 && (
-                  <span className="inline-flex items-center justify-center w-5 h-5 bg-amber-500 text-white text-xs rounded-full font-bold">
+                  <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 bg-vermilion-600 text-white text-[11px] font-bold tabular">
                     {badgeCount}
                   </span>
                 )}
@@ -160,7 +157,7 @@ export function ManagerNav() {
             className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-slate-800 transition-colors group"
             title="החשבון שלי"
           >
-            <div className="w-8 h-8 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center text-sm font-bold text-white flex-none">
+            <div className="w-8 h-8 bg-slate-700 text-slate-200 flex items-center justify-center text-sm font-bold flex-none">
               {user?.name?.[0]}
             </div>
             <div className="flex-1 min-w-0">
@@ -184,17 +181,13 @@ export function ManagerNav() {
       {/* ── Mobile top bar ── */}
       <div className="md:hidden fixed top-0 right-0 left-0 z-40 bg-slate-900 border-b border-slate-800 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-indigo-500 rounded-lg flex items-center justify-center">
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <span className="font-bold text-white text-sm">ShiftWise</span>
+          <span className="h-1.5 w-1.5 bg-vermilion-500 flex-none" />
+          <span className="font-display font-black text-white text-[16px] tracking-tightest">ShiftWise</span>
           {user?.org_name && <span className="text-xs text-slate-400">· {user.org_name}</span>}
         </div>
         <div className="flex items-center gap-2">
           {pendingSwaps.length > 0 && (
-            <Link href="/requests" className="w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center text-xs font-bold text-white">
+            <Link href="/requests" className="min-w-[20px] h-5 px-1 bg-vermilion-600 flex items-center justify-center text-[11px] font-bold text-white tabular">
               {pendingSwaps.length}
             </Link>
           )}
@@ -225,7 +218,7 @@ export function ManagerNav() {
                 <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-indigo-400 rounded-full" />
               )}
               {badgeCount > 0 && (
-                <span className="absolute top-1.5 left-1/2 translate-x-1.5 w-3.5 h-3.5 bg-amber-500 text-white text-[8px] rounded-full flex items-center justify-center font-bold">
+                <span className="absolute top-1.5 left-1/2 translate-x-1.5 w-3.5 h-3.5 bg-vermilion-600 text-white text-[8px] rounded-full flex items-center justify-center font-bold">
                   {badgeCount}
                 </span>
               )}

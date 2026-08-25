@@ -39,88 +39,91 @@ export default function LoginPage() {
     }
   }
 
+  const field =
+    'w-full bg-transparent border-0 border-b border-sand-300 px-0 py-2.5 text-[15px] ' +
+    'text-sand-900 placeholder:text-sand-400 focus:outline-none focus:border-vermilion-600 ' +
+    'focus:ring-0 transition-colors'
+
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4" dir="rtl">
-      {/* Background blobs */}
-      <div className="fixed top-0 right-0 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="fixed bottom-0 left-0 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen bg-sand-50 flex items-center justify-center p-5" dir="rtl">
+      {/* Ruled paper — the timesheet this product replaces. */}
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-0 opacity-[0.5]"
+        style={{
+          backgroundImage: 'repeating-linear-gradient(to bottom, #E4DFD5 0 1px, transparent 1px 46px)',
+        }}
+      />
 
-      <div className="w-full max-w-sm relative z-10">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-indigo-600 rounded-2xl mb-4 shadow-2xl shadow-indigo-900/60">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-              <line x1="16" y1="2" x2="16" y2="6"/>
-              <line x1="8" y1="2" x2="8" y2="6"/>
-              <line x1="3" y1="10" x2="21" y2="10"/>
-            </svg>
+      <div className="w-full max-w-[380px] relative">
+        <header className="mb-9">
+          <div className="flex items-baseline gap-2.5">
+            <span className="h-2.5 w-2.5 bg-vermilion-600" />
+            <h1 className="font-display text-[34px] leading-none font-black text-sand-900 tracking-tightest">
+              ShiftWise
+            </h1>
           </div>
-          <h1 className="text-3xl font-bold text-white">ShiftWise</h1>
-          <p className="text-slate-400 text-sm mt-1">ניהול משמרות חכם לעסקים</p>
-        </div>
+          <p className="label-caps mt-3">ניהול משמרות לעסקים</p>
+        </header>
 
-        {/* Card */}
-        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 shadow-2xl">
-          <h2 className="text-lg font-bold text-white mb-1">ברוך הבא</h2>
-          <p className="text-slate-400 text-sm mb-6">התחבר כדי לנהל את הסידור</p>
+        <div className="bg-white border border-sand-200 shadow-card">
+          <div className="border-b border-sand-200 px-7 py-4">
+            <h2 className="font-display text-[19px] text-sand-900">כניסה למערכת</h2>
+          </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="px-7 py-7 flex flex-col gap-6">
             <div>
-              <label className="block text-sm font-semibold text-slate-300 mb-2">מספר טלפון</label>
-              <input
-                {...register('phone')}
-                type="tel"
-                placeholder="050-0000000"
-                className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition text-right text-sm"
-              />
-              {errors.phone && <p className="text-red-400 text-xs mt-1">{errors.phone.message}</p>}
+              <label htmlFor="phone" className="label-caps block mb-1">מספר טלפון</label>
+              <input id="phone" {...register('phone')} type="tel" dir="ltr"
+                placeholder="050-0000000" autoComplete="tel"
+                className={`${field} text-right mono-time`} />
+              {errors.phone && (
+                <p className="text-vermilion-700 text-xs mt-1.5">{errors.phone.message}</p>
+              )}
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-300 mb-2">סיסמה</label>
-              <input
-                {...register('password')}
-                type="password"
-                placeholder="••••••••"
-                className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition text-sm"
-              />
-              {errors.password && <p className="text-red-400 text-xs mt-1">{errors.password.message}</p>}
-              <div className="text-left mt-2">
-                <a href="/forgot-password" className="text-xs text-indigo-400 hover:text-indigo-300">
+              <div className="flex items-baseline justify-between mb-1">
+                <label htmlFor="password" className="label-caps">סיסמה</label>
+                <a href="/forgot-password"
+                  className="text-xs text-sand-500 hover:text-vermilion-600 transition-colors">
                   שכחתי סיסמה
                 </a>
               </div>
+              <input id="password" {...register('password')} type="password"
+                placeholder="••••••••" autoComplete="current-password" className={field} />
+              {errors.password && (
+                <p className="text-vermilion-700 text-xs mt-1.5">{errors.password.message}</p>
+              )}
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-indigo-900/40 mt-2"
-            >
+            <button type="submit" disabled={loading}
+              className="w-full bg-vermilion-600 hover:bg-vermilion-700 disabled:opacity-55
+                         disabled:cursor-not-allowed text-white font-semibold text-[15px]
+                         py-3 transition-colors">
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                  <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-30" cx="12" cy="12" r="10"
+                      stroke="currentColor" strokeWidth="3" />
+                    <path className="opacity-90" fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
-                  נכנס...
+                  נכנס…
                 </span>
-              ) : 'כניסה למערכת'}
+              ) : 'כניסה'}
             </button>
           </form>
         </div>
 
-        <p className="text-center text-sm text-slate-500 mt-4">
+        <p className="text-sm text-sand-500 mt-6">
           עסק חדש?{' '}
-          <a href="/register" className="text-indigo-400 hover:text-indigo-300 font-medium">
-            פתח חשבון
+          <a href="/register" className="text-vermilion-700 hover:text-vermilion-600 font-semibold">
+            פתיחת חשבון
           </a>
         </p>
 
-        <p className="text-center text-xs text-slate-600 mt-4">
-          ShiftWise © {new Date().getFullYear()}
-        </p>
+        <p className="label-caps mt-10 text-sand-400">ShiftWise © 2026</p>
       </div>
     </div>
   )

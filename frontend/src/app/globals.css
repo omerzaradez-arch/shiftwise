@@ -4,48 +4,54 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Warm paper and ink. Every neutral carries a yellow bias so the interface
+       never settles into the blue-grey of a stock dashboard. */
+    --background: 40 33% 96%;
+    --foreground: 30 13% 11%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 30 13% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.75rem;
+    --popover-foreground: 30 13% 11%;
+
+    --primary: 12 61% 45%;
+    --primary-foreground: 40 33% 97%;
+    --secondary: 38 25% 92%;
+    --secondary-foreground: 30 13% 16%;
+    --muted: 38 25% 92%;
+    --muted-foreground: 33 11% 45%;
+    --accent: 168 27% 30%;
+    --accent-foreground: 40 33% 97%;
+    --destructive: 4 66% 47%;
+    --destructive-foreground: 40 33% 97%;
+
+    --border: 37 22% 87%;
+    --input: 37 22% 87%;
+    --ring: 12 61% 45%;
+    --radius: 4px;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --background: 30 13% 10%;
+    --foreground: 40 33% 95%;
+    --card: 30 13% 13%;
+    --card-foreground: 40 33% 95%;
+    --popover: 30 13% 13%;
+    --popover-foreground: 40 33% 95%;
+
+    --primary: 14 70% 62%;
+    --primary-foreground: 30 13% 10%;
+    --secondary: 30 12% 18%;
+    --secondary-foreground: 40 33% 95%;
+    --muted: 30 12% 18%;
+    --muted-foreground: 35 10% 62%;
+    --accent: 168 24% 42%;
+    --accent-foreground: 30 13% 10%;
+    --destructive: 6 60% 55%;
+    --destructive-foreground: 40 33% 95%;
+
+    --border: 30 10% 22%;
+    --input: 30 10% 22%;
+    --ring: 14 70% 62%;
   }
 }
 
@@ -53,76 +59,127 @@
   * {
     @apply border-border;
   }
+
+  html {
+    direction: rtl;
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
   }
-  /* RTL support */
-  html {
-    direction: rtl;
+
+  /* Headings carry the one typographic risk in the design: a Hebrew serif,
+     used here and nowhere else. Everything functional stays in Assistant. */
+  h1, h2, h3 {
+    font-family: var(--font-frank), Georgia, serif;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  /* A schedule is read in columns. Digits must line up everywhere they appear. */
+  time, td, th, input[type="time"], input[type="number"], .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
   }
 }
 
-/* FullCalendar RTL overrides */
+@layer components {
+  /* Uppercase micro-labels — the vocabulary of timetables and control panels. */
+  .label-caps {
+    @apply text-[11px] font-semibold uppercase tracking-label text-slate-500;
+  }
+
+  .mono-time {
+    font-family: var(--font-plex-mono), ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── The weekly board ────────────────────────────────────────────────────────
+   Treated as a printed timetable: hairline rules, monospaced hours, and colour
+   reserved for the shift blocks themselves. */
 .fc {
   direction: rtl;
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-assistant), system-ui, sans-serif;
 }
 .fc-toolbar-title {
-  font-size: 1rem !important;
-  font-weight: 600;
+  font-family: var(--font-frank), Georgia, serif;
+  font-size: 1.05rem !important;
+  font-weight: 700;
+  letter-spacing: -0.015em;
 }
 .fc-event {
   cursor: pointer;
-  border-radius: 8px !important;
+  border-radius: 3px !important;
   border: none !important;
+  border-inline-start: 3px solid rgba(30, 27, 23, 0.28) !important;
   padding: 3px 7px;
   font-size: 0.75rem !important;
-  font-weight: 500;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-  transition: opacity 0.15s;
+  font-weight: 600;
+  box-shadow: none;
+  transition: transform 0.12s ease, filter 0.12s ease;
 }
 .fc-event:hover {
-  opacity: 0.85;
+  filter: brightness(0.97);
+  transform: translateY(-1px);
 }
 .fc-day-today {
-  background-color: hsl(221.2 83.2% 53.3% / 0.04) !important;
+  background-color: rgba(184, 69, 44, 0.045) !important;
 }
 .fc-day-today .fc-col-header-cell-cushion {
-  color: #2563EB;
+  color: #B8452C;
   font-weight: 700;
 }
 .fc-col-header-cell-cushion {
   padding: 10px 4px !important;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #64748B;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7D7365;
   text-decoration: none !important;
 }
 .fc-timegrid-slot {
-  height: 48px !important;
+  height: 46px !important;
 }
 .fc-timegrid-slot-label-cushion {
-  font-size: 0.7rem;
-  color: #94A3B8;
+  font-family: var(--font-plex-mono), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.68rem;
+  color: #A69C8C;
   padding: 0 8px;
 }
 .fc-scrollgrid {
-  border-radius: 12px;
+  border-radius: 5px;
   overflow: hidden;
-  border-color: #E2E8F0 !important;
+  border-color: #E4DFD5 !important;
 }
 .fc-scrollgrid td, .fc-scrollgrid th {
-  border-color: #F1F5F9 !important;
+  border-color: #EFEBE3 !important;
 }
 .fc-timegrid-now-indicator-line {
-  border-color: #EF4444 !important;
+  border-color: #B8452C !important;
   border-width: 2px !important;
 }
 .fc-timegrid-now-indicator-arrow {
-  border-top-color: #EF4444 !important;
+  border-top-color: #B8452C !important;
 }
-/* Hide FullCalendar watermark */
 .fc-license-message, .fc .fc-license-message {
   display: none !important;
 }
