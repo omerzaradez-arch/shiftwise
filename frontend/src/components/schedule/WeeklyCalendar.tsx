@@ -10,18 +10,28 @@ import type { EventDropArg, EventClickArg, DateSelectArg } from '@fullcalendar/c
 import { format } from 'date-fns'
 import { Schedule, Conflict } from '@/types/schedule'
 
+// These are set inline on FullCalendar events, so they bypass Tailwind and have
+// to carry the palette themselves.
+
+// Role reads off the leading edge of each block, darkest for most senior.
 const ROLE_COLORS: Record<string, string> = {
-  senior: '#6366F1',
-  junior: '#3B82F6',
-  trainee: '#94A3B8',
-  manager: '#8B5CF6',
+  manager: '#B8452C',
+  senior:  '#345C52',
+  junior:  '#7D7365',
+  trainee: '#A69C8C',
 }
 
+// Shift blocks as tinted paper stock rather than saturated chips — the type
+// stays readable and the board doesn't turn into a colour chart.
 const SHIFT_BG: Record<string, string> = {
-  morning: '#FEF3C7',
-  afternoon: '#DBEAFE',
-  evening: '#EDE9FE',
+  morning:   '#FBE9CB',
+  afternoon: '#DAE7E3',
+  evening:   '#E8DCE6',
+  night:     '#D9D4CA',
 }
+
+const INK = '#1E1B17'
+const CONFLICT = '#9A6B12' // ochre — distinct from the vermilion of primary actions
 
 interface Props {
   schedule: Schedule
@@ -58,9 +68,9 @@ export function WeeklyCalendar({ schedule, weekStart, onShiftMove, onShiftClick,
     title: shift.employee_name,
     start: `${shift.date}T${shift.start_time}`,
     end: `${shift.date}T${shift.end_time}`,
-    backgroundColor: SHIFT_BG[shift.shift_type] ?? '#F1F5F9',
-    borderColor: conflictDates.has(shift.date) ? '#F59E0B' : ROLE_COLORS[shift.employee_role] ?? '#3B82F6',
-    textColor: '#1E293B',
+    backgroundColor: SHIFT_BG[shift.shift_type] ?? '#F2EFE8',
+    borderColor: conflictDates.has(shift.date) ? CONFLICT : ROLE_COLORS[shift.employee_role] ?? '#7D7365',
+    textColor: INK,
     extendedProps: {
       shiftId: shift.id,
       employeeId: shift.employee_id,
@@ -103,37 +113,42 @@ export function WeeklyCalendar({ schedule, weekStart, onShiftMove, onShiftClick,
 
   const renderEventContent = (eventInfo: any) => {
     const { role, shiftName, isManualOverride } = eventInfo.event.extendedProps
+    // A hand-placed shift is marked by a rule under the name, the way a
+    // corrected entry is struck on a paper roster — no emoji needed.
+    const overrideMark = isManualOverride ? (
+      <span
+        className="inline-block w-1.5 h-1.5 flex-none"
+        style={{ backgroundColor: '#B8452C' }}
+        title="שובץ ידנית"
+      />
+    ) : null
+
     if (isMobile) {
       return (
-        <div className="px-1 py-0.5">
+        <div className="px-1 py-0.5 flex items-center gap-1.5">
           <span className="font-semibold text-xs">{eventInfo.event.title}</span>
-          <span className="text-xs opacity-60 mx-1">·</span>
-          <span className="text-xs opacity-70">{shiftName}</span>
-          {isManualOverride && <span className="text-xs ml-1">✏️</span>}
+          <span className="text-xs opacity-45">{shiftName}</span>
+          {overrideMark}
         </div>
       )
     }
     return (
-      <div className="p-1 overflow-hidden">
-        <div className="flex items-center gap-1">
-          <div
-            className="w-2 h-2 rounded-full flex-none"
-            style={{ backgroundColor: ROLE_COLORS[role] ?? '#94A3B8' }}
+      <div className="p-1 overflow-hidden leading-tight">
+        <div className="flex items-center gap-1.5">
+          <span
+            className="w-1.5 h-1.5 flex-none"
+            style={{ backgroundColor: ROLE_COLORS[role] ?? '#A69C8C' }}
           />
-          <span className="font-semibold text-xs truncate">
-            {eventInfo.event.title}
-          </span>
-          {isManualOverride && (
-            <span className="text-xs opacity-60" title="עודכן ידנית">✏️</span>
-          )}
+          <span className="font-semibold text-xs truncate">{eventInfo.event.title}</span>
+          {overrideMark}
         </div>
-        <div className="text-xs opacity-70 mt-0.5">{shiftName}</div>
+        <div className="text-[11px] opacity-55 mt-0.5 truncate">{shiftName}</div>
       </div>
     )
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-2 md:p-4 h-full overflow-auto">
+    <div className="bg-white border border-sand-200 shadow-card p-2 md:p-4 h-full overflow-auto">
       <FullCalendar
         ref={calendarRef}
         plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}

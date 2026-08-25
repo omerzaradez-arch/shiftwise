@@ -63,7 +63,7 @@ export default function LoginPage() {
               ShiftWise
             </h1>
           </div>
-          <p className="label-caps mt-3">ניהול משמרות לעסקים</p>
+          <p className="label-caps mt-3 text-sand-500">ניהול משמרות לעסקים</p>
         </header>
 
         <div className="bg-white border border-sand-200 shadow-card">
@@ -73,7 +73,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="px-7 py-7 flex flex-col gap-6">
             <div>
-              <label htmlFor="phone" className="label-caps block mb-1">מספר טלפון</label>
+              <label htmlFor="phone" className="label-caps block mb-1 text-sand-500">מספר טלפון</label>
               <input id="phone" {...register('phone')} type="tel" dir="ltr"
                 placeholder="050-0000000" autoComplete="tel"
                 className={`${field} text-right mono-time`} />
@@ -84,7 +84,7 @@ export default function LoginPage() {
 
             <div>
               <div className="flex items-baseline justify-between mb-1">
-                <label htmlFor="password" className="label-caps">סיסמה</label>
+                <label htmlFor="password" className="label-caps text-sand-500">סיסמה</label>
                 <a href="/forgot-password"
                   className="text-xs text-sand-500 hover:text-vermilion-600 transition-colors">
                   שכחתי סיסמה

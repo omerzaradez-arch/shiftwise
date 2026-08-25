@@ -101,6 +101,12 @@ module.exports = {
         vermilion,
         verdigris,
 
+        // Semantic state, kept in the warm family so a health readout never
+        // looks like it was pasted in from another design.
+        good: { DEFAULT: '#3C6B52', soft: '#E7F0EA' },
+        warn: { DEFAULT: '#9A6B12', soft: '#FBF0D9' },
+        bad:  { DEFAULT: '#95371F', soft: '#FBE0D7' },
+
         // Shift tags, as tinted paper stock rather than pastel chips.
         shift: {
           morning:   '#FBE9CB',

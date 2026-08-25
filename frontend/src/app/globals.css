@@ -92,9 +92,11 @@
 }
 
 @layer components {
-  /* Uppercase micro-labels — the vocabulary of timetables and control panels. */
+  /* Uppercase micro-labels — the vocabulary of timetables and control panels.
+     Deliberately carries no colour: it is used on both paper and ink grounds,
+     and baking one in here would fight every utility set at the usage site. */
   .label-caps {
-    @apply text-[11px] font-semibold uppercase tracking-label text-slate-500;
+    @apply text-[11px] font-semibold uppercase tracking-label;
   }
 
   .mono-time {
@@ -124,11 +126,14 @@
   font-weight: 700;
   letter-spacing: -0.015em;
 }
+/* Only the leading edge is drawn, and its colour comes from the event itself —
+   that stripe is how the board shows an employee's role at a glance. */
 .fc-event {
   cursor: pointer;
-  border-radius: 3px !important;
-  border: none !important;
-  border-inline-start: 3px solid rgba(30, 27, 23, 0.28) !important;
+  border-radius: 2px !important;
+  border-width: 0 !important;
+  border-inline-start-width: 3px !important;
+  border-style: solid !important;
   padding: 3px 7px;
   font-size: 0.75rem !important;
   font-weight: 600;

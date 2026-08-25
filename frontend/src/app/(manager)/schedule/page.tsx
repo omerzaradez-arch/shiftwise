@@ -99,8 +99,8 @@ export default function SchedulePage() {
 
   const score = schedule?.optimizer_score ?? 0
   const coverage = schedule?.coverage_percent ?? 0
-  const scoreColor = score >= 80 ? 'text-green-600' : score >= 60 ? 'text-amber-500' : 'text-red-500'
-  const coverageColor = coverage >= 90 ? 'text-green-600' : coverage >= 70 ? 'text-amber-500' : 'text-red-500'
+  const scoreColor = score >= 80 ? 'text-good' : score >= 60 ? 'text-warn' : 'text-bad'
+  const coverageColor = coverage >= 90 ? 'text-good' : coverage >= 70 ? 'text-warn' : 'text-bad'
 
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden" dir="rtl">
@@ -108,52 +108,62 @@ export default function SchedulePage() {
 
       <main className="flex-1 flex flex-col overflow-hidden pt-14 md:pt-0 pb-20 md:pb-0">
         {/* Top bar */}
-        <div className="bg-white border-b border-slate-200 px-5 py-3 flex items-center gap-4 shadow-sm">
+        <div className="bg-white border-b border-slate-200 px-5 py-3 flex items-center gap-5">
           {/* Week nav */}
-          <div className="flex items-center gap-2 bg-slate-100 rounded-xl px-2 py-1">
+          <div className="flex items-center border border-sand-200">
             <button
               onClick={() => setCurrentWeek(w => subWeeks(w, 1))}
-              className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white transition text-slate-500"
+              aria-label="שבוע קודם"
+              className="w-8 h-8 flex items-center justify-center hover:bg-sand-100 transition-colors text-sand-500 hover:text-sand-800"
             >
               ›
             </button>
-            <span className="text-sm font-semibold text-slate-700 px-2 min-w-[160px] text-center">
+            <span className="mono-time text-[13px] font-medium text-sand-800 px-3 min-w-[168px] text-center border-x border-sand-200 leading-8">
               {format(currentWeek, "d MMM", { locale: he })} — {format(addWeeks(currentWeek, 1), "d MMM yyyy", { locale: he })}
             </span>
             <button
               onClick={() => setCurrentWeek(w => addWeeks(w, 1))}
-              className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white transition text-slate-500"
+              aria-label="שבוע הבא"
+              className="w-8 h-8 flex items-center justify-center hover:bg-sand-100 transition-colors text-sand-500 hover:text-sand-800"
             >
               ‹
             </button>
           </div>
 
-          {/* Stats */}
+          {/* Readouts — the state of this week, at a glance */}
           {schedule && (
-            <div className="flex items-center gap-4 mr-2">
-              <div className="flex items-center gap-1.5 text-sm">
-                <div className={`w-2 h-2 rounded-full ${conflicts.length > 0 ? 'bg-amber-400' : 'bg-emerald-400'}`} />
-                <span className="text-slate-500">
-                  {conflicts.length > 0 ? `${conflicts.length} קונפליקטים` : 'ללא קונפליקטים'}
-                </span>
+            <div className="hidden lg:flex items-stretch gap-5">
+              <div>
+                <p className="label-caps text-sand-500">כיסוי</p>
+                <p className={`mono-time text-[17px] font-semibold leading-tight ${coverageColor}`}>
+                  {coverage}<span className="text-[11px] text-sand-400">%</span>
+                </p>
               </div>
-              <div className="h-4 w-px bg-slate-200" />
-              <div className="text-sm">
-                <span className="text-slate-400">כיסוי </span>
-                <span className={`font-bold ${coverageColor}`}>{coverage}%</span>
+              <div className="w-px bg-sand-200" />
+              <div>
+                <p className="label-caps text-sand-500">ציון</p>
+                <p className={`mono-time text-[17px] font-semibold leading-tight ${scoreColor}`}>
+                  {score}<span className="text-[11px] text-sand-400">/100</span>
+                </p>
               </div>
-              <div className="h-4 w-px bg-slate-200" />
-              <div className="flex items-center gap-1 text-sm">
-                <span className="text-slate-400">ציון</span>
-                <span className={`font-bold text-base ${scoreColor}`}>{score}</span>
-                <span className="text-slate-300 text-xs">/100</span>
+              <div className="w-px bg-sand-200" />
+              <div>
+                <p className="label-caps text-sand-500">קונפליקטים</p>
+                <p className="flex items-center gap-1.5 leading-tight">
+                  <span className={`w-2 h-2 flex-none ${conflicts.length > 0 ? 'bg-[#9A6B12]' : 'bg-verdigris-500'}`} />
+                  <span className={`mono-time text-[17px] font-semibold ${conflicts.length > 0 ? 'text-[#9A6B12]' : 'text-sand-500'}`}>
+                    {conflicts.length}
+                  </span>
+                </p>
               </div>
               {schedule.status === 'published' && (
                 <>
-                  <div className="h-4 w-px bg-slate-200" />
-                  <span className="flex items-center gap-1 text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">
-                    ✓ פורסם
-                  </span>
+                  <div className="w-px bg-sand-200" />
+                  <div className="flex items-center">
+                    <span className="label-caps text-verdigris-700 border border-verdigris-200 bg-verdigris-50 px-2 py-1">
+                      פורסם
+                    </span>
+                  </div>
                 </>
               )}
             </div>
