@@ -200,10 +200,16 @@ async def notify_admin_new_registration(
     phone: str, org_name: str, contact_name: str, contact_phone: str,
     code: str, fallback_body: str,
 ) -> bool:
-    """Tell the ShiftWise admin a business asked to join."""
+    """Tell the ShiftWise admin a business asked to join.
+
+    The activation code stays out of the template on purpose: Meta rejected the
+    version carrying it, reading a code in the body as an authentication
+    message. The template points the admin at the panel; the free-form fallback,
+    which only goes out inside the 24h window, still carries the code.
+    """
     template = os.getenv("WHATSAPP_TEMPLATE_ADMIN_REGISTRATION", "").strip()
     if template and await send_template(
-        phone, template, [org_name, contact_name, contact_phone, code]
+        phone, template, [org_name, contact_name, contact_phone]
     ):
         return True
     return await send_text(phone, fallback_body)
