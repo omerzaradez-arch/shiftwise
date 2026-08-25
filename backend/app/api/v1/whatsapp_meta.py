@@ -188,7 +188,14 @@ async def _post(payload: dict) -> bool:
             if resp.status_code not in (200, 201):
                 print(f"[meta_wa] ERROR {resp.status_code}: {resp.text}", flush=True)
                 return False
-            print(f"[meta_wa] OK to={payload.get('to')}", flush=True)
+            try:
+                msg_id = resp.json()["messages"][0]["id"]
+            except Exception:
+                msg_id = "?"
+            print(
+                f"[meta_wa] OK to={payload.get('to')} type={payload.get('type')} id={msg_id}",
+                flush=True,
+            )
             return True
     except Exception as e:
         print(f"[meta_wa] exception: {e}", flush=True)
@@ -224,14 +231,14 @@ async def send_main_menu(to: str) -> None:
     )
 
 
-async def send_day_availability_buttons(to: str, day_name: str, day_date: date, week_start: date, week_end: date, step: int, total: int) -> None:
+async def send_day_availability_buttons(to: str, day_name: str, day_date: date, week_start: date, week_end: date, step: int, total: int) -> bool:
     body = (
         f"📅 *זמינות שבוע {week_start.strftime('%d/%m')}–{week_end.strftime('%d/%m')}* ({step}/{total})\n\n"
         f"*יום {day_name} {day_date.strftime('%d/%m')}* — מה הזמינות שלך?"
     )
     # Max 3 buttons — send morning/evening/any in first message
     # "לא זמין" as separate action (4th option → use list instead)
-    await send_list(
+    return await send_list(
         to=to,
         body=body,
         sections=[{
@@ -650,8 +657,19 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
     except (KeyError, IndexError):
         return {"status": "ok"}
 
-    # Ignore status updates (delivered, read)
+    # Delivery receipts. Not acted on, but a failed one is the only place Meta
+    # ever explains why a message the API accepted never reached the phone.
     if "messages" not in changes:
+        for st in changes.get("statuses", []):
+            status = st.get("status")
+            if status == "failed":
+                errs = "; ".join(
+                    f"{e.get('code')}:{e.get('title')} {e.get('error_data', {}).get('details', '')}".strip()
+                    for e in st.get("errors", [])
+                ) or "no detail"
+                print(f"[meta-status] FAILED id={st.get('id')} to={st.get('recipient_id')} — {errs}", flush=True)
+            else:
+                print(f"[meta-status] {status} id={st.get('id')} to={st.get('recipient_id')}", flush=True)
         return {"status": "ok"}
 
     message = changes["messages"][0]
@@ -684,6 +702,12 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
     elif msg_type == "location":
         lat = message["location"].get("latitude")
         lng = message["location"].get("longitude")
+
+    print(
+        f"[meta-in] from={phone} type={msg_type} "
+        f"button={button_id!r} text={text_body[:40]!r}",
+        flush=True,
+    )
 
     employee = await find_employee(phone, db)
     if not employee:
@@ -848,7 +872,12 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
             session.context = ctx
             session.updated_at = datetime.now(timezone.utc)
             await db.commit()
-            await send_day_availability_buttons(phone, DAY_NAMES[next_day_idx], next_date, week_start, week_end, step + 1, len(operating_days))
+            sent = await send_day_availability_buttons(phone, DAY_NAMES[next_day_idx], next_date, week_start, week_end, step + 1, len(operating_days))
+            print(
+                f"[avail] {phone} answered day={current_day_idx} -> asking day={next_day_idx} "
+                f"({step + 1}/{len(operating_days)}) sent={sent}",
+                flush=True,
+            )
             return {"status": "ok"}
 
         # All days done → confirm
