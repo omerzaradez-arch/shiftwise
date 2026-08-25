@@ -758,7 +758,7 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
         return {"status": "ok"}
 
     # ── Button: check-in ──
-    if button_id == "checkin" or any(kw in normalized for kw in ["כניסה", "נכנסתי", "הגעתי"]):
+    if button_id == "checkin" or (not button_id and any(kw in normalized for kw in ["כניסה", "נכנסתי", "הגעתי"])):
         org = await db.get(Organization, employee.org_id)
         has_location = org and org.settings and org.settings.get("location_lat")
         if has_location:
@@ -793,31 +793,31 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
         return {"status": "ok"}
 
     # ── Button: check-out ──
-    if button_id == "checkout" or any(kw in normalized for kw in ["יציאה", "יצאתי", "סיימתי"]):
+    if button_id == "checkout" or (not button_id and any(kw in normalized for kw in ["יציאה", "יצאתי", "סיימתי"])):
         msg = await cmd_checkout(employee, db)
         await send_text(phone, msg)
         return {"status": "ok"}
 
     # ── Button: hours ──
-    if button_id == "hours" or any(kw in normalized for kw in ["שעות", "שכר", "נוכחות"]):
+    if button_id == "hours" or (not button_id and any(kw in normalized for kw in ["שעות", "שכר", "נוכחות"])):
         msg = await cmd_hours(employee, db)
         await send_text(phone, msg)
         return {"status": "ok"}
 
     # ── Button: next shift ──
-    if button_id == "next_shift" or any(kw in normalized for kw in ["משמרת", "הבא"]):
+    if button_id == "next_shift" or (not button_id and any(kw in normalized for kw in ["משמרת", "הבא"])):
         msg = await cmd_next_shift(employee, db)
         await send_text(phone, msg)
         return {"status": "ok"}
 
     # ── Button: week schedule ──
-    if button_id == "week_schedule" or any(kw in normalized for kw in ["סידור", "שבוע"]):
+    if button_id == "week_schedule" or (not button_id and any(kw in normalized for kw in ["סידור", "שבוע"])):
         msg = await cmd_week_schedule(employee, db)
         await send_text(phone, msg)
         return {"status": "ok"}
 
     # ── Button: availability ──
-    if button_id == "availability" or "זמינות" in normalized:
+    if button_id == "availability" or (not button_id and "זמינות" in normalized):
         week_start = next_week_sunday()
         operating_days = await get_org_operating_days(employee.org_id, db)
         if not operating_days:
@@ -834,7 +834,7 @@ async def whatsapp_webhook(request: Request, db: AsyncSession = Depends(get_db))
         return {"status": "ok"}
 
     # ── Button: cant come ──
-    if button_id == "cant_come" or any(kw in normalized for kw in ["לא יכול", "החלפה"]):
+    if button_id == "cant_come" or (not button_id and any(kw in normalized for kw in ["לא יכול", "החלפה"])):
         msg, shift_ids = await cmd_cant_come(employee, db)
         if shift_ids:
             session.state = "cant_come_selecting"
